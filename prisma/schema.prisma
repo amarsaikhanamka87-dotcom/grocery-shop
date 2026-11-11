@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PaymentStatus {
+  UNPAID // Төлөгдөөгүй
+  PAID // Төлөгдсөн
+}
+
+enum OrderStatus {
+  PENDING // Хүлээгдэж буй
+  CONFIRMED // Баталгаажсан
+  DELIVERING // Хүргэлтэнд гарсан
+  DELIVERED // Хүргэгдсэн
+  CANCELLED // Цуцлагдсан
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  companyName  String? // Байгууллагын нэр
+  companyRegNo String? // Байгууллагын регистр
+  approved     Boolean  @default(false) // Админ баталгаажуулсан эсэх
+  passwordHash String
+  role         Role     @default(USER)
+  orders       Order[]
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  image     String
+  sortOrder Int       @default(0)
+  products  Product[]
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  description String
+  price       Int // төгрөгөөр
+  oldPrice    Int?
+  unit        String // жишээ: "1 кг", "500 гр"
+  image       String
+  stock       Int         @default(0)
+  minQty      Int         @default(1) // хамгийн бага захиалах тоо
+  isFeatured  Boolean     @default(false)
+  isOrganic   Boolean     @default(false)
+  origin      String? // фермийн нэр / аймаг
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([categoryId])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  number        Int         @unique @default(autoincrement())
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName  String
+  companyName   String?
+  companyRegNo  String?
+  phone         String
+  district      String
+  address       String
+  note          String?
+  deliverySlot  String
+  paymentMethod String        @default("QPAY")
+  paymentStatus PaymentStatus @default(UNPAID)
+  paidAt        DateTime?
+  qpayInvoiceId String?       @unique
+  qpayQrImage   String? // base64 PNG
+  qpayShortUrl  String?
+  qpayUrls      Json? // банкны аппын холбоосууд
+  subtotal      Int
+  deliveryFee   Int
+  total         Int
+  status        OrderStatus @default(PENDING)
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name      String
+  image     String
+  unit      String
+  price     Int
+  quantity  Int
+
+  @@index([orderId])
+}
