@@ -1,0 +1,7 @@
+[build]
+  # Apply pending Prisma migrations, then build the Next.js app.
+  command = "npx prisma migrate deploy && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
