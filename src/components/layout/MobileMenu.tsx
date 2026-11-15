@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Building2, Heart, Menu, User, X } from "lucide-react";
-import { NAV } from "./nav";
+import { Show, UserButton } from "@clerk/nextjs";
+import type { NavItem } from "@/types/nav";
 import { Logo } from "./Logo";
 
-export function MobileMenu({ user }: { user: { name: string; role: string } | null }) {
+export function MobileMenu({ nav }: { nav: NavItem[] }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export function MobileMenu({ user }: { user: { name: string; role: string } | nu
           </button>
         </div>
         <nav className="flex-1 overflow-y-auto overscroll-contain p-3">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <div key={item.label} className="border-b border-line/70 py-1 last:border-b-0">
               <Link
                 href={item.href}
@@ -69,20 +70,20 @@ export function MobileMenu({ user }: { user: { name: string; role: string } | nu
           ))}
         </nav>
         <div className="grid shrink-0 gap-2 border-t border-line p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          {user ? (
-            <Link href={user.role === "ADMIN" ? "/admin" : "/account"} className="btn btn-primary h-12">
-              <User className="size-4" /> {user.name}
+          <Show when="signed-in">
+            <div className="flex h-12 items-center gap-3 rounded-full border border-line bg-white px-3">
+              <UserButton />
+              <span className="font-bold">Миний бүртгэл</span>
+            </div>
+          </Show>
+          <Show when="signed-out">
+            <Link href="/sign-up" className="btn btn-primary h-12">
+              <Building2 className="size-4" /> Байгууллагаар бүртгүүлэх
             </Link>
-          ) : (
-            <>
-              <Link href="/register" className="btn btn-primary h-12">
-                <Building2 className="size-4" /> Байгууллагаар бүртгүүлэх
-              </Link>
-              <Link href="/login" className="btn btn-outline h-12">
-                <User className="size-4" /> Нэвтрэх
-              </Link>
-            </>
-          )}
+            <Link href="/sign-in" className="btn btn-outline h-12">
+              <User className="size-4" /> Нэвтрэх
+            </Link>
+          </Show>
           <Link href="/wishlist" className="btn btn-outline h-12">
             <Heart className="size-4" /> Хадгалсан бараа
           </Link>

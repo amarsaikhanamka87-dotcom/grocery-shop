@@ -8,7 +8,7 @@ export default function NotFound() {
         <Leaf className="mx-auto size-12 text-brand" />
         <p className="mt-4 text-[64px] font-extrabold leading-none tracking-tight text-brand">404</p>
         <h1 className="mt-3 text-2xl font-extrabold">Хуудас олдсонгүй</h1>
-        <p className="mt-2 text-muted">Таны хайсан хуудас устсан эсвэл буруу хаяг байна.</p>
+        <p className="mt-2 text-muted-foreground">Таны хайсан хуудас устсан эсвэл буруу хаяг байна.</p>
         <Link href="/" className="btn btn-primary mt-6 h-12 px-6">Нүүр хуудас руу</Link>
       </div>
     </div>

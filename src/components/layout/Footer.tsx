@@ -1,19 +1,10 @@
 import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { SHOP_NAME, SHOP_PHONE } from "@/lib/constants";
+import { getCategories } from "@/lib/catalog/getCategories";
 import { Logo } from "./Logo";
 
-const cols = [
-  {
-    title: "Дэлгүүр",
-    links: [
-      { label: "Үндэст ногоо", href: "/shop?category=root-vegetables" },
-      { label: "Жимсэн ногоо", href: "/shop?category=fruit-vegetables" },
-      { label: "Навчит ногоо", href: "/shop?category=leafy-greens" },
-      { label: "Холимог хайрцаг", href: "/shop?category=mixed-boxes" },
-      { label: "Хямдрал", href: "/shop?deals=1" },
-    ],
-  },
+const infoCols = [
   {
     title: "Бидний тухай",
     links: [
@@ -25,15 +16,25 @@ const cols = [
   {
     title: "Бүртгэл",
     links: [
-      { label: "Нэвтрэх", href: "/login" },
-      { label: "Байгууллагаар бүртгүүлэх", href: "/register" },
-      { label: "Миний захиалгууд", href: "/account" },
+      { label: "Нэвтрэх", href: "/sign-in" },
+      { label: "Байгууллагаар бүртгүүлэх", href: "/sign-up" },
       { label: "Хадгалсан бараа", href: "/wishlist" },
     ],
   },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const categories = await getCategories();
+  const cols = [
+    {
+      title: "Дэлгүүр",
+      links: [
+        ...categories.map((c) => ({ label: c.name, href: `/shop?category=${c.slug}` })),
+        { label: "Хямдрал", href: "/shop?deals=1" },
+      ],
+    },
+    ...infoCols,
+  ];
   return (
     <footer className="mt-24 bg-ink text-white/80">
       <div className="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
@@ -78,7 +79,7 @@ export function Footer() {
           <p>
             © {new Date().getFullYear()} {SHOP_NAME}. Бүх эрх хуулиар хамгаалагдсан.
           </p>
-          <p>Төлбөрийг QPay-ээр бүх банкны аппаар төлнө</p>
+          <p>Төлбөрийг QR кодоор бүх банкны аппаар төлнө</p>
         </div>
       </div>
     </footer>

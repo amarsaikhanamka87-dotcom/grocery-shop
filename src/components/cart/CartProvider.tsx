@@ -1,52 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CartContext, type CartContextValue, type CartItem } from "./CartContext";
+import { loadFromStorage } from "./loadFromStorage";
+import { saveToStorage } from "./saveToStorage";
 
-export type CartItem = {
-  productId: string;
-  slug: string;
-  name: string;
-  image: string;
-  unit: string;
-  price: number;
-  quantity: number;
-  stock: number;
-  minQty: number;
-};
-
-type CartContextValue = {
-  items: CartItem[];
-  count: number;
-  subtotal: number;
-  ready: boolean;
-  add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  setQuantity: (productId: string, quantity: number) => void;
-  remove: (productId: string) => void;
-  clear: () => void;
-  wishlist: string[];
-  toggleWish: (productId: string) => void;
-};
-
-const CartContext = createContext<CartContextValue | null>(null);
 const CART_KEY = "urgats-cart";
 const WISH_KEY = "urgats-wishlist";
-
-function load<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function save(key: string, value: unknown) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    /* storage unavailable */
-  }
-}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -56,17 +16,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Restore persisted state once on the client.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setItems(load<CartItem[]>(CART_KEY, []).map((i) => ({ ...i, minQty: i.minQty ?? 1 })));
-    setWishlist(load<string[]>(WISH_KEY, []));
+    setItems(loadFromStorage<CartItem[]>(CART_KEY, []).map((i) => ({ ...i, minQty: i.minQty ?? 1 })));
+    setWishlist(loadFromStorage<string[]>(WISH_KEY, []));
     setReady(true);
   }, []);
 
   useEffect(() => {
-    if (ready) save(CART_KEY, items);
+    if (ready) saveToStorage(CART_KEY, items);
   }, [items, ready]);
 
   useEffect(() => {
-    if (ready) save(WISH_KEY, wishlist);
+    if (ready) saveToStorage(WISH_KEY, wishlist);
   }, [wishlist, ready]);
 
   const add = useCallback<CartContextValue["add"]>((item, quantity) => {
@@ -125,10 +85,4 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-}
-
-export function useCart() {
-  const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used inside CartProvider");
-  return ctx;
 }
