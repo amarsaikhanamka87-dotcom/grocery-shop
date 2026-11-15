@@ -1,41 +1,41 @@
-# Ургац — бөөний хүнсний ногоо (B2B)
+# Бөөний Зах Онлайн
 
-Ресторан, зочид буудал, дэлгүүрт зориулсан хүнсний ногооны бөөний онлайн дэлгүүр.
-Next.js 16 + Tailwind CSS 4 + Prisma 6 + PostgreSQL (Supabase) + QPay.
+An online wholesale market for food sellers at the Bars and Nariin Nuguu markets in
+Ulaanbaatar. Buyers order and pay online; sellers manage products, prices and orders; the
+admin approves shops and handles payouts.
 
-## Эхлүүлэх
+Plan, workflows and 10-day schedule: [`docs/full-flow.md`](docs/full-flow.md).
+
+**Stack:** Next.js 16 · Tailwind 4 · shadcn/ui · Clerk · Supabase · Prisma · Wire.mn · n8n · Netlify
+
+## Getting started
 
 ```bash
 npm install
-npm run db:migrate   # хүснэгтүүдийг үүсгэнэ/шинэчилнэ
-npm run db:seed      # 6 ангилал, 22 ногоо, админ хэрэглэгч
-npm run dev          # http://localhost:3000
+cp .env.example .env.local   # fill in the keys
+npm run dev                  # http://localhost:3000
 ```
 
-> Схем өөрчлөгдсөний дараа `npm run dev`-ээ заавал дахин эхлүүлнэ үү (Prisma client шинэчлэгдэнэ).
+## Scripts
 
-## .env
-
-| Нэр | Тайлбар |
+| Script | What it does |
 | --- | --- |
-| `DATABASE_URL`, `DIRECT_URL` | Supabase Postgres |
-| `AUTH_SECRET` | Session болон QPay callback гарын үсгийн нууц түлхүүр |
-| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | `db:seed`-ээр үүсэх админ |
-| `QPAY_BASE_URL` | Sandbox: `https://merchant-sandbox.qpay.mn/v2` · Жинхэнэ: `https://merchant.qpay.mn/v2` |
-| `QPAY_CLIENT_ID`, `QPAY_CLIENT_SECRET`, `QPAY_INVOICE_CODE` | QPay-тэй гэрээ байгуулахад өгөх түлхүүрүүд (sandbox: `TEST_MERCHANT` / `123456` / `TEST_INVOICE`) |
-| `APP_URL` | Сайтын нийтэд нээлттэй хаяг. QPay төлбөрийн мэдэгдлийг `APP_URL/api/qpay/callback` руу илгээнэ |
+| `npm run dev` | Dev server |
+| `npm run lint` | ESLint (Pinebaatars rules, max 150 lines per file, one component per file) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run build` | Production build |
 
-## Бизнесийн урсгал
+## Folder structure
 
-1. Байгууллага нэр, 7 оронтой регистрээр бүртгүүлнэ → **админ баталгаажуулна** (`/admin/users`).
-2. Бүтээгдэхүүн бүр кг-ын үнэ, **хамгийн бага захиалгатай** (жишээ нь төмс 25 кг).
-3. Захиалга өгөхөд нөөц түр барьж, **QPay нэхэмжлэх** (QR + банкны аппын холбоос) үүснэ.
-4. Төлбөр орвол QPay callback эсвэл хуудасны автомат шалгалтаар захиалга **Төлөгдсөн / Баталгаажсан** болно.
-5. Төлөөгүй захиалгыг үйлчлүүлэгч өөрөө цуцалж болно; админ цуцлахад нөөц буцаж, QPay нэхэмжлэх хүчингүй болно.
+```
+src/
+  proxy.ts            Clerk session on every request (Next 16 "middleware")
+  app/<route>/
+    page.tsx          thin: data + auth, stacks features
+    _components/      UI components used only on this page
+    _features/        business logic & hooks specific to this page
+  components/         shared UI (layout/, ui/ = shadcn)
+  lib/                helpers and service clients
+```
 
-## Жинхэнэ QPay руу шилжих
-
-1. qpay.mn-тэй мерчант гэрээ байгуулж `client_id`, `client_secret`, `invoice_code` авна.
-2. `.env`-д `QPAY_BASE_URL=https://merchant.qpay.mn/v2` болон авсан түлхүүрүүдээ оруулна.
-3. `APP_URL`-ийг сайтын жинхэнэ домэйн (https) болгоно — localhost руу QPay callback хүрэхгүй.
-# grocery-shop
+The previous single-seller app ("Ургац", Prisma + QPay) is on the `legacy/urgats` branch.

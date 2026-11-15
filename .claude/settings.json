@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run build)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(npm run typecheck)",
+      "Bash(npx drizzle-kit generate:*)",
+      "Bash(npx drizzle-kit check:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(npx drizzle-kit push:*)",
+      "Bash(npx drizzle-kit migrate:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Bash(npx drizzle-kit drop:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/max-lines.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

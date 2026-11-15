@@ -14,7 +14,7 @@ export function SortSelect({ value }: { value: string }) {
   const pathname = usePathname();
   const params = useSearchParams();
   return (
-    <label className="flex items-center gap-2 text-[14px] font-medium text-muted">
+    <label className="flex items-center gap-2 text-[14px] font-medium text-muted-foreground">
       Эрэмбэлэх:
       <select
         value={value}

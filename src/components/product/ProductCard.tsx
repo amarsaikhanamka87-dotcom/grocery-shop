@@ -1,8 +1,9 @@
+import { discountPercent } from "@/lib/catalog/discountPercent";
 import Image from "next/image";
 import Link from "next/link";
 import { Leaf } from "lucide-react";
-import { formatPrice } from "@/lib/format";
-import { QuickAdd } from "./AddToCartButton";
+import { formatPrice } from "@/lib/format/formatPrice";
+import { QuickAdd } from "./QuickAdd";
 import { WishButton } from "./WishButton";
 
 export type CardProduct = {
@@ -25,7 +26,7 @@ function shortUnit(unit: string) {
 }
 
 export function ProductCard({ product: p, priority = false }: { product: CardProduct; priority?: boolean }) {
-  const discount = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+  const discount = discountPercent(p.price, p.oldPrice);
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-shadow hover:shadow-card">
       <Link href={`/product/${p.slug}`} className="relative block aspect-square overflow-hidden bg-cream-2">
@@ -55,7 +56,7 @@ export function ProductCard({ product: p, priority = false }: { product: CardPro
       </Link>
       <WishButton productId={p.id} className="absolute right-3 top-3" />
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        {p.origin && <p className="truncate text-[11.5px] font-medium text-muted sm:text-xs">{p.origin}</p>}
+        {p.origin && <p className="truncate text-[11.5px] font-medium text-muted-foreground sm:text-xs">{p.origin}</p>}
         <h3 className="mt-1 line-clamp-2 text-[14.5px] font-bold leading-snug sm:text-[15px]">
           <Link href={`/product/${p.slug}`} className="hover:text-brand">
             {p.name}
@@ -67,10 +68,10 @@ export function ProductCard({ product: p, priority = false }: { product: CardPro
         <div className="mt-auto flex items-end justify-between gap-2 pt-3 sm:pt-4">
           <div className="min-w-0 leading-tight">
             {p.oldPrice && (
-              <p className="text-[12px] font-medium text-muted line-through tabular-nums">{formatPrice(p.oldPrice)}</p>
+              <p className="text-[12px] font-medium text-muted-foreground line-through tabular-nums">{formatPrice(p.oldPrice)}</p>
             )}
             <p className="whitespace-nowrap text-[16px] font-extrabold tabular-nums sm:text-[17px]">{formatPrice(p.price)}</p>
-            <p className="truncate text-[12px] font-semibold text-muted">/ {p.unit}</p>
+            <p className="truncate text-[12px] font-semibold text-muted-foreground">/ {p.unit}</p>
           </div>
           <QuickAdd
             item={{

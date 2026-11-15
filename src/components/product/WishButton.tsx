@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import { useCart } from "@/components/cart/CartProvider";
+import { useCart } from "@/components/cart/useCart";
 
 export function WishButton({ productId, className = "" }: { productId: string; className?: string }) {
   const { wishlist, toggleWish } = useCart();
