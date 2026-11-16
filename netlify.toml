@@ -2,5 +2,9 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  NODE_VERSION = "22"
+
+# Official Next.js runtime for Netlify (server functions, middleware/proxy, images).
 [[plugins]]
   package = "@netlify/plugin-nextjs"
