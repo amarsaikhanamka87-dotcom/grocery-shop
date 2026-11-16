@@ -21,13 +21,6 @@ export function HeroSection() {
       <div className="container-x relative grid items-center gap-12 pb-16 pt-10 md:pb-20 lg:grid-cols-[1.02fr_1fr] lg:gap-6 lg:pb-24 lg:pt-14">
         {/* Copy */}
         <div className="max-w-[560px]">
-          <p className="inline-flex items-center gap-2.5 rounded-full bg-white py-1.5 pl-2 pr-4 text-[13px] font-semibold text-ink-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <span className="grid size-5 place-items-center rounded-full bg-brand-50">
-              <span className="size-2 rounded-full bg-brand/60" />
-            </span>
-            Ресторан, зочид буудал, дэлгүүрт зориулсан
-          </p>
-
           <h1 className="mt-6 text-[44px] font-extrabold leading-[1.02] tracking-[-0.045em] sm:text-[58px] lg:text-[66px] xl:text-[72px]">
             Фермийн ногоо,
             <br />

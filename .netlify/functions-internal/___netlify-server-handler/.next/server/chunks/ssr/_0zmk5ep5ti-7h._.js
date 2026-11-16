@@ -1,0 +1,3 @@
+module.exports=[69544,a=>{"use strict";var b=a.i(64831);let c={name:"minus",size:24,node:[["path",{d:"M5 12h14",key:"1ays0h"}]]};c.node;let d=(0,b.f)(c);a.s(["f",0,d],69544)},3512,a=>{"use strict";var b=a.i(64831);let c={name:"plus",size:24,node:[["path",{d:"M5 12h14",key:"1ays0h"}],["path",{d:"M12 5v14",key:"s699le"}]]};c.node;let d=(0,b.f)(c);a.s(["f",0,d],3512)},16644,a=>{"use strict";var b=a.i(67161);a.s(["default",()=>b.Image])},78729,a=>{"use strict";var b=a.i(21007);a.s(["f",0,function(a){return 0===a||a>=b.V?0:b.B}])},87634,a=>{"use strict";a.s(["f",0,function(a){return`${new Intl.NumberFormat("en-US").format(a)}₮`}])}];
+
+//# sourceMappingURL=_0zmk5ep5ti-7h._.js.map

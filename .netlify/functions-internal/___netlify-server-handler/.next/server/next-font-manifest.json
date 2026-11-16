@@ -1,0 +1,55 @@
+{
+  "app": {
+    "[project]/src/app/(shop)/(home)/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/cart/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/checkout/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/farms/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/help/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/product/[slug]/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/shop/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/sign-in/[[...sign-in]]/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/sign-up/[[...sign-up]]/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/(shop)/wishlist/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/_not-found/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ],
+    "[project]/src/app/admin/page": [
+      "static/media/276a8f4fe816cb6b-s.p.2v2sz4qlut9s1.woff2",
+      "static/media/82450a180bcad83c-s.p.0p-wng2nn8o-p.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pages": {},
+  "pagesUsingSizeAdjust": false
+}

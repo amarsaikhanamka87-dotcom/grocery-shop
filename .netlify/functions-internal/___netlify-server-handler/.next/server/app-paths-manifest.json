@@ -1,0 +1,15 @@
+{
+  "/(shop)/(home)/page": "app/(shop)/(home)/page.js",
+  "/(shop)/cart/page": "app/(shop)/cart/page.js",
+  "/(shop)/checkout/page": "app/(shop)/checkout/page.js",
+  "/(shop)/farms/page": "app/(shop)/farms/page.js",
+  "/(shop)/help/page": "app/(shop)/help/page.js",
+  "/(shop)/product/[slug]/page": "app/(shop)/product/[slug]/page.js",
+  "/(shop)/shop/page": "app/(shop)/shop/page.js",
+  "/(shop)/sign-in/[[...sign-in]]/page": "app/(shop)/sign-in/[[...sign-in]]/page.js",
+  "/(shop)/sign-up/[[...sign-up]]/page": "app/(shop)/sign-up/[[...sign-up]]/page.js",
+  "/(shop)/wishlist/page": "app/(shop)/wishlist/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/page": "app/admin/page.js"
+}
