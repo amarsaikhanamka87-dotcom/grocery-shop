@@ -48,3 +48,7 @@ CLAUDE.local.md
 
 # clerk cli (local link state, claim files)
 .clerk/
+
+# netlify local build output
+.netlify/*
+!.netlify/task-history/
