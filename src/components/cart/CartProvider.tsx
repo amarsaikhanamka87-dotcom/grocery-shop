@@ -62,6 +62,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clear = useCallback(() => setItems([]), []);
 
+  const refreshStock = useCallback<CartContextValue["refreshStock"]>((levels) => {
+    setItems((prev) => {
+      const next = prev.map((i) => ({ ...i, ...(levels[i.productId] ?? { stock: 0 }) }));
+      const changed = next.some((n, k) => n.stock !== prev[k].stock || n.minQty !== prev[k].minQty);
+      return changed ? next : prev;
+    });
+  }, []);
+
   const toggleWish = useCallback((productId: string) => {
     setWishlist((prev) =>
       prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId],
@@ -78,10 +86,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setQuantity,
       remove,
       clear,
+      refreshStock,
       wishlist,
       toggleWish,
     }),
-    [items, ready, add, setQuantity, remove, clear, wishlist, toggleWish],
+    [items, ready, add, setQuantity, remove, clear, refreshStock, wishlist, toggleWish],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
 import { Manrope } from "next/font/google";
+import { Toaster } from "sonner";
 import { CartProvider } from "@/components/cart/CartProvider";
+import { LocationProvider } from "@/components/location/LocationProvider";
 import "./globals.css";
 
 // Cyrillic subset is needed for the Mongolian UI text.
@@ -24,7 +26,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* unsafe_disableDevelopmentModeWarnings: hides the "Development mode" badge (dev keys only;
             production keys never show it). "Secured by Clerk" is off in Clerk config (branding). */}
         <ClerkProvider appearance={{ theme: shadcn, options: { unsafe_disableDevelopmentModeWarnings: true } }}>
-          <CartProvider>{children}</CartProvider>
+          <LocationProvider>
+            <CartProvider>
+              {children}
+              <Toaster position="top-center" offset={16} />
+            </CartProvider>
+          </LocationProvider>
         </ClerkProvider>
       </body>
     </html>

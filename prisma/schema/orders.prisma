@@ -1,0 +1,67 @@
+// Orders. User is the old Ургац account table, kept so migrations never drop it.
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  companyName  String? // Байгууллагын нэр
+  companyRegNo String? // Байгууллагын регистр
+  approved     Boolean  @default(false) // Админ баталгаажуулсан эсэх
+  passwordHash String
+  role         Role     @default(USER)
+  orders       Order[]
+  createdAt    DateTime @default(now())
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  number          Int           @unique @default(autoincrement())
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName    String
+  companyName     String?
+  companyRegNo    String?
+  phone           String
+  district        String
+  address         String
+  note            String?
+  deliverySlot    String
+  deliveryType    String? // "express" (Шуурхай) | "scheduled" (Хуваарьт)
+  deliveryDate    DateTime?     @db.Date
+  clerkUserId     String? // the buyer (Clerk); userId above is the old Ургац User table
+  paymentMethod   String        @default("QPAY")
+  paymentStatus   PaymentStatus @default(UNPAID)
+  paidAt          DateTime?
+  // Wire.mn PaymentIntent (pi_…) and its hosted checkout page. PAID only via the verified webhook.
+  wireIntentId    String?       @unique
+  wireCheckoutUrl String?
+  qpayInvoiceId   String?       @unique
+  qpayQrImage     String? // base64 PNG
+  qpayShortUrl    String?
+  qpayUrls        Json? // банкны аппын холбоосууд
+  subtotal        Int
+  deliveryFee     Int
+  total           Int
+  status          OrderStatus   @default(PENDING)
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+
+  @@index([userId])
+  @@index([clerkUserId])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name      String
+  image     String
+  unit      String
+  price     Int
+  quantity  Int
+
+  @@index([orderId])
+}

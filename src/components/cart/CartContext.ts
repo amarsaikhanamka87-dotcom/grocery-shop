@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext } from "react";
+import type { StockLevels } from "@/lib/catalog/getStockLevels";
 
 export type CartItem = {
   productId: string;
@@ -23,6 +24,8 @@ export type CartContextValue = {
   setQuantity: (productId: string, quantity: number) => void;
   remove: (productId: string) => void;
   clear: () => void;
+  /** Puts live DB stock on the cart lines (missing product = 0); quantities are left for the buyer to fix. */
+  refreshStock: (levels: StockLevels) => void;
   wishlist: string[];
   toggleWish: (productId: string) => void;
 };

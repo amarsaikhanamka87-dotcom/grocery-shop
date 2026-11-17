@@ -1,0 +1,34 @@
+// Products and categories (storefront catalog).
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  image     String
+  sortOrder Int       @default(0)
+  products  Product[]
+}
+
+model Product {
+  id                 String              @id @default(cuid())
+  name               String
+  slug               String              @unique
+  description        String
+  price              Int // төгрөгөөр
+  oldPrice           Int?
+  unit               String // жишээ: "1 кг", "500 гр"
+  image              String
+  stock              Int                 @default(0)
+  minQty             Int                 @default(1) // хамгийн бага захиалах тоо
+  isFeatured         Boolean             @default(false)
+  isOrganic          Boolean             @default(false)
+  origin             String? // фермийн нэр / аймаг
+  categoryId         String
+  category           Category            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems         OrderItem[]
+  standingOrderItems StandingOrderItem[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([categoryId])
+}

@@ -54,12 +54,20 @@ yet (`/admin`, `/business` guards are Day 2).
 **Data.** `page.tsx` calls query functions in `src/lib/catalog/*.ts` (`server-only`, Prisma via
 `src/lib/prisma.ts`) and passes results down as props. Types come from Prisma (`src/types/catalog.ts`
 re-exports `Product`, `Category`). The Supabase DB is shared with the old Ургац tables (`User`,
-`Order`, `OrderItem`, ...): they stay in `prisma/schema.prisma` so migrations never drop them.
+`Order`, `OrderItem`, ...): they stay in the schema (`prisma/schema/*.prisma`, one file per domain; migrations in
+`prisma/schema/migrations/`) so migrations never drop them.
 Product images are Unsplash URLs (the only host allowed in `next.config.ts`).
 
 **Cart / wishlist** are client-only, in localStorage (`components/cart/`: `CartContext`,
-`CartProvider`, `useCart`). Checkout is frontend-only until orders (Day 6) and Wire.mn payments
-(Day 7): submitting shows a notice (`checkout/_features/useCheckoutSubmit.ts`).
+`CartProvider`, `useCart`).
+
+**Checkout → Wire.mn.** `checkout/_features/placeOrder.ts` re-prices the cart from the DB, saves an
+UNPAID `Order`, creates a Wire PaymentIntent + hosted checkout (`lib/wire/`) and redirects there.
+Wire returns the buyer to `/orders/[id]`. An order becomes PAID only in `markOrderPaid` (amount must
+equal the total, idempotent), called from the signed webhook `api/webhooks/wire` or, as a fallback,
+after asking Wire's API server-to-server (`syncWirePayment`). Wire has no test mode (API accepts
+only `sk_live_` keys), so test with small real amounts. Env: `WIRE_API_KEY`, `WIRE_WEBHOOK_SECRET`.
+Delivery address lives in localStorage (`components/location/`); first visit asks for browser location.
 
 **Sign-in = Clerk Google + our own phone OTP.** Clerk cannot send SMS to Mongolia (+976), and its
 verification SMS can't be taken over. So `/sign-in` and `/sign-up` render Clerk's card (Google only)

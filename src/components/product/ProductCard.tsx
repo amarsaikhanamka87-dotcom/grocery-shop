@@ -1,9 +1,11 @@
-import { discountPercent } from "@/lib/catalog/discountPercent";
 import Image from "next/image";
 import Link from "next/link";
 import { Leaf } from "lucide-react";
+import { discountPercent } from "@/lib/catalog/discountPercent";
 import { formatPrice } from "@/lib/format/formatPrice";
-import { QuickAdd } from "./QuickAdd";
+import { CartButton } from "./CartButton";
+import { CartQtyOverlay } from "./CartQtyOverlay";
+import { StockBadge } from "./StockBadge";
 import { WishButton } from "./WishButton";
 
 export type CardProduct = {
@@ -20,16 +22,27 @@ export type CardProduct = {
   origin: string | null;
 };
 
-/** "хайрцаг (20 кг)" -> "хайрцаг" so the minimum badge stays on one line. */
+/** "хайрцаг (20 кг)" -> "хайрцаг" so the minimum line stays short. */
 function shortUnit(unit: string) {
   return unit.replace(/\s*\(.*\)\s*$/, "");
 }
 
+/** Grey card: white photo (heart, cart quantity overlay), price, name, then "Сагслах" or − / +. */
 export function ProductCard({ product: p, priority = false }: { product: CardProduct; priority?: boolean }) {
   const discount = discountPercent(p.price, p.oldPrice);
+  const item = {
+    productId: p.id,
+    slug: p.slug,
+    name: p.name,
+    image: p.image,
+    unit: p.unit,
+    price: p.price,
+    stock: p.stock,
+    minQty: p.minQty,
+  };
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-shadow hover:shadow-card">
-      <Link href={`/product/${p.slug}`} className="relative block aspect-square overflow-hidden bg-cream-2">
+    <article className="relative flex flex-col rounded-[24px] bg-cream-2 p-2.5 sm:p-3">
+      <Link href={`/product/${p.slug}`} className="group relative block aspect-square overflow-hidden rounded-[18px] bg-white">
         <Image
           src={p.image}
           alt={p.name}
@@ -38,53 +51,36 @@ export function ProductCard({ product: p, priority = false }: { product: CardPro
           sizes="(min-width: 1280px) 280px, (min-width: 768px) 33vw, 50vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
-        <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
-          {discount > 0 && (
-            <span className="rounded-full bg-clay px-2.5 py-1 text-xs font-bold text-white">-{discount}%</span>
-          )}
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
+          {discount > 0 && <span className="rounded-full bg-clay px-2.5 py-1 text-xs font-bold text-white">-{discount}%</span>}
           {p.isOrganic && (
             <span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-brand">
               <Leaf className="size-3" /> Органик
             </span>
           )}
+          <StockBadge stock={p.stock} minQty={p.minQty} unit={p.unit} />
         </div>
-        {p.stock < p.minQty && (
-          <span className="absolute inset-x-3 bottom-3 rounded-full bg-ink/80 py-1.5 text-center text-xs font-bold text-white">
-            Дууссан
-          </span>
-        )}
+        <CartQtyOverlay item={item} />
       </Link>
-      <WishButton productId={p.id} className="absolute right-3 top-3" />
-      <div className="flex flex-1 flex-col p-3 sm:p-4">
-        {p.origin && <p className="truncate text-[11.5px] font-medium text-muted-foreground sm:text-xs">{p.origin}</p>}
-        <h3 className="mt-1 line-clamp-2 text-[14.5px] font-bold leading-snug sm:text-[15px]">
+      <WishButton productId={p.id} className="absolute top-5 right-5 sm:top-5.5 sm:right-5.5" />
+
+      <div className="flex flex-1 flex-col px-1.5 pt-3 sm:px-2">
+        <div className="flex items-baseline gap-2">
+          <p className="text-[17px] font-extrabold whitespace-nowrap tabular-nums sm:text-lg">{formatPrice(p.price)}</p>
+          {p.oldPrice && (
+            <p className="text-[12.5px] font-medium text-muted-foreground line-through tabular-nums">{formatPrice(p.oldPrice)}</p>
+          )}
+        </div>
+        <h3 className="mt-1 line-clamp-2 text-[15px] leading-snug sm:text-base">
           <Link href={`/product/${p.slug}`} className="hover:text-brand">
             {p.name}
           </Link>
         </h3>
-        <p className="mt-1.5 w-fit max-w-full truncate rounded-md bg-cream-2 px-1.5 py-0.5 text-[11.5px] font-semibold text-ink-2 sm:text-[12px]">
-          Багадаа {p.minQty} {shortUnit(p.unit)}
+        <p className="mt-1 truncate text-[13px] text-muted-foreground">
+          {p.unit} · багадаа {p.minQty} {shortUnit(p.unit)}
         </p>
-        <div className="mt-auto flex items-end justify-between gap-2 pt-3 sm:pt-4">
-          <div className="min-w-0 leading-tight">
-            {p.oldPrice && (
-              <p className="text-[12px] font-medium text-muted-foreground line-through tabular-nums">{formatPrice(p.oldPrice)}</p>
-            )}
-            <p className="whitespace-nowrap text-[16px] font-extrabold tabular-nums sm:text-[17px]">{formatPrice(p.price)}</p>
-            <p className="truncate text-[12px] font-semibold text-muted-foreground">/ {p.unit}</p>
-          </div>
-          <QuickAdd
-            item={{
-              productId: p.id,
-              slug: p.slug,
-              name: p.name,
-              image: p.image,
-              unit: p.unit,
-              price: p.price,
-              stock: p.stock,
-              minQty: p.minQty,
-            }}
-          />
+        <div className="mt-auto pt-4">
+          <CartButton item={item} />
         </div>
       </div>
     </article>

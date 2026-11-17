@@ -1,4 +1,13 @@
-import { Banknote, Building2, CreditCard, LayoutDashboard, ReceiptText, Store, Undo2, type LucideIcon } from "lucide-react";
+import {
+  Building2,
+  CreditCard,
+  LayoutDashboard,
+  ReceiptText,
+  Store,
+  Undo2,
+  Package,
+  type LucideIcon,
+} from "lucide-react";
 
 export type AdminNavItem = { href: string; label: string; icon: LucideIcon };
 
@@ -10,5 +19,5 @@ export const adminNav: AdminNavItem[] = [
   { href: "/admin/orders", label: "Захиалга", icon: ReceiptText },
   { href: "/admin/payments", label: "Төлбөр", icon: CreditCard },
   { href: "/admin/refunds", label: "Буцаалт", icon: Undo2 },
-  { href: "/admin/payouts", label: "Шилжүүлэг", icon: Banknote },
+  { href: "/admin/products", label: "Бүтээгдэхүүн", icon: Package },
 ];

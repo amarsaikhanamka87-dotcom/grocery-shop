@@ -6,7 +6,8 @@ import { formatPrice } from "@/lib/format/formatPrice";
 import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
 import { useIsB2B } from "@/lib/roles/useIsB2B";
 
-export function CartSummary({ subtotal }: { subtotal: number }) {
+/** Totals + "Захиалга хийх"; blocked while some line asks for more than is in stock. */
+export function CartSummary({ subtotal, blocked = false }: { subtotal: number; blocked?: boolean }) {
   const fee = deliveryFeeFor(subtotal, useIsB2B());
   return (
     <aside className="card min-w-0 p-5 sm:p-6 lg:sticky lg:top-[200px]">
@@ -25,9 +26,15 @@ export function CartSummary({ subtotal }: { subtotal: number }) {
           <dd className="font-extrabold tabular-nums">{formatPrice(subtotal + fee)}</dd>
         </div>
       </dl>
-      <Link href="/checkout" className="btn btn-primary mt-6 h-[52px] w-full text-[15px]">
-        Захиалга хийх <ArrowRight className="size-4" />
-      </Link>
+      {blocked ? (
+        <button type="button" disabled className="btn btn-primary mt-6 h-[52px] w-full text-[15px] disabled:opacity-50">
+          Үлдэгдлээ шалгана уу
+        </button>
+      ) : (
+        <Link href="/checkout" className="btn btn-primary mt-6 h-[52px] w-full text-[15px]">
+          Захиалга хийх <ArrowRight className="size-4" />
+        </Link>
+      )}
       <Link href="/shop" className="mt-3 block text-center text-sm font-semibold text-brand hover:underline">
         Дэлгүүр үргэлжлүүлэх
       </Link>

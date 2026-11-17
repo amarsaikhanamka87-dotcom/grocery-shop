@@ -1,0 +1,14 @@
+/// One-time SMS sign-in codes for our own phone login (Clerk can't send SMS to +976).
+/// Only an HMAC of the code is stored. Used once (consumedAt), expires after a few minutes.
+model PhoneOtp {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  phone      String // E.164, e.g. +97699112233
+  codeHash   String    @map("code_hash")
+  attempts   Int       @default(0)
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([phone, createdAt], map: "phone_otps_phone_created_idx")
+  @@map("phone_otps")
+}
