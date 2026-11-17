@@ -16,7 +16,7 @@ export function CtaSection() {
           Бүртгэлийг 1 ажлын өдөрт баталгаажуулна. {formatPrice(FREE_DELIVERY_FROM)}-с дээш захиалгад хүргэлт үнэгүй.
         </p>
         <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-          <Link href="/sign-up" className="btn h-12 bg-white px-7 text-brand hover:bg-cream">
+          <Link href="/business" className="btn h-12 bg-white px-7 text-brand hover:bg-cream">
             Байгууллагаар бүртгүүлэх
           </Link>
           <Link href="/shop" className="btn h-12 border border-white/30 px-7 text-white hover:bg-white/10">

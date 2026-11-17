@@ -21,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Current Clerk SDKs expect the provider inside <body>. */}
         {/* Phone login is our own form (components/auth/PhoneLogin): Clerk can't text +976.
             Clerk's optional phone field stays hidden (showOptionalFields defaults to false). */}
-        <ClerkProvider appearance={{ theme: shadcn }}>
+        {/* unsafe_disableDevelopmentModeWarnings: hides the "Development mode" badge (dev keys only;
+            production keys never show it). "Secured by Clerk" is off in Clerk config (branding). */}
+        <ClerkProvider appearance={{ theme: shadcn, options: { unsafe_disableDevelopmentModeWarnings: true } }}>
           <CartProvider>{children}</CartProvider>
         </ClerkProvider>
       </body>

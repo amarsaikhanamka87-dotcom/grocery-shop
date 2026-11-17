@@ -1,13 +1,16 @@
+"use client";
+
 import { Info } from "lucide-react";
 import type { CartItem } from "@/components/cart/CartContext";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
+import { useIsB2B } from "@/lib/roles/useIsB2B";
 import { SummaryLine } from "./SummaryLine";
 
 type Props = { items: CartItem[]; subtotal: number; notice: string | null };
 
 export function OrderSummary({ items, subtotal, notice }: Props) {
-  const fee = deliveryFeeFor(subtotal);
+  const fee = deliveryFeeFor(subtotal, useIsB2B());
   return (
     <aside className="card min-w-0 p-5 sm:p-6 lg:sticky lg:top-[200px]">
       <h2 className="text-lg font-extrabold">Таны захиалга</h2>

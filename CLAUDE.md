@@ -73,6 +73,17 @@ plus `components/auth/PhoneLogin.tsx`:
 the code is printed in the dev server terminal. Clerk instance config: phone enabled but
 `used_for_sign_in: false`; email/password off; "force organization selection" is still on.
 
+**Roles.** Clerk `publicMetadata.role` (typed in `src/types/clerk.d.ts`), writable only by the server:
+`"admin"` = owner, `"b2b"` = approved business buyer (free delivery via `deliveryFeeFor(subtotal, isB2B)`),
+unset = regular buyer. Buyers apply at `/business` → `business_applications` table (Prisma
+`BusinessApplication`) → admin approves at `/admin/business`, which sets the role. `src/proxy.ts`
+requires sign-in for `/admin`, `/business`, `/checkout`; the admin role is checked server-side in
+`app/admin/layout.tsx` (`requireAdmin`) and again in every admin server action. An approved B2B
+customer's `/business` is a dashboard with a monthly order list (`StandingOrder` +
+`StandingOrderItem`: products, quantities, day 1–28, active): saved via `saveMonthlyOrder` (re-checks
+the b2b role and each product's `minQty`), and "add all to cart". Auto-placing it on that day
+comes after orders exist (Day 6–8).
+
 **Styling.** `app/styles/brand.css` holds the Ургац palette (`brand`, `cream`, `ink`, `clay`, `line`)
 and classes (`.btn`, `.card`, `.input`, `.container-x`); `globals.css` maps shadcn tokens onto it.
 Grey text is `text-muted-foreground` (`text-muted` is a background color in shadcn).

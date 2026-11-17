@@ -1,10 +1,11 @@
-import { Suspense } from "react";
 import Link from "next/link";
-import { Building2, ChevronDown } from "lucide-react";
-import { Show } from "@clerk/nextjs";
+import { ChevronDown } from "lucide-react";
 import type { NavItem } from "@/types/nav";
+import { RoleLink } from "./RoleLink";
 
-export function CategoryNav({ nav }: { nav: NavItem[] }) {
+type Props = { nav: NavItem[]; role: "admin" | "b2b" | null; signedIn: boolean };
+
+export function CategoryNav({ nav, role, signedIn }: Props) {
   return (
     <nav className="hidden border-b border-line bg-cream lg:block" aria-label="Үндсэн цэс">
       <div className="container-x flex h-[42px] items-center justify-between">
@@ -37,17 +38,7 @@ export function CategoryNav({ nav }: { nav: NavItem[] }) {
             </li>
           ))}
         </ul>
-        <Suspense>
-          <Show when="signed-out">
-            <Link
-              href="/sign-up"
-              className="flex h-[30px] items-center gap-2 rounded-lg border border-dashed border-ink-2/40 bg-white px-4 text-sm font-bold hover:border-brand hover:text-brand"
-            >
-              <Building2 className="size-4" />
-              Байгууллагаар бүртгүүлэх
-            </Link>
-          </Show>
-        </Suspense>
+        <RoleLink role={role} signedIn={signedIn} />
       </div>
     </nav>
   );

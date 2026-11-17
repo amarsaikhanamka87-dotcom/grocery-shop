@@ -1,8 +1,12 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Day 1: Clerk reads the session on every request. Route protection
-// (/business, /admin) is added on Day 2.
-export default clerkMiddleware();
+// Must be signed in for these. The admin *role* is checked on the server in app/admin/layout.tsx
+// (requireAdmin), so a signed-in non-admin still can't see /admin.
+const needsSignIn = createRouteMatcher(["/admin(.*)", "/business(.*)", "/checkout(.*)"]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (needsSignIn(req)) await auth.protect();
+});
 
 export const config = {
   matcher: [

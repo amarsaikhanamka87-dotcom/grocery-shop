@@ -1,10 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
+import { useIsB2B } from "@/lib/roles/useIsB2B";
 
 export function CartSummary({ subtotal }: { subtotal: number }) {
-  const fee = deliveryFeeFor(subtotal);
+  const fee = deliveryFeeFor(subtotal, useIsB2B());
   return (
     <aside className="card min-w-0 p-5 sm:p-6 lg:sticky lg:top-[200px]">
       <h2 className="text-lg font-extrabold">Захиалгын дүн</h2>
