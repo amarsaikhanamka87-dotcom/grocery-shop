@@ -1,17 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { SHOP_PHONE } from "@/lib/constants";
+import { useState, useTransition } from "react";
+import { useCart } from "@/components/cart/useCart";
+import { placeOrder } from "./placeOrder";
+import type { CheckoutInput } from "./checkoutSchema";
 
-// Orders are saved on Day 6 and paid on Day 7 (docs/full-flow.md §11).
-// Until then submitting only shows this notice; nothing leaves the browser.
-const NOT_YET = `Онлайн захиалга удахгүй нээгдэнэ. Одоогоор ${SHOP_PHONE} дугаарт залгаж захиална уу.`;
+const text = (form: FormData, key: string) => String(form.get(key) ?? "");
 
+/** Sends the order to the server, then goes to the Wire.mn payment page. */
 export function useCheckoutSubmit() {
+  const { items, clear } = useCart();
   const [notice, setNotice] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setNotice(NOT_YET);
+    const form = new FormData(e.currentTarget);
+    const input: CheckoutInput = {
+      customerName: text(form, "customerName"),
+      phone: text(form, "phone"),
+      district: text(form, "district"),
+      address: text(form, "address"),
+      note: text(form, "note"),
+      deliveryType: text(form, "deliveryType") as CheckoutInput["deliveryType"],
+      deliveryDate: text(form, "deliveryDate"),
+      deliverySlot: text(form, "deliverySlot"),
+      items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+    };
+    setNotice(null);
+    startTransition(async () => {
+      const res = await placeOrder(input);
+      if ("error" in res) return setNotice(res.error);
+      clear();
+      window.location.assign(res.url);
+    });
   };
-  return { notice, onSubmit };
+  return { notice, pending, onSubmit };
 }

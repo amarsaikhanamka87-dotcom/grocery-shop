@@ -7,9 +7,9 @@ import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
 import { useIsB2B } from "@/lib/roles/useIsB2B";
 import { SummaryLine } from "./SummaryLine";
 
-type Props = { items: CartItem[]; subtotal: number; notice: string | null };
+type Props = { items: CartItem[]; subtotal: number; notice: string | null; pending: boolean };
 
-export function OrderSummary({ items, subtotal, notice }: Props) {
+export function OrderSummary({ items, subtotal, notice, pending }: Props) {
   const fee = deliveryFeeFor(subtotal, useIsB2B());
   return (
     <aside className="card min-w-0 p-5 sm:p-6 lg:sticky lg:top-[200px]">
@@ -38,10 +38,12 @@ export function OrderSummary({ items, subtotal, notice }: Props) {
           <Info className="mt-0.5 size-4 shrink-0" /> {notice}
         </p>
       )}
-      <button type="submit" className="btn btn-primary mt-6 h-[52px] w-full text-[15px]">
-        Захиалах · {formatPrice(subtotal + fee)}
+      <button type="submit" disabled={pending} className="btn btn-primary mt-6 h-[52px] w-full text-[15px] disabled:opacity-60">
+        {pending ? "Төлбөр рүү шилжиж байна…" : `Төлөх · ${formatPrice(subtotal + fee)}`}
       </button>
-      <p className="mt-3 text-center text-[12.5px] text-muted-foreground">Үнэ, нөөцийг захиалах үед дахин шалгана.</p>
+      <p className="mt-3 text-center text-[12.5px] text-muted-foreground">
+        Wire.mn-ээр QR эсвэл банкны аппаар төлнө. Үнэ, нөөцийг захиалах үед дахин шалгана.
+      </p>
     </aside>
   );
 }

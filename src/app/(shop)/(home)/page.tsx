@@ -25,13 +25,14 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
-      <FeatureStrip />
-      <CategoriesSection categories={categories} />
+      {/* <FeatureStrip /> */}
+
       <FeaturedSection products={featured} />
-      <PromoBanners products={promo} />
+
       <DealsSection products={deals} />
+      <CategoriesSection categories={categories} />
       <FarmsStory productCount={productCount} />
-      <SegmentsSection />
+      {/* <SegmentsSection /> */}
       <CtaSection />
     </>
   );

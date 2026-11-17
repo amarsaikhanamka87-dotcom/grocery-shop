@@ -7,6 +7,7 @@ import { useCart } from "@/components/cart/useCart";
 import { type CartItem } from "@/components/cart/CartContext";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { QtyInput } from "./QtyInput";
+import { StockWarning } from "./StockWarning";
 
 export function CartRow({ item: i }: { item: CartItem }) {
   const { setQuantity, remove } = useCart();
@@ -24,6 +25,7 @@ export function CartRow({ item: i }: { item: CartItem }) {
             <p className="text-[13px] text-muted-foreground">
               {formatPrice(i.price)} / {i.unit} · хамгийн багадаа {i.minQty}
             </p>
+            <StockWarning item={i} />
           </div>
           <button
             onClick={() => remove(i.productId)}

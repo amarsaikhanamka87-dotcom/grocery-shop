@@ -1,0 +1,51 @@
+/// B2B (бизнес) хэрэглэгчийн хүсэлтийн төлөв
+enum BusinessStatus {
+  PENDING // Хүлээгдэж буй
+  APPROVED // Зөвшөөрсөн
+  REJECTED // Татгалзсан
+}
+
+/// A buyer's request to become a B2B customer (free delivery). The admin approves it,
+/// which also sets Clerk publicMetadata.role = "b2b". One application per Clerk user.
+model BusinessApplication {
+  id           String         @id @default(cuid())
+  clerkUserId  String         @unique @map("clerk_user_id")
+  companyName  String         @map("company_name")
+  companyRegNo String         @map("company_reg_no")
+  contactName  String         @map("contact_name")
+  phone        String
+  address      String?
+  status       BusinessStatus @default(PENDING)
+  rejectReason String?        @map("reject_reason")
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  reviewedAt   DateTime?      @map("reviewed_at") @db.Timestamptz(6)
+
+  @@index([status, createdAt])
+  @@map("business_applications")
+}
+
+/// A B2B customer's monthly order list ("сар бүрийн захиалга"): which products, how much, and the
+/// day of the month to deliver. Auto-placing the order on that day comes with orders (Day 6–8).
+model StandingOrder {
+  id          String              @id @default(cuid())
+  clerkUserId String              @unique @map("clerk_user_id")
+  dayOfMonth  Int                 @map("day_of_month") // 1–28 so every month has it
+  active      Boolean             @default(true)
+  items       StandingOrderItem[]
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("standing_orders")
+}
+
+model StandingOrderItem {
+  id              String        @id @default(cuid())
+  standingOrderId String        @map("standing_order_id")
+  standingOrder   StandingOrder @relation(fields: [standingOrderId], references: [id], onDelete: Cascade)
+  productId       String        @map("product_id")
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity        Int
+
+  @@unique([standingOrderId, productId])
+  @@map("standing_order_items")
+}

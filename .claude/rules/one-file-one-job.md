@@ -30,7 +30,7 @@ src/
     otp/                      requestOtp.ts, verifyOtp.ts, hashCode.ts, limits.ts
     auth/                     sendPhoneCode.ts, verifyPhoneCode.ts (server actions), ...
     format/  phone/  delivery/
-  lib/prisma.ts               the Prisma client (schema: prisma/schema.prisma)
+  lib/prisma.ts               the Prisma client (schema: prisma/schema/*.prisma)
   types/<domain>.ts           shared types only (exempt)
   lib/constants.ts            settings values only, no functions (exempt)
 ```

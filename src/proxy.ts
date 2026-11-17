@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 // Must be signed in for these. The admin *role* is checked on the server in app/admin/layout.tsx
 // (requireAdmin), so a signed-in non-admin still can't see /admin.
-const needsSignIn = createRouteMatcher(["/admin(.*)", "/business(.*)", "/checkout(.*)"]);
+const needsSignIn = createRouteMatcher(["/admin(.*)", "/business(.*)", "/checkout(.*)", "/orders(.*)", "/pay(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (needsSignIn(req)) await auth.protect();

@@ -1,62 +1,66 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Minus, Plus, ShoppingBasket } from "lucide-react";
-import { useCart } from "@/components/cart/useCart";
-import { type CartItem } from "@/components/cart/CartContext";
-
-type Item = Omit<CartItem, "quantity">;
+import { Check, Minus, Plus, ShoppingBasket, TriangleAlert } from "lucide-react";
+import type { CartItem } from "@/components/cart/CartContext";
+import { useAddToCart } from "./useAddToCart";
 
 /** Quantity stepper + add button used on the product page. */
-export function AddToCart({ item }: { item: Item }) {
-  const { add } = useCart();
-  const [qty, setQty] = useState(item.minQty);
+export function AddToCart({ item }: { item: Omit<CartItem, "quantity"> }) {
+  const a = useAddToCart(item);
   const [done, setDone] = useState(false);
-  const out = item.stock < item.minQty;
+  const blocked = a.soldOut || a.full || a.tooMany;
+  const label = a.soldOut ? "Дууссан" : a.full ? "Үлдэгдэл бүгд сагсанд" : done ? "Сагсанд нэмэгдлээ" : "Сагсанд нэмэх";
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="flex h-14 items-center rounded-full border border-line bg-white">
+    <div>
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex h-14 items-center rounded-full border border-line bg-white">
+          <button type="button" onClick={a.dec} disabled={a.soldOut || a.full} className="grid size-14 place-items-center rounded-full hover:text-brand disabled:opacity-30" aria-label="Тоо хасах">
+            <Minus className="size-4" />
+          </button>
+          <input
+            type="number"
+            value={a.qty}
+            min={1}
+            max={a.left}
+            disabled={a.soldOut || a.full}
+            onChange={(e) => a.setQty(Number(e.target.value) || 0)}
+            onBlur={a.clampQty}
+            className="w-14 bg-transparent text-center text-lg font-bold tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+            aria-label="Тоо хэмжээ"
+          />
+          <button type="button" onClick={a.inc} disabled={a.qty >= a.left} className="grid size-14 place-items-center rounded-full hover:text-brand disabled:opacity-30" aria-label="Тоо нэмэх">
+            <Plus className="size-4" />
+          </button>
+        </div>
         <button
           type="button"
-          onClick={() => setQty((q) => Math.max(item.minQty, q - 1))}
-          className="grid size-14 place-items-center rounded-full hover:text-brand"
-          aria-label="Тоо хасах"
+          disabled={blocked}
+          onClick={() => {
+            if (!a.addToCart()) return;
+            setDone(true);
+            setTimeout(() => setDone(false), 1500);
+          }}
+          className="btn btn-primary h-14 flex-1 px-8 text-base disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
         >
-          <Minus className="size-4" />
-        </button>
-        <input
-          type="number"
-          value={qty}
-          min={item.minQty}
-          max={item.stock}
-          onChange={(e) => setQty(Number(e.target.value) || item.minQty)}
-          onBlur={() => setQty((q) => Math.min(item.stock, Math.max(item.minQty, Math.round(q))))}
-          className="w-14 bg-transparent text-center text-lg font-bold tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-          aria-label="Тоо хэмжээ"
-        />
-        <button
-          type="button"
-          onClick={() => setQty((q) => Math.min(item.stock, q + 1))}
-          className="grid size-14 place-items-center rounded-full hover:text-brand"
-          aria-label="Тоо нэмэх"
-        >
-          <Plus className="size-4" />
+          {done ? <Check className="size-5" /> : <ShoppingBasket className="size-5" />}
+          {label}
         </button>
       </div>
-      <button
-        type="button"
-        disabled={out}
-        onClick={() => {
-          add(item, Math.min(item.stock, Math.max(item.minQty, Math.round(qty))));
-          setDone(true);
-          setTimeout(() => setDone(false), 1500);
-        }}
-        className="btn btn-primary h-14 flex-1 px-8 text-base sm:flex-none"
-      >
-        {done ? <Check className="size-5" /> : <ShoppingBasket className="size-5" />}
-        {out ? "Дууссан" : done ? "Сагсанд нэмэгдлээ" : "Сагсанд нэмэх"}
-      </button>
+      {!a.soldOut && (a.tooMany || a.full) && (
+        <p role="alert" className="mt-3 flex items-center gap-2 text-[13.5px] font-semibold text-amber-800">
+          <TriangleAlert className="size-4 shrink-0 text-amber-600" />
+          {a.full
+            ? `Үлдэгдэл ${item.stock} ${item.unit} — бүгд таны сагсанд байна.`
+            : `Үлдэгдэл хүрэлцэхгүй: дахиад ${a.left} ${item.unit} л нэмэх боломжтой.`}
+        </p>
+      )}
+      {a.inCart > 0 && !a.full && (
+        <p className="mt-2 text-[13px] text-muted-foreground">
+          Сагсанд {a.inCart} {item.unit} байна · нэмж болох {a.left} {item.unit}
+        </p>
+      )}
     </div>
   );
 }
