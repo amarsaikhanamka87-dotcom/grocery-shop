@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
+import { PICKUP_POINT } from "@/lib/constants";
 import { createWireCheckout } from "@/lib/wire/createWireCheckout";
 import { isDemoPayment } from "@/lib/wire/isDemoPayment";
 import { checkoutSchema, type CheckoutInput } from "./checkoutSchema";
@@ -27,7 +28,8 @@ export async function placeOrder(input: CheckoutInput): Promise<Result> {
   if ("error" in priced) return priced;
 
   const user = await currentUser();
-  const deliveryFee = deliveryFeeFor(priced.subtotal, user?.publicMetadata.role === "b2b");
+  const pickup = f.deliveryType === "pickup";
+  const deliveryFee = pickup ? 0 : deliveryFeeFor(priced.subtotal, user?.publicMetadata.role === "b2b");
   const total = priced.subtotal + deliveryFee;
 
   const order = await prisma.order.create({
@@ -35,12 +37,23 @@ export async function placeOrder(input: CheckoutInput): Promise<Result> {
       clerkUserId: userId,
       customerName: f.customerName || user?.fullName || "",
       phone: f.phone,
-      district: f.district,
-      address: f.address,
+      // НӨАТ: company receipt details, only when "Байгууллага" was chosen.
+      companyRegNo: f.invoiceType === "company" ? f.companyRegNo : null,
+      companyName: f.invoiceType === "company" ? f.companyName : null,
+      // Pickup orders always carry our pickup point, whatever the browser sent.
+      district: pickup ? PICKUP_POINT.district : f.district,
+      address: pickup ? PICKUP_POINT.detail : f.address,
       note: f.note || null,
       deliveryType: f.deliveryType,
       deliveryDate: new Date(`${f.deliveryDate}T00:00:00Z`),
       deliverySlot: f.deliverySlot,
+      ...(f.deliveryType === "recurring" &&
+        f.recurrence && {
+          recurrence: f.recurrence.frequency,
+          recurrenceDays: f.recurrence.days,
+          recurrenceStart: new Date(`${f.recurrence.start}T00:00:00Z`),
+          recurrenceEnd: new Date(`${f.recurrence.end}T00:00:00Z`),
+        }),
       paymentMethod: isDemoPayment() ? "DEMO" : "WIRE",
       subtotal: priced.subtotal,
       deliveryFee,

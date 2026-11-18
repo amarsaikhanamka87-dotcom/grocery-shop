@@ -25,3 +25,11 @@ export const DELIVERY_DAYS_AHEAD = 4;
 export const EXPRESS_MINUTES = 60;
 export const EXPRESS_FROM_HOUR = 8;
 export const EXPRESS_UNTIL_HOUR = 21;
+
+/** "Очиж авах": where buyers collect their order (no delivery fee). Owner: confirm the exact place. */
+export const PICKUP_POINT = {
+  district: "Баянзүрх",
+  detail: "Барс захын бөөний хэсэг",
+  /** What Google Maps searches for; better: exact "lat,lng" of the gate (e.g. "47.9145,106.9575"). */
+  mapsQuery: "Барс худалдааны төв, Улаанбаатар",
+};

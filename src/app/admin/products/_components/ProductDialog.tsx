@@ -35,7 +35,7 @@ export function ProductDialog({ product, categories }: { product?: Product; cate
           <div className="flex items-start justify-between gap-4 border-b border-line px-5 pt-3 pb-4 sm:px-6 sm:pt-5">
             <div className="min-w-0">
               <Dialog.Title className="text-lg font-extrabold text-ink sm:text-xl">
-                {product ? "Бүтээгдэхүүн засах" : "Шинэ бүтээгдэхүүн"}
+                {product ? "Үнэ ба үлдэгдэл засах" : "Шинэ бүтээгдэхүүн"}
               </Dialog.Title>
               <Dialog.Description className="mt-0.5 truncate text-[14px] text-muted-foreground">
                 {product ? product.name : "Мэдээллээ бөглөөд хадгална уу."}

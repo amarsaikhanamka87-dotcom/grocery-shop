@@ -11,21 +11,35 @@ export const metadata: Metadata = { title: "Бүтээгдэхүүн" };
 
 type Params = Promise<{ q?: string; category?: string }>;
 
-export default async function AdminProductsPage({ searchParams }: { searchParams: Params }) {
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: Params;
+}) {
   const { q, category } = await searchParams;
-  const [products, categories] = await Promise.all([getAdminProducts({ q, category }), getCategories()]);
+  const [products, categories] = await Promise.all([
+    getAdminProducts({ q, category }),
+    getCategories(),
+  ]);
   const total = categories.reduce((sum, c) => sum + c.productCount, 0);
   const filtered = Boolean(q?.trim() || category);
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <AdminPageHeader title="Бүтээгдэхүүн" description="Үнэ, үлдэгдэл, ангилал болон нүүрэнд онцлох бараагаа удирдана." />
+        <AdminPageHeader
+          title="Бүтээгдэхүүн"
+          description="Үнэ, үлдэгдэл, ангилал болон нүүрэнд онцлох бараагаа удирдана."
+        />
         <ProductDialog categories={categories} />
       </div>
-      <ProductStats products={products} total={total} filtered={filtered} />
+      {/* <ProductStats products={products} total={total} filtered={filtered} /> */}
       <section className="card mt-6 overflow-hidden">
         <ProductFilters categories={categories} />
-        <ProductTable products={products} categories={categories} filtered={filtered} />
+        <ProductTable
+          products={products}
+          categories={categories}
+          filtered={filtered}
+        />
       </section>
     </>
   );

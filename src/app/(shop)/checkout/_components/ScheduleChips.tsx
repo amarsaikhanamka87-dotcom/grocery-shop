@@ -1,5 +1,5 @@
-import { DELIVERY_SLOTS } from "@/lib/constants";
 import type { DeliveryDay } from "../_features/deliveryDays";
+import { SlotChips } from "./SlotChips";
 
 const CHIP =
   "flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-line bg-white px-3 py-3 text-center transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-50 has-[:checked]:text-brand";
@@ -26,14 +26,8 @@ export function ScheduleChips({ days, day, slot, onDay, onSlot }: Props) {
           </label>
         ))}
       </div>
-      <p className="label mt-5">Цаг</p>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {DELIVERY_SLOTS.map((s) => (
-          <label key={s} className={CHIP}>
-            <input type="radio" name="pickSlot" checked={slot === s} onChange={() => onSlot(s)} className="sr-only" />
-            <span className="text-[15px] font-semibold tabular-nums">{s}</span>
-          </label>
-        ))}
+      <div className="mt-5">
+        <SlotChips slot={slot} onSlot={onSlot} />
       </div>
     </div>
   );

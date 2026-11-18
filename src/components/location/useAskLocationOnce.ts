@@ -2,15 +2,21 @@
 
 import { useEffect } from "react";
 import { detectAddress } from "@/lib/location/detectAddress";
-import type { FoundAddress } from "@/types/location";
+import type { DeliveryAddress, FoundAddress } from "@/types/location";
 
-const ASKED_KEY = "location-asked";
+const ASKED_KEY = "location-asked-v2";
 
 /**
- * On opening the site without a chosen address, asks the browser for the location once per
- * browser session and hands the found address to `onFound` (→ the confirm pop-up).
+ * Once per browser session (when delivering): asks "Энэ хаяг руу хүргүүлэх үү?" for the saved
+ * address, or for the browser's GPS location when there is none. No location → "Хаяг сонгох".
+ * Not cancelled on cleanup: React dev mode runs effects twice, and cancelling dropped the answer.
  */
-export function useAskLocationOnce(enabled: boolean, onFound: (address: FoundAddress) => void) {
+export function useAskLocationOnce(
+  enabled: boolean,
+  current: DeliveryAddress | null,
+  onFound: (address: FoundAddress) => void,
+  openDialog: (open: boolean) => void,
+) {
   useEffect(() => {
     if (!enabled) return;
     try {
@@ -19,12 +25,7 @@ export function useAskLocationOnce(enabled: boolean, onFound: (address: FoundAdd
     } catch {
       return;
     }
-    let cancelled = false;
-    detectAddress().then((found) => {
-      if (found && !cancelled) onFound(found);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, onFound]);
+    if (current) return onFound(current);
+    detectAddress().then((found) => (found ? onFound(found) : openDialog(true)));
+  }, [enabled, current, onFound, openDialog]);
 }

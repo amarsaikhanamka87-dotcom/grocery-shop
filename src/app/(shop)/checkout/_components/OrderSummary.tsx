@@ -7,10 +7,11 @@ import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
 import { useIsB2B } from "@/lib/roles/useIsB2B";
 import { SummaryLine } from "./SummaryLine";
 
-type Props = { items: CartItem[]; subtotal: number; notice: string | null; pending: boolean };
+type Props = { pickup: boolean; items: CartItem[]; subtotal: number; notice: string | null; pending: boolean };
 
-export function OrderSummary({ items, subtotal, notice, pending }: Props) {
-  const fee = deliveryFeeFor(subtotal, useIsB2B());
+export function OrderSummary({ pickup, items, subtotal, notice, pending }: Props) {
+  const isB2B = useIsB2B();
+  const fee = pickup ? 0 : deliveryFeeFor(subtotal, isB2B);
   return (
     <aside className="card min-w-0 p-5 sm:p-6 lg:sticky lg:top-[200px]">
       <h2 className="text-lg font-extrabold">Таны захиалга</h2>
@@ -26,7 +27,7 @@ export function OrderSummary({ items, subtotal, notice, pending }: Props) {
         </div>
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Хүргэлт</dt>
-          <dd className="font-semibold tabular-nums">{fee === 0 ? "Үнэгүй" : formatPrice(fee)}</dd>
+          <dd className="font-semibold tabular-nums">{pickup ? "Очиж авна" : fee === 0 ? "Үнэгүй" : formatPrice(fee)}</dd>
         </div>
         <div className="mt-1 flex justify-between border-t border-line pt-4 text-lg">
           <dt className="font-bold">Нийт</dt>

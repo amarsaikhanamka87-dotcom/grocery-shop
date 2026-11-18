@@ -1,42 +1,56 @@
 "use client";
 
-import { Bike, CalendarCheck, CalendarDays } from "lucide-react";
+import { CalendarCheck, CalendarDays, CalendarSync } from "lucide-react";
 import { useDeliveryTime } from "../_features/useDeliveryTime";
 import { DeliveryTypeCard } from "./DeliveryTypeCard";
 import { ScheduleChips } from "./ScheduleChips";
+import { SlotChips } from "./SlotChips";
+import { RecurrenceDialog } from "./RecurrenceDialog";
 
-/** Step 2 "Хүргэлтийн хугацаа": Шуурхай (today, within the hour) or Хуваарьт (day + slot). */
-export function DeliveryTime() {
-  const t = useDeliveryTime();
+/** Step 2 "Хүргэлтийн хугацаа": Хуваарьт (day + slot) or Давтамжит (repeating plan + slot). */
+export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
+  const t = useDeliveryTime(pickup);
+  const plan = t.type === "recurring" ? t.plan : null;
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="text-lg font-extrabold">Хүргэлтийн хугацаа</h2>
-      {/* What the order will carry once orders are saved (Day 6). */}
+      <h2 className="text-lg font-extrabold">{pickup ? "Очиж авах хугацаа" : "Хүргэлтийн хугацаа"}</h2>
+      {/* What the order carries; read by useCheckoutSubmit. */}
       <input type="hidden" name="deliveryType" value={t.type} />
       <input type="hidden" name="deliveryDate" value={t.date} />
       <input type="hidden" name="deliverySlot" value={t.windowText} />
+      <input type="hidden" name="recurrence" value={plan?.frequency ?? ""} />
+      <input type="hidden" name="recurrenceDays" value={plan?.days.join(",") ?? ""} />
+      <input type="hidden" name="recurrenceStart" value={plan?.start ?? ""} />
+      <input type="hidden" name="recurrenceEnd" value={plan?.end ?? ""} />
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <DeliveryTypeCard
-          title="Шуурхай"
-          hint={t.express ? "Шуурхай хүргэлт" : "Одоогоор боломжгүй"}
-          icon={Bike}
-          checked={t.type === "express"}
-          disabled={!t.express}
-          onSelect={() => t.setType("express")}
-        />
-        <DeliveryTypeCard
-          title="Хуваарьт"
-          hint="Хуваарьт хүргэлт"
-          icon={CalendarCheck}
-          checked={t.type === "scheduled"}
-          onSelect={() => t.setType("scheduled")}
-        />
-      </div>
+      {!pickup && (
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <DeliveryTypeCard
+            title="Хуваарьт"
+            hint="Хуваарьт хүргэлт"
+            icon={CalendarCheck}
+            checked={t.type === "scheduled"}
+            onSelect={() => t.setType("scheduled")}
+          />
+          <DeliveryTypeCard
+            title="Давтамжит"
+            hint="Давтамжит хүргэлт"
+            icon={CalendarSync}
+            checked={t.type === "recurring"}
+            onSelect={() => t.setPlanOpen(true)}
+          />
+        </div>
+      )}
+      <RecurrenceDialog open={t.planOpen} onOpenChange={t.setPlanOpen} initial={t.plan} onSave={t.savePlan} />
 
-      {t.type === "scheduled" && (
+      {(t.type === "scheduled" || t.type === "pickup") && (
         <div className="mt-5">
           <ScheduleChips days={t.days} day={t.day} slot={t.slot} onDay={t.setDay} onSlot={t.setSlot} />
+        </div>
+      )}
+      {t.type === "recurring" && (
+        <div className="mt-5">
+          <SlotChips slot={t.slot} onSlot={t.setSlot} />
         </div>
       )}
 
@@ -44,10 +58,15 @@ export function DeliveryTime() {
         <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-brand text-white">
           <CalendarDays className="size-6" />
         </span>
-        <div>
-          <p className="text-[14px] text-muted-foreground">Хүргэлтийн огноо</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] text-muted-foreground">{pickup ? "Очиж авах огноо" : "Хүргэлтийн огноо"}</p>
           <p className="text-[16px] font-bold tabular-nums">{t.summary}</p>
         </div>
+        {t.type === "recurring" && (
+          <button type="button" onClick={() => t.setPlanOpen(true)} className="text-[14px] font-bold text-brand hover:underline">
+            Өөрчлөх
+          </button>
+        )}
       </div>
     </section>
   );

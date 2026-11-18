@@ -3,25 +3,40 @@ import { formatPrice } from "@/lib/format/formatPrice";
 import { formatDateTime } from "@/lib/format/formatDateTime";
 import type { AdminOrder } from "@/lib/orders/listAdminOrders";
 import { ORDER_BADGES } from "../_features/orderBadges";
+import { statusBadge } from "../_features/statusBadge";
+import { FulfillmentPill } from "./FulfillmentPill";
 import { StatusPill } from "./StatusPill";
 import { DetailField } from "./DetailField";
-
-const TYPE_LABEL: Record<string, string> = { express: "Шуурхай", scheduled: "Хуваарьт" };
+import { DELIVERY_TYPE_LABEL } from "@/lib/orders/deliveryTypeLabel";
+import { recurrenceText } from "@/lib/orders/recurrenceText";
 
 /** Read-only body of the order dialog: buyer, delivery, payment, lines and totals. */
 export function AdminOrderDetail({ order: o }: { order: AdminOrder }) {
   const day = o.deliveryDate?.toISOString().slice(0, 10) ?? "";
+  const pickup = o.deliveryType === "pickup";
   return (
     <div className="grid gap-5">
       <div className="flex flex-wrap gap-1.5">
+        <FulfillmentPill pickup={pickup} />
         <StatusPill {...ORDER_BADGES.payment[o.paymentStatus]} />
-        <StatusPill {...ORDER_BADGES.status[o.status]} />
+        <StatusPill {...statusBadge(o.status, pickup)} />
       </div>
       <dl className="grid gap-4 sm:grid-cols-2">
         <DetailField label="Захиалагч" value={[o.customerName || "—", o.companyName].filter(Boolean).join(" · ")} />
         <DetailField label="Утас" value={<a href={`tel:${o.phone}`} className="text-brand hover:underline">{o.phone}</a>} />
-        <DetailField label="Хүргүүлэх хаяг" value={`${o.district} дүүрэг, ${o.address}`} wide />
-        <DetailField label="Хүргэлтийн хугацаа" value={`${TYPE_LABEL[o.deliveryType ?? ""] ?? "—"} · ${day} ${o.deliverySlot}`} />
+        <DetailField label={pickup ? "Очиж авах цэг" : "Хүргүүлэх хаяг"} value={`${o.district} дүүрэг, ${o.address}`} wide />
+        <DetailField label={pickup ? "Очиж авах хугацаа" : "Хүргэлтийн хугацаа"} value={`${DELIVERY_TYPE_LABEL[o.deliveryType ?? ""] ?? "—"} · ${day} ${o.deliverySlot}`} />
+        {o.recurrence && (
+          <DetailField
+            label="Давтамж"
+            value={recurrenceText(o.recurrence, o.recurrenceDays, o.recurrenceStart?.toISOString().slice(0, 10) ?? "", o.recurrenceEnd?.toISOString().slice(0, 10) ?? "")}
+            wide
+          />
+        )}
+        <DetailField
+          label="НӨАТ"
+          value={o.companyRegNo ? `Байгууллага · ${o.companyName ?? ""} · РД ${o.companyRegNo}` : "Хувь хүн"}
+        />
         <DetailField label="Захиалсан" value={formatDateTime(o.createdAt)} />
         <DetailField label="Төлбөр" value={`${o.paymentMethod}${o.paidAt ? ` · ${formatDateTime(o.paidAt)}` : ""}`} />
         {o.wireIntentId && <DetailField label="Wire ID" value={<code className="text-[12.5px]">{o.wireIntentId}</code>} />}

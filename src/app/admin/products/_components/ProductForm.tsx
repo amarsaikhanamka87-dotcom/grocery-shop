@@ -9,6 +9,7 @@ import { createProduct } from "../_features/createProduct";
 import { updateProduct } from "../_features/updateProduct";
 import { FormSection } from "./FormSection";
 import { ProductField } from "./ProductField";
+import { KeepFields } from "./KeepFields";
 
 /** Empty form values for a new product. */
 const BLANK: Partial<Record<keyof Product, string>> = { stock: "0", minQty: "1", categoryId: "" };
@@ -17,7 +18,10 @@ const toggle = "flex flex-1 items-center gap-2.5 rounded-xl border border-line p
 
 type Props = { product?: Product; categories: Category[]; onSaved: () => void };
 
-/** Edits `product`, or creates a new one when it is not given. Body scrolls; the save bar stays. */
+/**
+ * Creates a product (all sections), or quick-edits `product`: only "Үнэ ба үлдэгдэл", the rest is
+ * sent unchanged by <KeepFields>. Body scrolls; the save bar stays.
+ */
 export function ProductForm({ product: p, categories, onSaved }: Props) {
   const submit = p ? updateProduct.bind(null, p.id) : createProduct;
   const [state, action, pending] = useActionState<FormState, FormData>(submit, {});
@@ -33,6 +37,9 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
   return (
     <form key={JSON.stringify(v)} action={action} className="flex min-h-0 flex-1 flex-col">
       <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5 sm:px-6">
+        {p ? (
+          <KeepFields product={p} />
+        ) : (
         <FormSection title="Үндсэн мэдээлэл">
           <ProductField name="name" label="Нэр" defaultValue={val("name")} error={fe.name} />
           <ProductField name="slug" label="Slug (URL)" defaultValue={val("slug")} error={fe.slug} />
@@ -51,6 +58,7 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
             <ProductField name="description" label="Тайлбар" defaultValue={val("description")} error={fe.description} multiline />
           </div>
         </FormSection>
+        )}
 
         <FormSection title="Үнэ ба үлдэгдэл">
           <ProductField name="price" label="Үнэ (₮)" defaultValue={val("price")} error={fe.price} inputMode="numeric" />
@@ -60,6 +68,7 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
           <ProductField name="minQty" label="Хамгийн бага захиалах тоо" defaultValue={val("minQty")} error={fe.minQty} inputMode="numeric" />
         </FormSection>
 
+        {!p && (
         <FormSection title="Зураг ба шошго">
           <div className="sm:col-span-2">
             <ProductField name="image" label="Зургийн холбоос (images.unsplash.com)" defaultValue={val("image")} error={fe.image} />
@@ -73,6 +82,7 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
             </label>
           </div>
         </FormSection>
+        )}
 
         {state.error && <p className="rounded-xl bg-clay-50 px-4 py-3 text-[14px] font-medium text-clay">{state.error}</p>}
       </div>

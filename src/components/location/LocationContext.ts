@@ -2,9 +2,13 @@
 
 import { createContext } from "react";
 import type { DeliveryAddress, FoundAddress } from "@/types/location";
+import type { FulfillmentMode } from "@/types/fulfillment";
 
 export type LocationContextValue = {
   ready: boolean;
+  /** "Хүргэлтээр" or "Очиж авах" (header switch); pickup needs no address. */
+  mode: FulfillmentMode;
+  setMode: (mode: FulfillmentMode) => void;
   /** The address orders go to (shown in the header pill, pre-fills checkout). */
   current: DeliveryAddress | null;
   /** Addresses the buyer saved ("Хадгалсан хаяг"). */
@@ -16,7 +20,6 @@ export type LocationContextValue = {
   save: (address: FoundAddress) => DeliveryAddress;
   remove: (id: string) => void;
   answerSuggestion: (accept: boolean) => void;
-  dismissSuggestion: () => void;
   setDialogOpen: (open: boolean) => void;
 };
 
