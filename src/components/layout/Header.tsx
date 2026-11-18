@@ -12,6 +12,7 @@ import { BasketButton } from "./BasketButton";
 import { MobileMenu } from "./MobileMenu";
 import { CategoryNav } from "./CategoryNav";
 import { AddressPill } from "@/components/location/AddressPill";
+import { ModeToggle } from "@/components/location/ModeToggle";
 
 export async function Header() {
   const [categories, role, { userId }] = await Promise.all([
@@ -51,6 +52,7 @@ export async function Header() {
           <MobileMenu nav={nav} />
           <Logo />
           <SearchForm className="hidden flex-1 md:flex" />
+          <ModeToggle />
           <AddressPill />
           <div className="ml-auto flex items-center gap-1 md:ml-0">
             <AccountButton />

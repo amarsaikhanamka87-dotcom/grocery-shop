@@ -4,14 +4,24 @@ import Link from "next/link";
 import { useCart } from "@/components/cart/useCart";
 import { useSyncCartStock } from "@/components/cart/useSyncCartStock";
 import { stockProblem } from "@/components/cart/stockProblem";
+import { useDeliveryLocation } from "@/components/location/useDeliveryLocation";
 import { DeliveryAddress } from "./DeliveryAddress";
+import { PickupPoint } from "./PickupPoint";
+import { VatSection } from "./VatSection";
 import { DeliveryTime } from "./DeliveryTime";
 import { OrderSummary } from "./OrderSummary";
 import { useCheckoutSubmit } from "../_features/useCheckoutSubmit";
 
-export function CheckoutForm({ defaults }: { defaults: { name: string; phone: string } }) {
+type Props = {
+  defaults: { name: string; phone: string };
+  /** An approved B2B buyer's company, to pre-fill "НӨАТ → Байгууллага". */
+  company: { name: string; regNo: string } | null;
+};
+
+export function CheckoutForm({ defaults, company }: Props) {
   const { items, subtotal, ready } = useCart();
   const { notice, pending, onSubmit } = useCheckoutSubmit();
+  const pickup = useDeliveryLocation().mode === "pickup";
   useSyncCartStock();
 
   if (!ready) return <div className="min-h-[40vh]" />;
@@ -43,10 +53,11 @@ export function CheckoutForm({ defaults }: { defaults: { name: string; phone: st
       className="mt-6 grid grid-cols-1 items-start gap-6 sm:mt-8 lg:grid-cols-[1fr_400px] lg:gap-8"
     >
       <div className="grid min-w-0 gap-5 sm:gap-6">
-        <DeliveryAddress defaults={defaults} />
-        <DeliveryTime />
+        {pickup ? <PickupPoint defaults={defaults} /> : <DeliveryAddress defaults={defaults} />}
+        <DeliveryTime pickup={pickup} />
+        <VatSection company={company} />
       </div>
-      <OrderSummary items={items} subtotal={subtotal} notice={notice} pending={pending} />
+      <OrderSummary pickup={pickup} items={items} subtotal={subtotal} notice={notice} pending={pending} />
     </form>
   );
 }

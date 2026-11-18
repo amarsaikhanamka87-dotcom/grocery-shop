@@ -29,6 +29,12 @@ model Order {
   deliverySlot    String
   deliveryType    String? // "express" (Шуурхай) | "scheduled" (Хуваарьт)
   deliveryDate    DateTime?     @db.Date
+  // "Давтамжит" (deliveryType = "recurring"): repeat on these weekdays (0 = Ням … 6 = Бямба)
+  // between start and end. Auto-placing the repeats comes with Day 6–8.
+  recurrence      Recurrence?
+  recurrenceDays  Int[]         @default([]) @map("recurrence_days")
+  recurrenceStart DateTime?     @map("recurrence_start") @db.Date
+  recurrenceEnd   DateTime?     @map("recurrence_end") @db.Date
   clerkUserId     String? // the buyer (Clerk); userId above is the old Ургац User table
   paymentMethod   String        @default("QPAY")
   paymentStatus   PaymentStatus @default(UNPAID)
@@ -64,4 +70,11 @@ model OrderItem {
   quantity  Int
 
   @@index([orderId])
+}
+
+/// Давтамжит хүргэлтийн давтамж
+enum Recurrence {
+  WEEKLY // 7 хоног бүр
+  BIWEEKLY // 14 хоног бүр
+  MONTHLY // Сар бүр
 }

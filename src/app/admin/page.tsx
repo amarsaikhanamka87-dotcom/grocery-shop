@@ -1,23 +1,27 @@
 import Link from "next/link";
 import { ArrowRight, Building2 } from "lucide-react";
 import { countPendingApplications } from "@/lib/business/countPendingApplications";
+import { getTodayMoney } from "@/lib/orders/getTodayMoney";
+import { getInventory } from "@/lib/catalog/getInventory";
 import { AdminPageHeader } from "./_components/AdminPageHeader";
+import { TodayMoney } from "./_components/TodayMoney";
+import { InventoryTable } from "./_components/InventoryTable";
 
 export default async function AdminDashboardPage() {
-  const pending = await countPendingApplications();
+  const [pending, money, inventory] = await Promise.all([
+    countPendingApplications(),
+    getTodayMoney(),
+    getInventory(),
+  ]);
   return (
     <>
-      <AdminPageHeader title="Хянах самбар" description="Өнөөдрийн захиалга, орлого, хүлээгдэж буй хүсэлтүүд." />
-      <Link href="/admin/business" className="card mt-6 flex max-w-sm items-center gap-4 p-5 hover:shadow-card">
-        <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand">
-          <Building2 className="size-5" />
-        </span>
-        <span className="flex-1">
-          <span className="block text-[28px] font-extrabold leading-none">{pending}</span>
-          <span className="text-[14px] text-muted-foreground">B2B хүсэлт хүлээгдэж байна</span>
-        </span>
-        <ArrowRight className="size-4 text-brand" />
-      </Link>
+      <AdminPageHeader
+        title="Хянах самбар"
+        description="Өнөөдрийн захиалга, орлого, хүлээгдэж буй хүсэлтүүд."
+      />
+      <TodayMoney money={money} />
+
+      <InventoryTable rows={inventory} />
     </>
   );
 }

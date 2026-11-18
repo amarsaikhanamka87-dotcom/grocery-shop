@@ -3,7 +3,7 @@ import Link from "next/link";
 import { formatPrice } from "@/lib/format/formatPrice";
 import type { Category, ProductWithCategory } from "@/types/catalog";
 import { ProductActions } from "./ProductActions";
-import { StockBadge } from "./StockBadge";
+import { StockBadge } from "@/components/admin/StockBadge";
 
 type Props = { product: ProductWithCategory; categories: Category[] };
 

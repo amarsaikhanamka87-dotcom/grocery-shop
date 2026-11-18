@@ -2,27 +2,50 @@
 
 import { useState } from "react";
 import { DELIVERY_DAYS_AHEAD, DELIVERY_SLOTS } from "@/lib/constants";
+import { recurrenceText } from "@/lib/orders/recurrenceText";
+import type { RecurrencePlan } from "./checkoutSchema";
 import { deliveryDays } from "./deliveryDays";
 import { expressWindow } from "./expressWindow";
+import { firstRecurringDate } from "./firstRecurringDate";
+import { toIsoDate } from "./toIsoDate";
 
-export type DeliveryType = "express" | "scheduled";
+export type DeliveryType = "express" | "scheduled" | "recurring" | "pickup";
 
-const mmddyyyy = (d: Date) =>
-  `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
-const isoDate = (d: Date) => mmddyyyy(d).replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$1-$2");
+const mmddyyyy = (iso: string) => iso.replace(/(\d+)-(\d+)-(\d+)/, "$2/$3/$1");
 
-/** "Хүргэлтийн хугацаа": Шуурхай (today, within the hour) or Хуваарьт (pick a day + slot). */
-export function useDeliveryTime() {
+/**
+ * "Хүргэлтийн хугацаа": Шуурхай (today, within the hour), Хуваарьт (pick a day + slot) or
+ * Давтамжит (a repeating plan from the dialog + slot). In pickup mode: the day + slot to collect.
+ */
+export function useDeliveryTime(pickup = false) {
   const [now] = useState(() => new Date());
   const days = deliveryDays(DELIVERY_DAYS_AHEAD, now);
   const express = expressWindow(now);
-  const [type, setType] = useState<DeliveryType>(express ? "express" : "scheduled");
+  const [chosen, setType] = useState<DeliveryType>(express ? "express" : "scheduled");
+  // "Очиж авах": always a picked day + slot (the Хуваарьт chips).
+  const type: DeliveryType = pickup ? "pickup" : chosen;
   const [day, setDay] = useState(days[0].value);
   const [slot, setSlot] = useState(DELIVERY_SLOTS[0]);
+  const [plan, setPlan] = useState<RecurrencePlan | null>(null);
+  const [planOpen, setPlanOpen] = useState(false);
 
-  const picked = type === "express" && express
-    ? { date: isoDate(express.day), slot: `${express.from}–${express.to}`, shown: express.day }
-    : { date: day, slot, shown: new Date(`${day}T00:00`) };
+  const savePlan = (p: RecurrencePlan) => {
+    setPlan(p);
+    setType("recurring");
+    setPlanOpen(false);
+  };
+
+  let date = day;
+  let windowText = slot;
+  let summary = `${mmddyyyy(day)} (${slot})`;
+  if (type === "express" && express) {
+    date = toIsoDate(express.day);
+    windowText = `${express.from}–${express.to}`;
+    summary = `${mmddyyyy(date)} (${windowText})`;
+  } else if (type === "recurring" && plan) {
+    date = firstRecurringDate(plan.start, plan.days);
+    summary = `${recurrenceText(plan.frequency, plan.days, plan.start, plan.end)} (${slot})`;
+  }
 
   return {
     type,
@@ -33,8 +56,12 @@ export function useDeliveryTime() {
     setDay,
     slot,
     setSlot,
-    date: picked.date,
-    windowText: picked.slot,
-    summary: `${mmddyyyy(picked.shown)} (${picked.slot})`,
+    plan,
+    planOpen,
+    setPlanOpen,
+    savePlan,
+    date,
+    windowText,
+    summary,
   };
 }

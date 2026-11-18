@@ -1,9 +1,9 @@
 import type { Order, OrderItem } from "@prisma/client";
 import { formatPrice } from "@/lib/format/formatPrice";
+import { DELIVERY_TYPE_LABEL } from "@/lib/orders/deliveryTypeLabel";
+import { recurrenceText } from "@/lib/orders/recurrenceText";
 
 type Props = { order: Order & { items: OrderItem[] } };
-
-const TYPE_LABEL: Record<string, string> = { express: "Шуурхай", scheduled: "Хуваарьт" };
 
 /** Delivery address/time and the ordered lines with totals. */
 export function OrderDetails({ order }: Props) {
@@ -20,8 +20,13 @@ export function OrderDetails({ order }: Props) {
         <div>
           <dt className="text-muted-foreground">Хүргэлтийн хугацаа</dt>
           <dd className="font-semibold">
-            {TYPE_LABEL[order.deliveryType ?? ""] ?? ""} · {date} ({order.deliverySlot})
+            {DELIVERY_TYPE_LABEL[order.deliveryType ?? ""] ?? ""} · {date} ({order.deliverySlot})
           </dd>
+          {order.recurrence && (
+            <dd className="text-[14px] text-muted-foreground">
+              {recurrenceText(order.recurrence, order.recurrenceDays, order.recurrenceStart?.toISOString().slice(0, 10) ?? "", order.recurrenceEnd?.toISOString().slice(0, 10) ?? "")}
+            </dd>
+          )}
         </div>
       </dl>
       <ul className="grid gap-2 border-t border-line pt-4">
