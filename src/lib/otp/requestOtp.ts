@@ -1,13 +1,17 @@
 import "server-only";
 import { randomInt } from "node:crypto";
 import { prisma } from "@/lib/prisma";
-import { sendSms } from "@/lib/sms";
-import type { OtpResult } from "@/types/auth";
+import { createVerifySession } from "@/lib/verify/createVerifySession";
+import type { RequestOtpResult } from "@/types/auth";
 import { hashCode } from "./hashCode";
 import { OTP_LIMITS } from "./limits";
 
-/** Creates a code for the phone and texts it. Rate-limited per phone number. */
-export async function requestOtp(phone: string): Promise<OtpResult> {
+/**
+ * Starts phone verification via verify.mn (the buyer texts a code to its shortcode).
+ * We store an HMAC of phone + sessionId, so a session can only sign in the phone it was made for.
+ * Rate-limited per phone number.
+ */
+export async function requestOtp(phone: string): Promise<RequestOtpResult> {
   const recent = await prisma.phoneOtp.findMany({
     where: { phone, createdAt: { gt: new Date(Date.now() - 60 * 60_000) } },
     orderBy: { createdAt: "desc" },
@@ -20,9 +24,9 @@ export async function requestOtp(phone: string): Promise<OtpResult> {
   if (recent.length >= OTP_LIMITS.maxPerHour) return { ok: false, error: "too_many" };
 
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  const { expiresAt, ...session } = await createVerifySession(phone, code);
   await prisma.phoneOtp.create({
-    data: { phone, codeHash: hashCode(phone, code), expiresAt: new Date(Date.now() + OTP_LIMITS.codeTtlMs) },
+    data: { phone, codeHash: hashCode(phone, session.sessionId), expiresAt },
   });
-  await sendSms(phone, `Urgats nevtrekh kod: ${code}. 5 minutad khuchintei. Busdad bitgii kheleerei.`);
-  return { ok: true };
+  return { ok: true, session };
 }

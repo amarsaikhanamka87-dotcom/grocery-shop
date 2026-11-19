@@ -31,7 +31,7 @@ export function AddressPill() {
           <MapPin className="size-5 shrink-0 text-ink-2" />
           <span className="hidden min-w-0 leading-tight lg:block">
             <span className="block truncate text-[13px] font-bold">{loc.ready ? title : "…"}</span>
-            <span className="block text-[11px] font-medium text-muted-foreground">
+            <span className="block truncate text-[11px] font-medium text-muted-foreground">
               {pickup ? "Очиж авах цэг" : "Таны хүргүүлэх хаяг"}
             </span>
           </span>

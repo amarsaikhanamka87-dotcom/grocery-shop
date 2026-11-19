@@ -18,6 +18,6 @@ export const adminNav: AdminNavItem[] = [
   { href: "/admin/shops", label: "Дэлгүүрүүд", icon: Store },
   { href: "/admin/orders", label: "Захиалга", icon: ReceiptText },
   { href: "/admin/payments", label: "Төлбөр", icon: CreditCard },
-  { href: "/admin/refunds", label: "Буцаалт", icon: Undo2 },
+
   { href: "/admin/products", label: "Бүтээгдэхүүн", icon: Package },
 ];

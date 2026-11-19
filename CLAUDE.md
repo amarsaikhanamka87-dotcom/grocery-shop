@@ -48,15 +48,16 @@ If `tsc` reports errors in `.next/types/`, delete `.next/types` (stale route typ
 (async Server Components that load categories from the DB to build the menu, see
 `components/layout/buildNav.ts`). Home is `(shop)/(home)/` so the URL stays `/`. Root
 `app/layout.tsx` wraps everything in `ClerkProvider` (inside `<body>`) and `CartProvider`.
-`src/proxy.ts` is Next 16's renamed middleware and runs `clerkMiddleware()`; no route is protected
-yet (`/admin`, `/business` guards are Day 2).
+`src/proxy.ts` is Next 16's renamed middleware and runs `clerkMiddleware()` (route guards: see Roles).
+Admin pages live outside `(shop)` in `app/admin/` with their own sidebar layout.
 
 **Data.** `page.tsx` calls query functions in `src/lib/catalog/*.ts` (`server-only`, Prisma via
 `src/lib/prisma.ts`) and passes results down as props. Types come from Prisma (`src/types/catalog.ts`
 re-exports `Product`, `Category`). The Supabase DB is shared with the old Ургац tables (`User`,
 `Order`, `OrderItem`, ...): they stay in the schema (`prisma/schema/*.prisma`, one file per domain; migrations in
 `prisma/schema/migrations/`) so migrations never drop them.
-Product images are Unsplash URLs (the only host allowed in `next.config.ts`).
+Product images are Unsplash URLs (the only remote host allowed in `next.config.ts`); our own photos
+(hero, farms) are in `public/images/`.
 
 **Cart / wishlist** are client-only, in localStorage (`components/cart/`: `CartContext`,
 `CartProvider`, `useCart`).
@@ -67,19 +68,38 @@ Wire returns the buyer to `/orders/[id]`. An order becomes PAID only in `markOrd
 equal the total, idempotent), called from the signed webhook `api/webhooks/wire` or, as a fallback,
 after asking Wire's API server-to-server (`syncWirePayment`). Wire has no test mode (API accepts
 only `sk_live_` keys), so test with small real amounts. Env: `WIRE_API_KEY`, `WIRE_WEBHOOK_SECRET`.
-Delivery address lives in localStorage (`components/location/`); first visit asks for browser location.
+
+**Delivery vs pickup.** The header switch `ModeToggle` ("Хүргэлтээр" / "Очиж авах") sets `mode` in
+`LocationProvider` (localStorage, with the delivery address and saved addresses in
+`components/location/`). Pickup = buyer collects at `PICKUP_POINT` (`lib/constants.ts`, also the footer
+address + Google Maps link via `lib/location/googleMapsLinks.ts`): no address form, no delivery fee;
+`placeOrder` forces fee 0 and the pickup address server-side. Once per browser session in delivery mode
+`useAskLocationOnce` asks "Энэ хаяг руу хүргүүлэх үү?" (saved address, else GPS, else opens
+"Хаяг сонгох"); the popup only closes on Тийм or by choosing an address.
+
+**Order kinds.** `Order.deliveryType` (string): `scheduled` (day + slot), `recurring` ("Давтамжит":
+`recurrence` enum WEEKLY/BIWEEKLY/MONTHLY + `recurrenceDays` weekdays 0=Ням + start/end dates, picked
+in `RecurrenceDialog` with our own `MonthCalendar`; repeats are not auto-placed yet), `pickup`, and
+`express` (logic kept, its card is hidden at checkout). Labels: `lib/orders/deliveryTypeLabel.ts`,
+`recurrenceText.ts`. НӨАТ: checkout "Хувь хүн" / "Байгууллага"; company → `companyRegNo` (7 digits)
++ `companyName` on the order, pre-filled for approved B2B buyers. `checkoutSchema` (zod) re-validates
+all of it on the server.
 
 **Sign-in = Clerk Google + our own phone OTP.** Clerk cannot send SMS to Mongolia (+976), and its
 verification SMS can't be taken over. So `/sign-in` and `/sign-up` render Clerk's card (Google only)
 plus `components/auth/PhoneLogin.tsx`:
-1. `lib/auth/sendPhoneCode.ts` → `lib/otp/requestOtp.ts`: stores an HMAC (`OTP_SECRET`) of a 6-digit
-   code in `phone_otps` (Prisma `PhoneOtp`), 5 min TTL, rate limits, sends via `lib/sms.ts`.
-2. `lib/auth/verifyPhoneCode.ts` → `lib/otp/verifyOtp.ts`, then finds/creates the Clerk user by phone
-   and returns a 60 s sign-in token; the browser calls `signIn.ticket()` + `signIn.finalize()`.
+1. `lib/auth/sendPhoneCode.ts` → `lib/otp/requestOtp.ts` → `lib/verify/createVerifySession.ts`: **verify.mn
+   is reverse SMS**: it texts nothing; the buyer sends a 6-digit code to shortcode 144773 from their phone
+   (`PhoneSmsStep`, `sms:` link). We store an HMAC (`OTP_SECRET`) of phone + sessionId in `phone_otps`
+   (Prisma `PhoneOtp`), 1/min and 5/hour per phone.
+2. `usePhoneVerifyPoll` calls `lib/auth/verifyPhoneCode.ts` every 3 s → `lib/otp/verifyOtp.ts` asks
+   `GET /sessions/:id` (`lib/verify/getVerifyStatus.ts`); on VERIFIED it finds/creates the Clerk user via
+   our `phone_users` table (Prisma `PhoneUser`; Clerk users have no phone, it rejects +976) and returns a
+   60 s sign-in token; the browser calls `signIn.ticket()` + `signIn.finalize()`.
 
-`lib/sms.ts` is a generic JSON POST until the SMS provider is chosen; with no `SMS_API_URL` in dev
-the code is printed in the dev server terminal. Clerk instance config: phone enabled but
-`used_for_sign_in: false`; email/password off; "force organization selection" is still on.
+Env: `SMS_API_URL` = `https://api.verify.mn/sessions`, `SMS_API_KEY` = `vrf_...`. verify.mn keeps saying
+PENDING after `expiresAt`, so our own row's expiry is what ends a session. Clerk instance config: phone
+enabled but `used_for_sign_in: false`; email/password off; "force organization selection" off (2026-11-19).
 
 **Roles.** Clerk `publicMetadata.role` (typed in `src/types/clerk.d.ts`), writable only by the server:
 `"admin"` = owner, `"b2b"` = approved business buyer (free delivery via `deliveryFeeFor(subtotal, isB2B)`),
@@ -92,6 +112,13 @@ customer's `/business` is a dashboard with a monthly order list (`StandingOrder`
 the b2b role and each product's `minQty`), and "add all to cart". Auto-placing it on that day
 comes after orders exist (Day 6–8).
 
+**Admin.** `/admin` dashboard: today's income (`getTodayMoney`: PAID orders since midnight UB time,
+UTC+8; expenses are 0 until an expense table exists) and every product's stock lowest-first
+(`getInventory`). `/admin/orders`: filters `?pay=paid|unpaid&type=delivery|pickup`, and a
+"Хүргэж өгсөн" / "Очиж авсан" button (`markDelivered`, PAID orders only → `DELIVERED`). Paid orders
+take stock in `payOrder`. `/admin/products` edit dialog changes only "Үнэ ба үлдэгдэл"; the other
+fields go along unchanged as hidden inputs (`KeepFields`), creating a product shows the full form.
+
 **Styling.** `app/styles/brand.css` holds the Ургац palette (`brand`, `cream`, `ink`, `clay`, `line`)
 and classes (`.btn`, `.card`, `.input`, `.container-x`); `globals.css` maps shadcn tokens onto it.
 Grey text is `text-muted-foreground` (`text-muted` is a background color in shadcn).
@@ -103,4 +130,9 @@ Grey text is `text-muted-foreground` (`text-muted` is a background color in shad
   `<Show when="signed-in" | "signed-out">`, wrapped in `<Suspense>` in Server Components. Optional
   fields are hidden unless `appearance.options.showOptionalFields` is set. `await auth()`.
 - **shadcn `base-nova`** uses Base UI: no `asChild`, use `render`.
+- **After a Prisma migration/generate, restart `npm run dev`.** A dev server started earlier keeps the
+  old client and fails with "Unknown field `x` for select statement".
+- **Effects run twice in dev (StrictMode).** Don't combine a "done once" flag (sessionStorage) with
+  cancelling async work in the effect cleanup; the second run sees the flag and the answer is lost.
+- Don't run `prettier --write`: the repo isn't Prettier-formatted and it rewraps files past 150 lines.
 - Clerk config changes: `npx clerk@latest config patch --file x.json --dry-run --mode agent` first.

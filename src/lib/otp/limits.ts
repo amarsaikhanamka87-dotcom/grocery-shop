@@ -1,7 +1,5 @@
-/** Phone-login code rules. */
+/** Phone-login rules (verify.mn sessions last 5 minutes on their side). */
 export const OTP_LIMITS = {
-  codeTtlMs: 5 * 60_000,
   resendAfterMs: 60_000,
   maxPerHour: 5,
-  maxAttempts: 5,
 } as const;

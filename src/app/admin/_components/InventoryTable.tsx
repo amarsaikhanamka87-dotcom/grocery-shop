@@ -20,7 +20,7 @@ export function InventoryTable({ rows }: { rows: InventoryRow[] }) {
           <PackageSearch className="size-7" /> Одоогоор бүтээгдэхүүн алга.
         </p>
       ) : (
-        <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
           {rows.map((p) => (
             <InventoryItem key={p.id} product={p} />
           ))}
