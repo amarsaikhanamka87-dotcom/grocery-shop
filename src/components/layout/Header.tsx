@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { SHOP_PHONE } from "@/lib/constants";
-import { auth } from "@clerk/nextjs/server";
 import { getCategories } from "@/lib/catalog/getCategories";
-import { getRole } from "@/lib/roles/getRole";
 import { buildNav } from "./buildNav";
 import { Logo } from "./Logo";
 import { SearchForm } from "./SearchForm";
@@ -15,12 +12,7 @@ import { AddressPill } from "@/components/location/AddressPill";
 import { ModeToggle } from "@/components/location/ModeToggle";
 
 export async function Header() {
-  const [categories, role, { userId }] = await Promise.all([
-    getCategories(),
-    getRole(),
-    auth(),
-  ]);
-  const nav = buildNav(categories);
+  const nav = buildNav(await getCategories());
   return (
     <header className="sticky -top-[30px] z-40 lg:top-0">
       {/* Top bar */}
@@ -70,7 +62,7 @@ export async function Header() {
         </div>
       </div>
 
-      <CategoryNav nav={nav} role={role} signedIn={!!userId} />
+      <CategoryNav nav={nav} />
     </header>
   );
 }

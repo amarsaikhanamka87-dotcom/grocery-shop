@@ -42,6 +42,32 @@ If `tsc` reports errors in `.next/types/`, delete `.next/types` (stale route typ
    Only page copy and settings in `src/lib/constants.ts` are fixed.
 5. Never read or print `.env*` files (a deny rule exists); `.env.example` lists the key names.
 
+## Coding rules
+
+| Rule                               | Bad                               | Good                                             |
+| ---------------------------------- | --------------------------------- | ------------------------------------------------ |
+| No `any`                           | `(data: any)`                     | `(data: Post)`                                   |
+| Names say what it is               | `d`, `flag`, `handle()`           | `posts`, `isLoading`, `savePost()`               |
+| Return early                       | 3 nested `if`                     | `if (!user) return;` then the main code          |
+| Small files                        | one 600-line page                 | one component per file, under 150 lines (rule 2) |
+| Check input on the server          | trust `req.body`                  | check it with `zod` first                        |
+| Catch errors from outside services | app crashes when Pinecone is slow | `try/catch`, friendly message to the user        |
+| Never show raw errors              | "PostgresError: relation..."      | "Could not save. Try again."                     |
+| No leftover logs                   | `console.log(user)` in a commit   | delete it before commit                          |
+
+Checking input on the server:
+
+```ts
+const Body = z.object({ text: z.string().min(1).max(2000) });
+
+const parsed = Body.safeParse(await req.json());
+if (!parsed.success)
+  return Response.json(
+    { error: "Text is empty or too long." },
+    { status: 400 },
+  );
+```
+
 ## Architecture
 
 **Routing.** All pages live under the `(shop)` route group: `layout.tsx` renders `Header`/`Footer`
@@ -64,7 +90,8 @@ Product images are Unsplash URLs (the only remote host allowed in `next.config.t
 
 **Checkout → Wire.mn.** `checkout/_features/placeOrder.ts` re-prices the cart from the DB, saves an
 UNPAID `Order`, creates a Wire PaymentIntent + hosted checkout (`lib/wire/`) and redirects there.
-Wire returns the buyer to `/orders/[id]`. An order becomes PAID only in `markOrderPaid` (amount must
+Wire returns the buyer to `/orders/[id]`. An unpaid order without a Wire link is paid from `/pay?order=<id>`
+(`pay/_features/startPayment.ts`). Wire calls go through the SDK `@buildry-wire/wire` (`lib/wire/getWireClient.ts`). An order becomes PAID only in `markOrderPaid` (amount must
 equal the total, idempotent), called from the signed webhook `api/webhooks/wire` or, as a fallback,
 after asking Wire's API server-to-server (`syncWirePayment`). Wire has no test mode (API accepts
 only `sk_live_` keys), so test with small real amounts. Env: `WIRE_API_KEY`, `WIRE_WEBHOOK_SECRET`.
@@ -82,12 +109,14 @@ address + Google Maps link via `lib/location/googleMapsLinks.ts`): no address fo
 in `RecurrenceDialog` with our own `MonthCalendar`; repeats are not auto-placed yet), `pickup`, and
 `express` (logic kept, its card is hidden at checkout). Labels: `lib/orders/deliveryTypeLabel.ts`,
 `recurrenceText.ts`. НӨАТ: checkout "Хувь хүн" / "Байгууллага"; company → `companyRegNo` (7 digits)
-+ `companyName` on the order, pre-filled for approved B2B buyers. `checkoutSchema` (zod) re-validates
-all of it on the server.
+
+- `companyName` on the order, pre-filled for approved B2B buyers. `checkoutSchema` (zod) re-validates
+  all of it on the server.
 
 **Sign-in = Clerk Google + our own phone OTP.** Clerk cannot send SMS to Mongolia (+976), and its
 verification SMS can't be taken over. So `/sign-in` and `/sign-up` render Clerk's card (Google only)
 plus `components/auth/PhoneLogin.tsx`:
+
 1. `lib/auth/sendPhoneCode.ts` → `lib/otp/requestOtp.ts` → `lib/verify/createVerifySession.ts`: **verify.mn
    is reverse SMS**: it texts nothing; the buyer sends a 6-digit code to shortcode 144773 from their phone
    (`PhoneSmsStep`, `sms:` link). We store an HMAC (`OTP_SECRET`) of phone + sessionId in `phone_otps`

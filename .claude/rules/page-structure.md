@@ -22,13 +22,14 @@ app/
 
 ## What goes where
 
-| Folder | Holds | Examples | Never |
-|---|---|---|---|
-| `page.tsx` | The route: `metadata`, auth check, data loading, then renders `_components` | `CheckoutPage` | markup sections, business rules |
-| `_components/` | **All UI of this page**: big sections and small pieces. `.tsx`, PascalCase | `CheckoutForm.tsx`, `OrderSummary.tsx`, `CartRow.tsx` | price math, validation, fetch/DB calls, state machines |
-| `_features/` | **Business logic & hooks of this page**: hooks, calculations, validation, URL/state helpers, page-only server actions. `.ts`, camelCase | `useCheckoutForm.ts`, `shopHref.ts`, `calcCartTotals.ts`, `placeOrder.ts` | JSX / UI |
-| `src/components/<area>/` | UI shared by 2+ pages | `layout/Header.tsx`, `product/ProductCard.tsx` | page-specific UI |
-| `src/lib/<domain>/` | Logic shared by 2+ pages, DB queries (Prisma), external services | `catalog/getProduct.ts`, `otp/verifyOtp.ts` | page-specific logic |
+| Folder                   | Holds                                                                                                                                   | Examples                                                                             | Never                                                  |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| `page.tsx`               | The route: `metadata`, auth check, data loading, then renders `_components`                                                             | `CheckoutPage`                                                                       | markup sections, business rules                        |
+| `_components/`           | **All UI of this page**: big sections and small pieces. `.tsx`, PascalCase                                                              | `CheckoutForm.tsx`, `OrderSummary.tsx`, `CartRow.tsx`                                | price math, validation, fetch/DB calls, state machines |
+| `_features/`             | **Business logic & hooks of this page**: hooks, calculations, validation, URL/state helpers, page-only server actions. `.ts`, camelCase | `useCheckoutForm.ts`, `shopHref.ts`, `calcCartTotals.ts`, `placeOrder.ts`            | JSX / UI                                               |
+| `_middleware/`           | **Page guards**: who may open this page (sign-in, role), run first in `page.tsx`. `.ts`, `require<Page>SignIn`                          | `requirePaySignIn.ts` → calls `lib/auth/requireSignIn.ts` with the page's return URL | UI, data loading                                       |
+| `src/components/<area>/` | UI shared by 2+ pages                                                                                                                   | `layout/Header.tsx`, `product/ProductCard.tsx`                                       | page-specific UI                                       |
+| `src/lib/<domain>/`      | Logic shared by 2+ pages, DB queries (Prisma), external services                                                                        | `catalog/getProduct.ts`, `otp/verifyOtp.ts`                                          | page-specific logic                                    |
 
 ## Rules
 

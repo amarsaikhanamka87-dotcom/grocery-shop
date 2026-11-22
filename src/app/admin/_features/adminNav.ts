@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   ReceiptText,
   Store,
-  Undo2,
   Package,
   type LucideIcon,
 } from "lucide-react";

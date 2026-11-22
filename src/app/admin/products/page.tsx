@@ -4,7 +4,6 @@ import { getCategories } from "@/lib/catalog/getCategories";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { ProductDialog } from "./_components/ProductDialog";
 import { ProductFilters } from "./_components/ProductFilters";
-import { ProductStats } from "./_components/ProductStats";
 import { ProductTable } from "./_components/ProductTable";
 
 export const metadata: Metadata = { title: "Бүтээгдэхүүн" };
@@ -21,7 +20,6 @@ export default async function AdminProductsPage({
     getAdminProducts({ q, category }),
     getCategories(),
   ]);
-  const total = categories.reduce((sum, c) => sum + c.productCount, 0);
   const filtered = Boolean(q?.trim() || category);
   return (
     <>
@@ -32,7 +30,6 @@ export default async function AdminProductsPage({
         />
         <ProductDialog categories={categories} />
       </div>
-      {/* <ProductStats products={products} total={total} filtered={filtered} /> */}
       <section className="card mt-6 overflow-hidden">
         <ProductFilters categories={categories} />
         <ProductTable

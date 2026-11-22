@@ -1,15 +1,8 @@
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import type { NavItem } from "@/types/nav";
-import { RoleLink } from "./RoleLink";
 
-type Props = {
-  nav: NavItem[];
-  role: "admin" | "b2b" | null;
-  signedIn: boolean;
-};
-
-export function CategoryNav({ nav, role, signedIn }: Props) {
+export function CategoryNav({ nav }: { nav: NavItem[] }) {
   return (
     <nav
       className="hidden border-b border-line bg-cream lg:block"
@@ -46,7 +39,6 @@ export function CategoryNav({ nav, role, signedIn }: Props) {
             </li>
           ))}
         </ul>
-        {/* <RoleLink role={role} signedIn={signedIn} /> */}
       </div>
     </nav>
   );

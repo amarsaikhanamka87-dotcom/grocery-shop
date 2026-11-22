@@ -10,7 +10,7 @@ const FAILED = "Нэвтрэх үед алдаа гарлаа. Дахин оро
  * - Already signed in (`session_exists`): just go on.
  * - A pending session task (e.g. "choose-organization" while force organization selection is on):
  *   open Clerk's task page instead of the target, or the session stays unusable.
- * Returns an error text (with Clerk's code, also logged) or null.
+ * Returns a friendly error text (Clerk's code is only logged) or null.
  */
 export function useTicketSignIn(redirectUrl: string) {
   const { signIn } = useSignIn();
@@ -27,7 +27,7 @@ export function useTicketSignIn(redirectUrl: string) {
         router.push(target);
         return null;
       }
-      return `${FAILED} (${res.error.code})`;
+      return FAILED;
     }
     const done = await signIn.finalize({
       navigate: ({ session, decorateUrl }) => {
@@ -37,7 +37,7 @@ export function useTicketSignIn(redirectUrl: string) {
     });
     if (done.error) {
       console.error("[phone-login] finalize", done.error.code, done.error.longMessage ?? done.error.message);
-      return `${FAILED} (${done.error.code})`;
+      return FAILED;
     }
     return null;
   };

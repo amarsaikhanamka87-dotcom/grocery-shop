@@ -1,13 +1,14 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { WireEvent } from "@/types/wire";
+import { wireEventSchema } from "./wireEventSchema";
 
 const TOLERANCE_SECONDS = 300;
 
 /**
  * Checks the `WirePayment-Signature: t=<unix>,v1=<hex>` header: HMAC-SHA256 of `${t}.${rawBody}`
  * with WIRE_WEBHOOK_SECRET (whsec_…), compared in constant time, max 5 minutes old.
- * Returns the parsed event, or null if it did not come from Wire.mn.
+ * Returns the checked event (zod), or null if it did not come from Wire.mn or has a bad shape.
  */
 export function verifyWireWebhook(rawBody: string, header: string | null): WireEvent | null {
   const secret = process.env.WIRE_WEBHOOK_SECRET;
@@ -28,7 +29,8 @@ export function verifyWireWebhook(rawBody: string, header: string | null): WireE
   if (!timingSafeEqual(expected, Buffer.from(v1, "hex"))) return null;
 
   try {
-    return JSON.parse(rawBody) as WireEvent;
+    const parsed = wireEventSchema.safeParse(JSON.parse(rawBody));
+    return parsed.success ? parsed.data : null;
   } catch {
     return null;
   }
