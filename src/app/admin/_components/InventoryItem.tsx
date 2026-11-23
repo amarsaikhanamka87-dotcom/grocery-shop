@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { adminStockLevel, type StockLevel } from "@/lib/catalog/adminStockLevel";
 import { cartUnitLabel } from "@/lib/format/cartUnitLabel";
-import type { InventoryRow } from "@/lib/catalog/getInventory";
+import type { OutgoingRow } from "@/lib/orders/getDayOutgoing";
 
 const LOOK: Record<StockLevel, { label: string; pill: string; tint: string }> = {
   out: { label: "Дууссан", pill: "bg-clay text-white", tint: "bg-ink/70" },
@@ -12,10 +12,12 @@ const LOOK: Record<StockLevel, { label: string; pill: string; tint: string }> = 
 };
 
 /**
- * One product in "Агуулахын үлдэгдэл", styled like a shop product card: the stock is shown big
- * over the dimmed photo, the status pill on top, name + category below. Opens it in /admin/products.
+ * One product in "<day> гарсан бараа", styled like a shop product card: that day's outgoing amount
+ * is shown big over the dimmed photo, the stock status pill on top, name + stock left below.
+ * Opens it in /admin/products.
  */
-export function InventoryItem({ product: p }: { product: InventoryRow }) {
+export function InventoryItem({ product: p }: { product: OutgoingRow }) {
+  const unit = cartUnitLabel(p.unit);
   const look = LOOK[adminStockLevel(p.stock, p.minQty)];
   return (
     <li>
@@ -33,8 +35,8 @@ export function InventoryItem({ product: p }: { product: InventoryRow }) {
           />
           <span className={cn("absolute inset-0 grid place-items-center", look.tint)}>
             <span className="flex max-w-full items-baseline gap-1 px-2 text-white drop-shadow">
-              <span className="text-4xl font-extrabold tabular-nums sm:text-5xl xl:text-6xl">{p.stock}</span>
-              <span className="text-sm font-bold sm:text-lg xl:text-xl">{cartUnitLabel(p.unit)}</span>
+              <span className="text-4xl font-extrabold tabular-nums sm:text-5xl xl:text-6xl">{p.outgoing}</span>
+              <span className="text-sm font-bold sm:text-lg xl:text-xl">{unit}</span>
             </span>
           </span>
           <span className={cn("absolute top-2 left-2 rounded-full px-2.5 py-1 text-[11.5px] font-bold", look.pill)}>
@@ -44,7 +46,7 @@ export function InventoryItem({ product: p }: { product: InventoryRow }) {
         <span className="block px-1.5 pt-2.5 pb-1">
           <span className="block truncate text-[15px] font-bold text-ink">{p.name}</span>
           <span className="block truncate text-[12.5px] text-muted-foreground">
-            {p.category.name} · багадаа {p.minQty}
+            Үлдэгдэл {p.stock} {unit} · {p.category.name}
           </span>
         </span>
       </Link>

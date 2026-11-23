@@ -7,9 +7,9 @@ import type { CheckoutInput, RecurrencePlan } from "./checkoutSchema";
 
 const text = (form: FormData, key: string) => String(form.get(key) ?? "");
 
-/** The "Давтамжит" plan from the hidden fields, or undefined for other delivery types. */
 const readRecurrence = (form: FormData): CheckoutInput["recurrence"] => {
-  if (text(form, "deliveryType") !== "recurring" || !text(form, "recurrence")) return undefined;
+  if (text(form, "deliveryType") !== "recurring" || !text(form, "recurrence"))
+    return undefined;
   return {
     frequency: text(form, "recurrence") as RecurrencePlan["frequency"],
     days: text(form, "recurrenceDays").split(",").filter(Boolean).map(Number),
@@ -18,7 +18,6 @@ const readRecurrence = (form: FormData): CheckoutInput["recurrence"] => {
   };
 };
 
-/** Sends the order to the server, then goes to the Wire.mn payment page. */
 export function useCheckoutSubmit() {
   const { items, clear } = useCart();
   const [notice, setNotice] = useState<string | null>(null);
@@ -37,10 +36,14 @@ export function useCheckoutSubmit() {
       deliveryDate: text(form, "deliveryDate"),
       deliverySlot: text(form, "deliverySlot"),
       recurrence: readRecurrence(form),
-      invoiceType: text(form, "invoiceType") === "company" ? "company" : "person",
+      invoiceType:
+        text(form, "invoiceType") === "company" ? "company" : "person",
       companyRegNo: text(form, "companyRegNo"),
       companyName: text(form, "companyName"),
-      items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+      items: items.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+      })),
     };
     setNotice(null);
     startTransition(async () => {

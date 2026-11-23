@@ -25,7 +25,7 @@ export default async function HomePage() {
       <FeaturedSection products={featured} />
 
       <DealsSection products={deals} />
-      <CategoriesSection categories={categories} />
+      {/* <CategoriesSection categories={categories} /> */}
       <FarmsStory productCount={productCount} />
       {/* <SegmentsSection /> */}
       <CtaSection />

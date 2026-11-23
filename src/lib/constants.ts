@@ -35,3 +35,12 @@ export const PICKUP_POINT = {
 
   mapsQuery: "Барс худалдааны төв, Улаанбаатар",
 };
+
+/** How many day buttons the admin dashboard shows (today + the days before it). */
+export const DASHBOARD_DAYS = 14;
+
+/** Seller's 7-digit register number printed on the БМ-3 receipt (empty = blank boxes). */
+export const SHOP_REG_NO = "";
+
+/** Paid receipts are emailed (via n8n) only when the order total is more than this, in ₮. */
+export const RECEIPT_EMAIL_MIN_TOTAL = 200;

@@ -5,14 +5,20 @@ import { prisma } from "@/lib/prisma";
 /**
  * Admin: newest orders first with everything the list and the detail dialog show (so opening
  * an order needs no extra request), filtered by payment and by delivery vs pickup ("Очиж авах").
+ * Delivered orders are hidden unless `delivered` is true, which shows only them ("Хүргэгдсэн").
  * Old QPay QR images are left out.
  */
-export function listAdminOrders(filter: { payment?: PaymentStatus; method?: "delivery" | "pickup" } = {}) {
+export function listAdminOrders(
+  filter: { payment?: PaymentStatus; method?: "delivery" | "pickup"; delivered?: boolean } = {},
+) {
   const where: Prisma.OrderWhereInput = {
+    status: filter.delivered ? "DELIVERED" : { not: "DELIVERED" },
     ...(filter.payment && { paymentStatus: filter.payment }),
     ...(filter.method === "pickup" && { deliveryType: "pickup" }),
     // Old orders have no deliveryType; they were all delivered.
-    ...(filter.method === "delivery" && { OR: [{ deliveryType: null }, { deliveryType: { not: "pickup" } }] }),
+    ...(filter.method === "delivery" && {
+      OR: [{ deliveryType: null }, { deliveryType: { not: "pickup" } }],
+    }),
   };
   return prisma.order.findMany({
     where,
@@ -42,7 +48,16 @@ export function listAdminOrders(filter: { payment?: PaymentStatus; method?: "del
       subtotal: true,
       deliveryFee: true,
       total: true,
-      items: { select: { id: true, name: true, image: true, unit: true, price: true, quantity: true } },
+      items: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          unit: true,
+          price: true,
+          quantity: true,
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 200,

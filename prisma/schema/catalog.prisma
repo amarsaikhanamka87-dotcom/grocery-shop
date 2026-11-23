@@ -16,7 +16,7 @@ model Product {
   description        String
   price              Int // төгрөгөөр
   oldPrice           Int?
-  unit               String // жишээ: "1 кг", "500 гр"
+  unit               String // жишээ: "шуудай", "шуудай (50 кг)"
   image              String
   stock              Int                 @default(0)
   minQty             Int                 @default(1) // хамгийн бага захиалах тоо

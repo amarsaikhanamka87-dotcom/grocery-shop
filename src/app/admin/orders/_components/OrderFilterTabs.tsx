@@ -6,6 +6,7 @@ const PAY_TABS = [
   { value: "", label: "Бүгд" },
   { value: "paid", label: "Төлөгдсөн" },
   { value: "unpaid", label: "Төлөгдөөгүй" },
+  { value: "delivered", label: "Хүргэгдсэн" },
 ];
 
 const TYPE_TABS = [
@@ -22,7 +23,7 @@ const tab = (on: boolean) =>
 
 type Props = { pay: string; type: string; count: number };
 
-/** Payment (all / paid / unpaid) and kind (delivery / pickup) filters, kept in the URL. */
+/** Payment (all / paid / unpaid / delivered) and kind (delivery / pickup) filters, kept in the URL. */
 export function OrderFilterTabs({ pay, type, count }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3 sm:px-5">

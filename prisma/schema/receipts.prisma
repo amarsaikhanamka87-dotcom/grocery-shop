@@ -1,0 +1,22 @@
+// Receipts. One "Зарлагын баримт" (НХМаягт БМ-3) per paid order, created in payOrder.
+
+model Receipt {
+  id          String             @id @default(cuid())
+  number      Int                @unique @default(autoincrement()) // Зарлагын баримт №
+  orderId     String             @unique
+  order       Order              @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  email       String? // where it was (or would be) emailed
+  emailStatus ReceiptEmailStatus @default(PENDING)
+  emailedAt   DateTime?
+  createdAt   DateTime           @default(now())
+
+  @@index([createdAt])
+}
+
+/// Баримтыг и-мэйлээр илгээсэн эсэх
+enum ReceiptEmailStatus {
+  PENDING // Илгээж байна
+  SENT // Илгээсэн (n8n хүлээж авсан)
+  SKIPPED // Илгээгээгүй: и-мэйлгүй эсвэл дүн бага
+  FAILED // Илгээж чадсангүй
+}

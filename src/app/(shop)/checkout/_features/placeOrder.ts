@@ -37,6 +37,7 @@ export async function placeOrder(input: CheckoutInput): Promise<Result> {
       clerkUserId: userId,
       customerName: f.customerName || user?.fullName || "",
       phone: f.phone,
+      email: user?.primaryEmailAddress?.emailAddress ?? null,
 
       companyRegNo: f.invoiceType === "company" ? f.companyRegNo : null,
       companyName: f.invoiceType === "company" ? f.companyName : null,

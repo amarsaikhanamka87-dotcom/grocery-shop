@@ -10,10 +10,6 @@ import { idSchema } from "@/lib/validation/idSchema";
 
 type PayState = { error: string | null };
 
-/**
- * "Төлөх": creates the Wire.mn checkout for one of the buyer's unpaid orders (if it has none yet)
- * and sends the buyer there. Returns a friendly error when it can't.
- */
 export async function startPayment(orderId: string): Promise<PayState> {
   const id = idSchema.safeParse(orderId);
   if (!id.success) return { error: "Захиалга олдсонгүй." };
@@ -23,7 +19,8 @@ export async function startPayment(orderId: string): Promise<PayState> {
 
   const order = await getMyOrder(id.data, userId);
   if (!order) return { error: "Захиалга олдсонгүй." };
-  if (order.paymentStatus === "PAID" || order.status === "CANCELLED") redirect(`/orders/${order.id}`);
+  if (order.paymentStatus === "PAID" || order.status === "CANCELLED")
+    redirect(`/orders/${order.id}`);
   if (order.wireCheckoutUrl) redirect(order.wireCheckoutUrl);
 
   const origin = (await headers()).get("origin") ?? "";
@@ -43,7 +40,9 @@ export async function startPayment(orderId: string): Promise<PayState> {
     checkoutUrl = wire.url;
   } catch (err) {
     console.error("[wire] pay page checkout failed", err);
-    return { error: "Төлбөрийн систем түр ажиллахгүй байна. Дахин оролдоно уу." };
+    return {
+      error: "Төлбөрийн систем түр ажиллахгүй байна. Дахин оролдоно уу.",
+    };
   }
   redirect(checkoutUrl);
 }

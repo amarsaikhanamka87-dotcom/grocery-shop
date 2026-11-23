@@ -34,11 +34,3 @@ export default async function PayPage({
     </div>
   );
 }
-
-// wire web hook
-
-// const ep = await wire.webhookEndpoints.create({
-//   url: "https://yourshop.mn/webhooks/wire",
-//   enabled_events: ["payment_intent.succeeded"],
-//   idempotencyKey: "wh-ep-1",
-// });

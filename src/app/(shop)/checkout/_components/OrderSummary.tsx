@@ -66,6 +66,7 @@ export function OrderSummary({
           ? "Төлбөр рүү шилжиж байна…"
           : `Төлөх · ${formatPrice(subtotal + fee)}`}
       </button>
+
       <p className="mt-3 text-center text-[12.5px] text-muted-foreground">
         Wire.mn-ээр QR эсвэл банкны аппаар төлнө. Үнэ, нөөцийг захиалах үед
         дахин шалгана.

@@ -1,21 +1,26 @@
 import "server-only";
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendReceipt } from "@/lib/receipts/sendReceipt";
 
 /**
- * Turns an UNPAID order into PAID and takes its quantities out of product stock, in one
- * transaction. Runs once: a second call (webhook retry, double click) changes nothing.
- * Returns true when the order is paid (now or already).
+ * Turns an UNPAID order into PAID, issues its Receipt (БМ-3) and takes its quantities out of
+ * product stock, in one transaction. Runs once: a second call (webhook retry, double click)
+ * changes nothing. Returns true when the order is paid (now or already). Only the call that
+ * actually paid it emails the receipt (via n8n), after the response is sent.
  */
 export async function payOrder(orderId: string): Promise<boolean> {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const { count } = await tx.order.updateMany({
       where: { id: orderId, paymentStatus: "UNPAID" },
       data: { paymentStatus: "PAID", paidAt: new Date() },
     });
     if (count === 0) {
       const order = await tx.order.findUnique({ where: { id: orderId }, select: { paymentStatus: true } });
-      return order?.paymentStatus === "PAID";
+      return order?.paymentStatus === "PAID" ? "already-paid" : "not-paid";
     }
+
+    await tx.receipt.create({ data: { orderId } });
 
     const items = await tx.orderItem.findMany({ where: { orderId }, select: { productId: true, quantity: true } });
     for (const item of items) {
@@ -30,6 +35,9 @@ export async function payOrder(orderId: string): Promise<boolean> {
         console.error(`[stock] order ${orderId}: not enough stock for product ${item.productId}`);
       }
     }
-    return true;
+    return "paid-now";
   });
+
+  if (result === "paid-now") after(() => sendReceipt({ orderId }));
+  return result !== "not-paid";
 }

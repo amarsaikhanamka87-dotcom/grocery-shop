@@ -1,23 +1,33 @@
-import { getTodayMoney } from "@/lib/orders/getTodayMoney";
-import { getInventory } from "@/lib/catalog/getInventory";
+import { getDayMoney } from "@/lib/orders/getDayMoney";
+import { getDayOutgoing } from "@/lib/orders/getDayOutgoing";
+import { ubRecentDays } from "@/lib/date/ubRecentDays";
+import { DASHBOARD_DAYS } from "@/lib/constants";
 import { AdminPageHeader } from "./_components/AdminPageHeader";
+import { DayButtons } from "./_components/DayButtons";
 import { TodayMoney } from "./_components/TodayMoney";
 import { InventoryTable } from "./_components/InventoryTable";
 
-export default async function AdminDashboardPage() {
-  const [money, inventory] = await Promise.all([
-    getTodayMoney(),
-    getInventory(),
-  ]);
+type Params = Promise<{ day?: string }>;
+
+// Admin role is checked in app/admin/layout.tsx (requireAdmin).
+export default async function AdminDashboardPage({ searchParams }: { searchParams: Params }) {
+  const { day: dayParam } = await searchParams;
+  const days = ubRecentDays(DASHBOARD_DAYS);
+  // Only one of the listed days is accepted; anything else falls back to today.
+  const day = days.find((d) => d.key === dayParam) ?? days[0];
+  const dayTitle = day === days[0] ? "Өнөөдөр" : `${day.label}, ${day.weekday}`;
+
+  const [money, outgoing] = await Promise.all([getDayMoney(day), getDayOutgoing(day)]);
   return (
     <>
       <AdminPageHeader
         title="Хянах самбар"
-        description="Өнөөдрийн захиалга, орлого, хүлээгдэж буй хүсэлтүүд."
+        description="Өдрөөр нь орлого болон гарсан барааг харах."
       />
-      <TodayMoney money={money} />
+      <DayButtons days={days} selected={day.key} />
+      <TodayMoney title={dayTitle} money={money} />
 
-      <InventoryTable rows={inventory} />
+      <InventoryTable dayTitle={dayTitle} rows={outgoing} />
     </>
   );
 }

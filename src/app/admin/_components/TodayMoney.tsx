@@ -1,14 +1,14 @@
 import { Scale, TrendingDown, TrendingUp } from "lucide-react";
-import type { getTodayMoney } from "@/lib/orders/getTodayMoney";
+import type { getDayMoney } from "@/lib/orders/getDayMoney";
 import { MoneyCard } from "./MoneyCard";
 
-type Props = { money: Awaited<ReturnType<typeof getTodayMoney>> };
+type Props = { title: string; money: Awaited<ReturnType<typeof getDayMoney>> };
 
-/** "Өнөөдөр": today's income, expenses and the balance between them. */
-export function TodayMoney({ money }: Props) {
+/** One day's income, expenses and the balance between them, under `title` ("Өнөөдөр" / "11:21"). */
+export function TodayMoney({ title, money }: Props) {
   return (
     <section className="mt-6">
-      <h2 className="text-lg font-extrabold">Өнөөдөр</h2>
+      <h2 className="text-lg font-extrabold">{title}</h2>
       <div className="mt-3 grid gap-4 sm:grid-cols-3">
         <MoneyCard
           label="Орлого"

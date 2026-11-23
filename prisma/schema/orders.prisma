@@ -23,6 +23,7 @@ model Order {
   companyName     String?
   companyRegNo    String?
   phone           String
+  email           String? // buyer's Clerk email at order time (Google sign-in); null for phone-only buyers
   district        String
   address         String
   note            String?
@@ -51,6 +52,7 @@ model Order {
   total           Int
   status          OrderStatus   @default(PENDING)
   items           OrderItem[]
+  receipt         Receipt?
   createdAt       DateTime      @default(now())
 
   @@index([userId])

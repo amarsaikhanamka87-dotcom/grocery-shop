@@ -13,7 +13,7 @@ export const productSchema = z.object({
     .trim()
     .transform((s) => (s === "" ? null : Number(s)))
     .refine((n) => n === null || (Number.isInteger(n) && n >= 0), "Хуучин үнэ бүхэл тоо байна"),
-  unit: z.string().trim().min(1, "Нэгж оруулна уу (жишээ: 1 кг)"),
+  unit: z.string().trim().min(1, "Нэгж оруулна уу (жишээ: шуудай)"),
   image: z
     .string()
     .trim()

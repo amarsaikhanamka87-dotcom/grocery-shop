@@ -96,6 +96,17 @@ equal the total, idempotent), called from the signed webhook `api/webhooks/wire`
 after asking Wire's API server-to-server (`syncWirePayment`). Wire has no test mode (API accepts
 only `sk_live_` keys), so test with small real amounts. Env: `WIRE_API_KEY`, `WIRE_WEBHOOK_SECRET`.
 
+**Receipts (БМ-3 "Зарлагын баримт").** `payOrder` creates a `Receipt` (prisma `receipts.prisma`, own
+№) in the same transaction that flips the order to PAID, then schedules (`after()`) `lib/receipts/sendReceipt`:
+if the order has an `email` (Clerk email saved at checkout) and total > `RECEIPT_EMAIL_MIN_TOTAL` it POSTs
+`order.paid` to n8n (`lib/n8n/postN8nEvent`, header `x-n8n-secret`) and records `emailStatus`
+(SENT/SKIPPED/FAILED); n8n is called only when an email should go out. `receiptHtml` renders the one
+БМ-3 layout used by the email (`body.receipt.html`, `body.receipt.subject`, to `body.order.email`), the
+admin view and the print page. Admin: `/admin/receipts` (filter by status), `/admin/receipts/[id]`
+(sheet, "Хэвлэх" → `[id]/print` route, "И-мэйлээр илгээх" = `resendReceipt`, any amount). n8n workflow:
+`n8n/order-paid-receipt.json` (Webhook → Gmail). Env: `N8N_ORDER_EVENT_URL`, `N8N_WEBHOOK_SECRET`,
+`SITE_URL` (optional, for the order link). Seller register no. on the form: `SHOP_REG_NO` (constants).
+
 **Delivery vs pickup.** The header switch `ModeToggle` ("Хүргэлтээр" / "Очиж авах") sets `mode` in
 `LocationProvider` (localStorage, with the delivery address and saved addresses in
 `components/location/`). Pickup = buyer collects at `PICKUP_POINT` (`lib/constants.ts`, also the footer
@@ -141,9 +152,10 @@ customer's `/business` is a dashboard with a monthly order list (`StandingOrder`
 the b2b role and each product's `minQty`), and "add all to cart". Auto-placing it on that day
 comes after orders exist (Day 6–8).
 
-**Admin.** `/admin` dashboard: today's income (`getTodayMoney`: PAID orders since midnight UB time,
-UTC+8; expenses are 0 until an expense table exists) and every product's stock lowest-first
-(`getInventory`). `/admin/orders`: filters `?pay=paid|unpaid&type=delivery|pickup`, and a
+**Admin.** `/admin` dashboard: income (`getDayMoney`: PAID orders in one UB day,
+UTC+8; expenses are 0 until an expense table exists), day buttons "11:23", "11:22" … (`DayButtons`,
+`ubRecentDays`, `?day=`) pick the day for `getDayMoney` and the products paid that day (`getDayOutgoing`).
+Product units are "шуудай" (sacks) since 2026-11-23; old order items keep "кг". `/admin/orders`: filters `?pay=paid|unpaid&type=delivery|pickup`, and a
 "Хүргэж өгсөн" / "Очиж авсан" button (`markDelivered`, PAID orders only → `DELIVERED`). Paid orders
 take stock in `payOrder`. `/admin/products` edit dialog changes only "Үнэ ба үлдэгдэл"; the other
 fields go along unchanged as hidden inputs (`KeepFields`), creating a product shows the full form.
