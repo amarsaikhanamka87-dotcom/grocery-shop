@@ -1,5 +1,7 @@
-export const SHOP_NAME = "Ургац";
+export const SHOP_NAME = "Бөөний Зах Онлайн";
 export const SHOP_PHONE = "89056629";
+/** Contact e-mail in the footer. Still the old Ургац address: replace with the market's own. */
+export const SHOP_EMAIL = "hello@urgats.mn";
 export const FREE_DELIVERY_FROM = 200000;
 export const DELIVERY_FEE = 15000;
 
@@ -38,6 +40,9 @@ export const PICKUP_POINT = {
 
 /** How many day buttons the admin dashboard shows (today + the days before it). */
 export const DASHBOARD_DAYS = 14;
+
+/** POS tiles show the stock left in clay (warning) at or below this many units. */
+export const POS_LOW_STOCK = 10;
 
 /** Seller's 7-digit register number printed on the БМ-3 receipt (empty = blank boxes). */
 export const SHOP_REG_NO = "";

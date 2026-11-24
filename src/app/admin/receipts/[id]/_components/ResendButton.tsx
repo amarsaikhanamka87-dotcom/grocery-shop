@@ -5,14 +5,14 @@ import { Loader2, Send } from "lucide-react";
 import { resendReceipt } from "../_features/resendReceipt";
 
 /** "И-мэйлээр илгээх": sends this receipt to the buyer's email again, then shows the outcome. */
-export function ResendButton({ receiptId, disabled }: { receiptId: string; disabled: boolean }) {
+export function ResendButton({ receiptId }: { receiptId: string }) {
   const [pending, start] = useTransition();
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   return (
     <div className="flex flex-col gap-1">
       <button
         type="button"
-        disabled={disabled || pending}
+        disabled={pending}
         onClick={() => start(async () => setResult(await resendReceipt(receiptId)))}
         className="btn btn-primary h-10 px-4"
       >

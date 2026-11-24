@@ -14,7 +14,7 @@ export function PromoMainBanner({ product: p }: { product: Product }) {
         <p className="mt-3 line-clamp-3 text-[15px] text-white/75">{p.description}</p>
         <Link
           href={`/product/${p.slug}`}
-          className="btn mt-7 h-12 w-fit bg-white px-6 text-[15px] text-brand hover:bg-cream"
+          className="btn mt-7 h-12 w-fit bg-white px-6 text-[15px] text-brand hover:bg-ink/5"
         >
           {formatPrice(p.price)} — Захиалах <ArrowRight className="size-4" />
         </Link>

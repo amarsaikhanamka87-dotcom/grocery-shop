@@ -31,10 +31,14 @@ export function ProductActions({ product, categories }: { product: Product; cate
     );
   }
   return (
-    <div className="flex items-center gap-1">
+    // "Засах" on the left, "Устгах" at the far right (asks "sure?" first), so they're never mis-tapped.
+    <div className="flex items-center justify-between gap-3">
       <ProductDialog product={product} categories={categories} />
-      <button onClick={() => setConfirming(true)} aria-label="Устгах" title="Устгах" className={`${icon} text-muted-foreground hover:bg-clay-50 hover:text-clay`}>
-        <Trash2 className="size-4" />
+      <button
+        onClick={() => setConfirming(true)}
+        className="flex h-10 items-center gap-1.5 rounded-full px-3 text-[14px] font-semibold text-muted-foreground hover:bg-clay-50 hover:text-clay"
+      >
+        <Trash2 className="size-4" /> Устгах
       </button>
     </div>
   );

@@ -21,7 +21,9 @@ export function useDeliveryTime(pickup = false) {
   const [now] = useState(() => new Date());
   const days = deliveryDays(DELIVERY_DAYS_AHEAD, now);
   const express = expressWindow(now);
-  const [chosen, setType] = useState<DeliveryType>(express ? "express" : "scheduled");
+  // Default Хуваарьт: its card is visible and ticked. Шуурхай's card is hidden, so defaulting to it
+  // showed a "today 13:10–14:10" time with no card ticked.
+  const [chosen, setType] = useState<DeliveryType>("scheduled");
   // "Очиж авах": always a picked day + slot (the Хуваарьт chips).
   const type: DeliveryType = pickup ? "pickup" : chosen;
   const [day, setDay] = useState(days[0].value);

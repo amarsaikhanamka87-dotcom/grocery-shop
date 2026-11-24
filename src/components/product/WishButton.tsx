@@ -15,9 +15,9 @@ export function WishButton({ productId, className = "" }: { productId: string; c
       }}
       aria-pressed={active}
       aria-label={active ? "Хадгалснаас хасах" : "Хадгалах"}
-      className={`grid size-9 place-items-center rounded-full bg-white/95 shadow-sm transition-colors hover:text-clay ${className}`}
+      className={`grid size-11 place-items-center rounded-full bg-white/95 shadow-sm transition-colors hover:text-brand ${className}`}
     >
-      <Heart className={`size-[17px] ${active ? "fill-clay text-clay" : ""}`} />
+      <Heart className={`size-[17px] ${active ? "fill-brand text-brand" : ""}`} />
     </button>
   );
 }

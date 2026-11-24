@@ -5,10 +5,16 @@ import { ArrowRight } from "lucide-react";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { deliveryFeeFor } from "@/lib/delivery/deliveryFeeFor";
 import { useIsB2B } from "@/lib/roles/useIsB2B";
+import { useDeliveryLocation } from "@/components/location/useDeliveryLocation";
 
-/** Totals + "Захиалга хийх"; blocked while some line asks for more than is in stock. */
+/**
+ * Totals + "Захиалга хийх"; blocked while some line asks for more than is in stock. In "Очиж авах"
+ * mode there is no delivery fee (same as checkout), so the totals match on both pages.
+ */
 export function CartSummary({ subtotal, blocked = false }: { subtotal: number; blocked?: boolean }) {
-  const fee = deliveryFeeFor(subtotal, useIsB2B());
+  const isPickup = useDeliveryLocation().mode === "pickup";
+  const isB2B = useIsB2B();
+  const fee = isPickup ? 0 : deliveryFeeFor(subtotal, isB2B);
   return (
     <aside className="card min-w-0 p-5 sm:p-6 lg:sticky lg:top-[200px]">
       <h2 className="text-lg font-extrabold">Захиалгын дүн</h2>
@@ -19,7 +25,9 @@ export function CartSummary({ subtotal, blocked = false }: { subtotal: number; b
         </div>
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Хүргэлт</dt>
-          <dd className="font-semibold tabular-nums">{fee === 0 ? "Үнэгүй" : formatPrice(fee)}</dd>
+          <dd className="font-semibold tabular-nums">
+            {isPickup ? "Очиж авна (0₮)" : fee === 0 ? "Үнэгүй" : formatPrice(fee)}
+          </dd>
         </div>
         <div className="mt-2 flex justify-between border-t border-line pt-4 text-lg">
           <dt className="font-bold">Нийт</dt>

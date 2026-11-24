@@ -3,7 +3,7 @@
 @theme {
   --color-cream: #faf8f3;
   --color-cream-2: #f3efe6;
-  --color-line: #e7e2d6;
+  --color-line: #e3e6e4; /* a light tint of ink (was beige #e7e2d6) */
   --color-ink: #1d2a21;
   --color-ink-2: #3c4840;
   --color-brand: #2e5d3d;
@@ -114,7 +114,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-clay);
+    color: var(--color-brand);
   }
   .h-section {
     font-size: clamp(1.75rem, 3vw, 2.5rem);

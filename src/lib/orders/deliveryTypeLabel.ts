@@ -4,4 +4,5 @@ export const DELIVERY_TYPE_LABEL: Record<string, string> = {
   scheduled: "Хуваарьт",
   recurring: "Давтамжит",
   pickup: "Очиж авах",
+  store: "Касс",
 };

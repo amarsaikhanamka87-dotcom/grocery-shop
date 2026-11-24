@@ -4,11 +4,11 @@ import { formatPrice } from "@/lib/format/formatPrice";
 import { formatDateTime } from "@/lib/format/formatDateTime";
 import { DELIVERY_TYPE_LABEL } from "@/lib/orders/deliveryTypeLabel";
 import type { ReceiptListRow } from "@/lib/receipts/listReceipts";
-import { RECEIPT_STATUS_BADGE } from "../_features/receiptStatusBadge";
+import { receiptStatusBadge } from "../_features/receiptStatusBadge";
 
 /** One issued receipt; opens its БМ-3 sheet. */
 export function ReceiptRow({ receipt: r }: { receipt: ReceiptListRow }) {
-  const badge = RECEIPT_STATUS_BADGE[r.emailStatus];
+  const badge = receiptStatusBadge(r.emailStatus, r.email);
   return (
     <li>
       <Link

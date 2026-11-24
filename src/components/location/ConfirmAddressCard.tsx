@@ -16,7 +16,7 @@ export function ConfirmAddressCard({ address, onAnswer }: Props) {
           Хүргүүлэх хаягнаас шалтгаалж авах боломжтой бүтээгдэхүүн харагдана.
         </p>
       </div>
-      <div className="flex items-center gap-3 rounded-2xl bg-cream-2 p-4">
+      <div className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4">
         <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand text-white">
           <Truck className="size-5" />
         </span>

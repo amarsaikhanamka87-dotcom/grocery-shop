@@ -5,7 +5,7 @@ type Crumb = { label: string; href?: string };
 
 export function Breadcrumb({ items }: { items: Crumb[] }) {
   return (
-    <nav className="text-[13px] font-medium text-muted-foreground" aria-label="Breadcrumb">
+    <nav className="text-[15px] font-medium text-muted-foreground" aria-label="Breadcrumb">
       {items.map((c, i) => (
         <Fragment key={c.label}>
           {i > 0 && <span className="mx-1.5">/</span>}

@@ -7,6 +7,7 @@ import { receiptHtml } from "@/lib/receipts/receiptHtml";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { ReceiptToolbar } from "./_components/ReceiptToolbar";
 import { ReceiptSheet } from "./_components/ReceiptSheet";
+import { ReceiptSummary } from "./_components/ReceiptSummary";
 
 export const metadata: Metadata = { title: "Баримт" };
 
@@ -34,6 +35,7 @@ export default async function AdminReceiptPage({ params }: { params: Params }) {
         emailStatus={status.emailStatus}
         emailedAt={status.emailedAt}
       />
+      <ReceiptSummary receipt={receipt} />
       <ReceiptSheet html={receiptHtml(receipt)} />
     </>
   );

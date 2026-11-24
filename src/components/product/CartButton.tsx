@@ -3,6 +3,7 @@
 import { Minus, Plus } from "lucide-react";
 import type { CartItem } from "@/components/cart/CartContext";
 import { useCartLine } from "@/components/cart/useCartLine";
+import { cartUnitLabel } from "@/lib/format/cartUnitLabel";
 
 /** Card footer: "Сагслах" until the product is in the cart, then − / + to change the quantity. */
 export function CartButton({ item }: { item: Omit<CartItem, "quantity"> }) {
@@ -10,7 +11,7 @@ export function CartButton({ item }: { item: Omit<CartItem, "quantity"> }) {
 
   if (line.soldOut) {
     return (
-      <button type="button" disabled className="h-12 w-full rounded-2xl bg-white/60 font-bold text-muted-foreground">
+      <button type="button" disabled className="h-12 w-full rounded-2xl bg-brand-50 text-[16px] font-bold text-muted-foreground">
         Дууссан
       </button>
     );
@@ -21,7 +22,7 @@ export function CartButton({ item }: { item: Omit<CartItem, "quantity"> }) {
         type="button"
         onClick={line.add}
         aria-label={`${item.name} сагсанд нэмэх`}
-        className="h-12 w-full rounded-2xl bg-white font-bold text-ink shadow-sm transition-colors hover:bg-brand hover:text-white"
+        className="h-12 w-full rounded-2xl bg-brand text-[16px] font-bold text-white transition-colors hover:bg-brand-dark"
       >
         Сагслах
       </button>
@@ -33,12 +34,14 @@ export function CartButton({ item }: { item: Omit<CartItem, "quantity"> }) {
         type="button"
         onClick={line.decrement}
         aria-label={line.quantity <= item.minQty ? "Сагснаас хасах" : "Нэгээр хасах"}
-        className="grid size-12 place-items-center rounded-2xl bg-white text-ink shadow-sm transition-colors hover:bg-cream"
+        className="grid size-12 place-items-center rounded-2xl border border-line bg-white text-ink transition-colors hover:border-ink"
       >
         <Minus className="size-5" strokeWidth={2.6} />
       </button>
-      <span className="sr-only" aria-live="polite">
-        Сагсанд {line.quantity}
+      {/* The amount in the cart sits between − and + (it used to be big text over the photo). */}
+      <span className="text-[16px] font-extrabold whitespace-nowrap tabular-nums" aria-live="polite">
+        <span className="sr-only">Сагсанд </span>
+        {line.quantity} {cartUnitLabel(item.unit)}
       </span>
       <button
         type="button"

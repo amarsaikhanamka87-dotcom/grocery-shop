@@ -22,6 +22,9 @@ npm run db:status      # prisma migrate status
 npm run db:migrate:dev # prisma migrate dev: writes to Supabase, ask the owner first (db-change skill)
 npx prisma generate    # after schema changes (also runs on npm install); then restart dev
 npx clerk@latest doctor --mode agent   # Clerk link/keys health; the project is linked to app "grocery-store"
+
+# One-off script against server code (lib files import "server-only", which throws without this condition):
+npx tsx --env-file=.env.local --env-file=.env --conditions=react-server -e 'import { x } from "./src/lib/..."; ...'
 ```
 
 No test runner exists yet. Verify with lint + typecheck + build, and run the app for UI changes.
@@ -41,6 +44,13 @@ If `tsc` reports errors in `.next/types/`, delete `.next/types` (stale route typ
 4. **No hard-coded data**: products, categories, prices, counts, menu links come from the DB via Prisma.
    Only page copy and settings in `src/lib/constants.ts` are fixed.
 5. Never read or print `.env*` files (a deny rule exists); `.env.example` lists the key names.
+6. **Phone first.** The owner runs every admin page (Касс, orders, receipts, products) on a phone,
+   and buyers mostly use the mobile site. Design and check at 390px first: no sideways scroll,
+   nothing cut off, 44px tap targets, words next to icons, no duplicate or dead buttons.
+7. **UI review after UI changes**: run the `ui-review` skill (agent `ui-ux-reviewer`). It uses the
+   site as buyer and admin and pins what is unclear; it only reviews. The owner usually answers "fix
+   all of them". Storefront design: max 3 colors (white, ink, brand green; clay only for admin
+   warnings) and max 3 text styles per page (display, heading, body) in one font (Manrope).
 
 ## Coding rules
 
@@ -120,13 +130,13 @@ address + Google Maps link via `lib/location/googleMapsLinks.ts`): no address fo
 in `RecurrenceDialog` with our own `MonthCalendar`; repeats are not auto-placed yet), `pickup`, and
 `express` (logic kept, its card is hidden at checkout). Labels: `lib/orders/deliveryTypeLabel.ts`,
 `recurrenceText.ts`. НӨАТ: checkout "Хувь хүн" / "Байгууллага"; company → `companyRegNo` (7 digits)
-
-- `companyName` on the order, pre-filled for approved B2B buyers. `checkoutSchema` (zod) re-validates
-  all of it on the server.
++ `companyName` on the order, pre-filled for approved B2B buyers. `checkoutSchema` (zod) re-validates
+all of it on the server.
 
 **Sign-in = Clerk Google + our own phone OTP.** Clerk cannot send SMS to Mongolia (+976), and its
-verification SMS can't be taken over. So `/sign-in` and `/sign-up` render Clerk's card (Google only)
-plus `components/auth/PhoneLogin.tsx`:
+verification SMS can't be taken over. So `/sign-in` and `/sign-up` render Clerk's card (Google only,
+in Mongolian via `lib/auth/clerkLocalization.ts` = `@clerk/localizations` mn-MN + our titles, passed to
+`ClerkProvider` in `app/layout.tsx`) plus `components/auth/PhoneLogin.tsx`:
 
 1. `lib/auth/sendPhoneCode.ts` → `lib/otp/requestOtp.ts` → `lib/verify/createVerifySession.ts`: **verify.mn
    is reverse SMS**: it texts nothing; the buyer sends a 6-digit code to shortcode 144773 from their phone
@@ -144,7 +154,9 @@ enabled but `used_for_sign_in: false`; email/password off; "force organization s
 **Roles.** Clerk `publicMetadata.role` (typed in `src/types/clerk.d.ts`), writable only by the server:
 `"admin"` = owner, `"b2b"` = approved business buyer (free delivery via `deliveryFeeFor(subtotal, isB2B)`),
 unset = regular buyer. Buyers apply at `/business` → `business_applications` table (Prisma
-`BusinessApplication`) → admin approves at `/admin/business`, which sets the role. `src/proxy.ts`
+`BusinessApplication`) → admin approves (`approveApplication`, sets the role). The `/admin/business`
+and `/admin/shops` pages are removed for now (menu entries hidden in `adminNav.ts`); the approval
+pieces (`ApplicationsTable`, `ReviewActions`) still sit in `app/admin/`. `src/proxy.ts`
 requires sign-in for `/admin`, `/business`, `/checkout`; the admin role is checked server-side in
 `app/admin/layout.tsx` (`requireAdmin`) and again in every admin server action. An approved B2B
 customer's `/business` is a dashboard with a monthly order list (`StandingOrder` +
@@ -152,17 +164,32 @@ customer's `/business` is a dashboard with a monthly order list (`StandingOrder`
 the b2b role and each product's `minQty`), and "add all to cart". Auto-placing it on that day
 comes after orders exist (Day 6–8).
 
-**Admin.** `/admin` dashboard: income (`getDayMoney`: PAID orders in one UB day,
-UTC+8; expenses are 0 until an expense table exists), day buttons "11:23", "11:22" … (`DayButtons`,
-`ubRecentDays`, `?day=`) pick the day for `getDayMoney` and the products paid that day (`getDayOutgoing`).
-Product units are "шуудай" (sacks) since 2026-11-23; old order items keep "кг". `/admin/orders`: filters `?pay=paid|unpaid&type=delivery|pickup`, and a
-"Хүргэж өгсөн" / "Очиж авсан" button (`markDelivered`, PAID orders only → `DELIVERED`). Paid orders
-take stock in `payOrder`. `/admin/products` edit dialog changes only "Үнэ ба үлдэгдэл"; the other
-fields go along unchanged as hidden inputs (`KeepFields`), creating a product shows the full form.
+**Admin.** `/admin` dashboard: day buttons "11/23", "11/22" … (`DayButtons`, `ubRecentDays`,
+`?day=`, one UB day = UTC+8). `page.tsx` starts the day's queries without awaiting and `DayReport`
+awaits them inside `<Suspense key={day}>`, so switching days shows a skeleton, never the old day's
+money. Cards: Нийт орлого (`getDayMoney`, PAID orders by `paidAt`) split into Онлайн захиалга and
+Касс (`getStoreDaySales`); then one table of goods out with money per item (`getDayOutgoing`:
+quantity, price range, `price × quantity`, stock left) + delivery fees = the total. Product units are
+"шуудай" (sacks) since 2026-11-23; old order items keep "кг". `/admin/orders`: filters
+`?pay=paid|unpaid|delivered&type=delivery|pickup`; Касс sales are never listed; DELIVERED orders show
+only under "Хүргэгдсэн" (never deleted: receipts and income depend on them). One status badge per order
+(`orders/_features/orderState.ts`). "Хүргэж өгсөн" / "Очиж авсан" (`markDelivered`, PAID only →
+`DELIVERED`). `/admin/products` edit dialog changes only "Үнэ ба үлдэгдэл"; the other fields go along
+unchanged as hidden inputs (`KeepFields`), creating a product shows the full form.
 
-**Styling.** `app/styles/brand.css` holds the Ургац palette (`brand`, `cream`, `ink`, `clay`, `line`)
-and classes (`.btn`, `.card`, `.input`, `.container-x`); `globals.css` maps shadcn tokens onto it.
-Grey text is `text-muted-foreground` (`text-muted` is a background color in shadcn).
+**Касс (POS, `/admin/physical-store`).** The owner sells at the market stall: tap product tiles, the
+bill (`usePosCart`, client state) → `recordStoreSale` server action (re-checks admin, zod, re-prices
+from the DB, checks stock) saves an `Order` with `deliveryType: "store"`, `status: DELIVERED`,
+`paymentMethod` CASH/CARD/TRANSFER (labels in `lib/orders/paymentMethodLabel.ts`), then calls
+`payOrder`, so the receipt, stock and income work exactly like an online order. No separate tables.
+Cash needs the amount handed over ≥ total (`paymentBlockReason`); quick notes are fixed
+(`QUICK_CASH_NOTES`) so they don't move under the cashier's finger.
+
+**Styling.** `app/styles/brand.css` holds the palette (`brand`, `cream`, `ink`, `clay`, `line`) and
+classes (`.btn`, `.card`, `.input`, `.container-x`); `globals.css` maps shadcn tokens onto it. The
+storefront background is white (rule 7); `cream` is only for the admin. Grey text is
+`text-muted-foreground` (`text-muted` is a background color in shadcn). The shop name is `SHOP_NAME`
+("Бөөний Зах Онлайн", also the seller on receipts).
 
 ## Gotchas
 
@@ -171,9 +198,20 @@ Grey text is `text-muted-foreground` (`text-muted` is a background color in shad
   `<Show when="signed-in" | "signed-out">`, wrapped in `<Suspense>` in Server Components. Optional
   fields are hidden unless `appearance.options.showOptionalFields` is set. `await auth()`.
 - **shadcn `base-nova`** uses Base UI: no `asChild`, use `render`.
-- **After a Prisma migration/generate, restart `npm run dev`.** A dev server started earlier keeps the
-  old client and fails with "Unknown field `x` for select statement".
+- **After a Prisma migration/generate, restart `npm run dev`.** `lib/prisma.ts` caches the client on
+  `globalThis`, so a dev server started earlier keeps the old one: "Unknown field `x` for select
+  statement" for a new field, "Cannot read properties of undefined (reading 'findMany')" for a new model.
+- **The Supabase pooler sometimes refuses connections (P1001 "Can't reach database server").** `next build`
+  prerenders DB-backed pages, so it fails on a random page (`/cart`, `/`, `/business`); retry before
+  debugging the code. Migrations fail the same way.
 - **Effects run twice in dev (StrictMode).** Don't combine a "done once" flag (sessionStorage) with
   cancelling async work in the effect cleanup; the second run sees the flag and the answer is lost.
 - Don't run `prettier --write`: the repo isn't Prettier-formatted and it rewraps files past 150 lines.
+- **`backdrop-blur` (or any filter/transform) on an ancestor traps `position: fixed`**: a drawer inside
+  it gets clipped to that box. The admin top bar is solid white for this reason; the shop mobile menu
+  renders its drawer through a portal.
+- **Turbopack sometimes keeps a stale `globals.css`** (a changed CSS variable doesn't show): restart
+  `npm run dev`.
+- **Claude in Chrome can't resize the owner's maximized window**, so admin pages can't be checked at
+  phone width there; buyer pages can be shot headless with `.claude/skills/ui-review/shot.mjs <url> <png> 390`.
 - Clerk config changes: `npx clerk@latest config patch --file x.json --dry-run --mode agent` first.

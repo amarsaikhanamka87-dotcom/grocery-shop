@@ -10,7 +10,7 @@ export function AccountButton() {
       <Show when="signed-out">
         <Link
           href="/sign-in"
-          className="hidden size-10 place-items-center rounded-full hover:bg-cream-2 sm:grid"
+          className="hidden size-10 place-items-center rounded-full hover:bg-ink/5 sm:grid"
           aria-label="Нэвтрэх"
           title="Нэвтрэх"
         >

@@ -1,4 +1,4 @@
-/** A small colored status badge. */
+/** The one status badge of an order (see orderState). */
 export function StatusPill({ label, className }: { label: string; className: string }) {
-  return <span className={`rounded-full px-2.5 py-1 text-[12px] font-bold ${className}`}>{label}</span>;
+  return <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${className}`}>{label}</span>;
 }

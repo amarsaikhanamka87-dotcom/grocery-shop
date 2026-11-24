@@ -17,8 +17,11 @@ export function listAdminOrders(
     ...(filter.method === "pickup" && { deliveryType: "pickup" }),
     // Old orders have no deliveryType; they were all delivered.
     ...(filter.method === "delivery" && {
-      OR: [{ deliveryType: null }, { deliveryType: { not: "pickup" } }],
+      OR: [{ deliveryType: null }, { deliveryType: { notIn: ["pickup", "store"] } }],
     }),
+    // Касс (walk-in) sales are never orders to fulfil: they live on /admin/physical-store and in
+    // Баримт. (A null deliveryType must stay in, so not a plain `not: "store"`.)
+    AND: [{ OR: [{ deliveryType: null }, { deliveryType: { not: "store" } }] }],
   };
   return prisma.order.findMany({
     where,

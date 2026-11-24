@@ -40,7 +40,7 @@ export function SavedAddressList({ saved, selectedId, onSelect, onRemove }: Prop
               type="button"
               onClick={() => onRemove(a.id)}
               aria-label="Хаяг устгах"
-              className="grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-cream-2 hover:text-clay"
+              className="grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-ink/5 hover:text-clay"
             >
               <Trash2 className="size-4" />
             </button>

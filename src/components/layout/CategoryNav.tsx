@@ -5,7 +5,7 @@ import type { NavItem } from "@/types/nav";
 export function CategoryNav({ nav }: { nav: NavItem[] }) {
   return (
     <nav
-      className="hidden border-b border-line bg-cream lg:block"
+      className="hidden border-b border-line bg-white lg:block"
       aria-label="Үндсэн цэс">
       <div className="container-x flex h-[42px] items-center justify-between">
         <ul className="-ml-2.5 flex items-center gap-1">
@@ -14,10 +14,10 @@ export function CategoryNav({ nav }: { nav: NavItem[] }) {
               <Link
                 href={item.href}
                 className={`flex h-[42px] items-center gap-1 px-2.5 text-[14.5px] font-semibold transition-colors hover:text-brand ${
-                  item.dot ? "text-clay" : "text-ink-2"
+                  item.dot ? "text-brand" : "text-ink-2"
                 }`}>
                 {item.dot && (
-                  <span className="mr-1 size-1.5 rounded-full bg-clay" />
+                  <span className="mr-1 size-1.5 rounded-full bg-brand" />
                 )}
                 {item.label}
                 {item.children && (

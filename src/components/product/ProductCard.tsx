@@ -4,7 +4,6 @@ import { Leaf } from "lucide-react";
 import { discountPercent } from "@/lib/catalog/discountPercent";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { CartButton } from "./CartButton";
-import { CartQtyOverlay } from "./CartQtyOverlay";
 import { StockBadge } from "./StockBadge";
 import { WishButton } from "./WishButton";
 
@@ -27,7 +26,7 @@ function shortUnit(unit: string) {
   return unit.replace(/\s*\(.*\)\s*$/, "");
 }
 
-/** Grey card: white photo (heart, cart quantity overlay), price, name, then "Сагслах" or − / +. */
+/** White card: white photo (heart, cart quantity overlay), price, name, then "Сагслах" or − / +. */
 export function ProductCard({
   product: p,
   priority = false,
@@ -47,10 +46,10 @@ export function ProductCard({
     minQty: p.minQty,
   };
   return (
-    <article className="relative flex flex-col rounded-[24px] bg-cream-2 p-2.5 sm:p-3">
+    <article className="relative flex flex-col rounded-[24px] border border-line bg-white p-2.5 sm:p-3">
       <Link
         href={`/product/${p.slug}`}
-        className="group relative block aspect-square overflow-hidden rounded-[18px] bg-white">
+        className="group relative block aspect-square overflow-hidden rounded-[18px] bg-brand-50">
         <Image
           src={p.image}
           alt={p.name}
@@ -59,45 +58,48 @@ export function ProductCard({
           sizes="(min-width: 1280px) 280px, (min-width: 768px) 33vw, 50vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
-        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
+        <div className="absolute top-2.5 left-2.5 flex max-w-[calc(100%-3.75rem)] flex-col items-start gap-1.5">
           {discount > 0 && (
-            <span className="rounded-full bg-clay px-2.5 py-1 text-xs font-bold text-white">
+            <span className="rounded-full bg-ink px-2.5 py-0.5 text-[16px] font-bold text-white">
               -{discount}%
             </span>
           )}
           {p.isOrganic && (
-            <span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-brand">
-              <Leaf className="size-3" /> Органик
+            <span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-0.5 text-[16px] font-bold text-brand">
+              <Leaf className="hidden size-3.5 sm:block" /> Органик
             </span>
           )}
           <StockBadge stock={p.stock} minQty={p.minQty} unit={p.unit} />
         </div>
-        <CartQtyOverlay item={item} />
       </Link>
       <WishButton
         productId={p.id}
-        className="absolute top-5 right-5 sm:top-5.5 sm:right-5.5"
+        className="absolute top-4 right-4 sm:top-5 sm:right-5"
       />
 
       <div className="flex flex-1 flex-col px-1.5 pt-3 sm:px-2">
-        <div className="flex items-baseline gap-2">
-          <p className="text-[17px] font-extrabold whitespace-nowrap tabular-nums sm:text-lg">
-            {formatPrice(p.price)}
-          </p>
+        {/* Price always with its unit; on a narrow card "/ шуудай" may wrap, never gets cut. The
+            button stays aligned across a row (mt-auto below). */}
+        <p className="flex flex-wrap items-baseline gap-x-1.5">
+          <span className="text-[16px] font-extrabold whitespace-nowrap tabular-nums">{formatPrice(p.price)}</span>
+          <span className="text-[16px] whitespace-nowrap text-muted-foreground">/ {shortUnit(p.unit)}</span>
           {p.oldPrice && (
-            <p className="text-[12.5px] font-medium text-muted-foreground line-through tabular-nums">
+            <span className="text-[16px] whitespace-nowrap text-muted-foreground line-through tabular-nums">
               {formatPrice(p.oldPrice)}
-            </p>
+            </span>
           )}
-        </div>
-        <h3 className="mt-1 line-clamp-2 text-[15px] leading-snug sm:text-base">
+        </p>
+        <h3 className="mt-1 line-clamp-2 text-[16px] font-semibold leading-snug">
           <Link href={`/product/${p.slug}`} className="hover:text-brand">
             {p.name}
           </Link>
         </h3>
-        <p className="mt-1 truncate text-[13px] text-muted-foreground">
-          {p.unit} · багадаа {p.minQty} {shortUnit(p.unit)}
-        </p>
+        {/* The minimum only when it matters (> 1); "Багадаа 1" on every card was noise. */}
+        {p.minQty > 1 && (
+          <p className="mt-1 text-[16px] text-muted-foreground">
+            Багадаа {p.minQty} {shortUnit(p.unit)}
+          </p>
+        )}
         <div className="mt-auto pt-4">
           <CartButton item={item} />
         </div>

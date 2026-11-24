@@ -42,7 +42,7 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
         ) : (
         <FormSection title="Үндсэн мэдээлэл">
           <ProductField name="name" label="Нэр" defaultValue={val("name")} error={fe.name} />
-          <ProductField name="slug" label="Slug (URL)" defaultValue={val("slug")} error={fe.slug} />
+          <ProductField name="slug" label="Холбоосын нэр (латинаар, жишээ: carrot)" defaultValue={val("slug")} error={fe.slug} />
           <div>
             <label className="label" htmlFor="categoryId">Ангилал</label>
             <select id="categoryId" name="categoryId" defaultValue={val("categoryId")} className="input" required>
@@ -60,12 +60,13 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
         </FormSection>
         )}
 
-        <FormSection title="Үнэ ба үлдэгдэл">
+        {/* Editing: the dialog title is already "Үнэ ба үлдэгдэл засах", so no repeat label. */}
+        <FormSection title={p ? undefined : "Үнэ ба үлдэгдэл"}>
           <ProductField name="price" label="Үнэ (₮)" defaultValue={val("price")} error={fe.price} inputMode="numeric" />
-          <ProductField name="oldPrice" label="Хуучин үнэ (₮, заавал биш)" defaultValue={val("oldPrice")} error={fe.oldPrice} inputMode="numeric" required={false} />
+          <ProductField name="oldPrice" label="Хямдралын өмнөх үнэ (₮, заавал биш)" defaultValue={val("oldPrice")} error={fe.oldPrice} inputMode="numeric" required={false} />
           <ProductField name="unit" label="Нэгж" defaultValue={val("unit")} error={fe.unit} />
           <ProductField name="stock" label="Үлдэгдэл" defaultValue={val("stock")} error={fe.stock} inputMode="numeric" />
-          <ProductField name="minQty" label="Хамгийн бага захиалах тоо" defaultValue={val("minQty")} error={fe.minQty} inputMode="numeric" />
+          <ProductField name="minQty" label="Багадаа (хамгийн бага захиалах тоо)" defaultValue={val("minQty")} error={fe.minQty} inputMode="numeric" />
         </FormSection>
 
         {!p && (

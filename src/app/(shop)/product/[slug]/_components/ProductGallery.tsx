@@ -7,7 +7,7 @@ import { WishButton } from "@/components/product/WishButton";
 export function ProductGallery({ product: p }: { product: Product }) {
   const discount = discountPercent(p.price, p.oldPrice);
   return (
-    <div className="relative aspect-square overflow-hidden rounded-[28px] bg-cream-2">
+    <div className="relative aspect-square overflow-hidden rounded-[28px] bg-ink/5">
       <Image
         src={p.image.replace("w=800", "w=1200")}
         alt={p.name}

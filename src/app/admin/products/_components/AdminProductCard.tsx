@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cartUnitLabel } from "@/lib/format/cartUnitLabel";
 import { formatPrice } from "@/lib/format/formatPrice";
 import type { Category, ProductWithCategory } from "@/types/catalog";
 import { ProductActions } from "./ProductActions";
@@ -33,20 +34,25 @@ export function AdminProductCard({ product: p, categories }: Props) {
           <Link href={`/product/${p.slug}`} target="_blank" className="mt-0.5 block truncate font-bold text-ink hover:underline">
             {p.name}
           </Link>
-          <p className="text-[13px] text-muted-foreground">{p.unit}</p>
         </div>
 
-        <div className="flex items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-x-2">
           <span className="text-lg font-extrabold text-ink">{formatPrice(p.price)}</span>
-          {p.oldPrice && <span className="text-[13px] text-muted-foreground line-through">{formatPrice(p.oldPrice)}</span>}
+          <span className="text-[14px] text-muted-foreground">/ {cartUnitLabel(p.unit)}</span>
+          {p.oldPrice && <span className="text-[14px] text-muted-foreground line-through">{formatPrice(p.oldPrice)}</span>}
         </div>
 
-        <div className="mt-auto flex items-center gap-2 border-t border-line pt-3">
-          <StockBadge stock={p.stock} minQty={p.minQty} />
-          <span className="text-[12.5px] text-muted-foreground">Доод {p.minQty}</span>
-          <div className="ml-auto">
-            <ProductActions product={p} categories={categories} />
+        {/* Stock (+ the minimum, only when it's more than 1) on one line, the actions on their own. */}
+        <div className="mt-auto grid gap-3 border-t border-line pt-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <StockBadge stock={p.stock} minQty={p.minQty} unit={p.unit} />
+            {p.minQty > 1 && (
+              <span className="text-[13px] text-muted-foreground">
+                Багадаа {p.minQty} {cartUnitLabel(p.unit)}
+              </span>
+            )}
           </div>
+          <ProductActions product={p} categories={categories} />
         </div>
       </div>
     </li>

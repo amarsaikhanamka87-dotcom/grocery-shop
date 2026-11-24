@@ -27,7 +27,7 @@ export function AddressDialogBody() {
                 onClick={() => d.setTab(t.id)}
                 className={cn(
                   "h-10 rounded-xl px-4 text-[14px] font-bold",
-                  d.tab === t.id ? "bg-ink text-white" : "bg-cream-2 text-muted-foreground hover:text-ink",
+                  d.tab === t.id ? "bg-ink text-white" : "bg-ink/5 text-ink-2 hover:text-ink",
                 )}
               >
                 {t.label}

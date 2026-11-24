@@ -5,7 +5,7 @@ import { Check, Minus, Plus, ShoppingBasket, TriangleAlert } from "lucide-react"
 import type { CartItem } from "@/components/cart/CartContext";
 import { useAddToCart } from "./useAddToCart";
 
-/** Quantity stepper + add button used on the product page. */
+/** Quantity stepper + add button used on the product page; one row, also on phones (sticky bar). */
 export function AddToCart({ item }: { item: Omit<CartItem, "quantity"> }) {
   const a = useAddToCart(item);
   const [done, setDone] = useState(false);
@@ -14,9 +14,9 @@ export function AddToCart({ item }: { item: Omit<CartItem, "quantity"> }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex h-14 items-center rounded-full border border-line bg-white">
-          <button type="button" onClick={a.dec} disabled={a.soldOut || a.full} className="grid size-14 place-items-center rounded-full hover:text-brand disabled:opacity-30" aria-label="Тоо хасах">
+      <div className="flex items-center gap-3">
+        <div className="flex h-14 shrink-0 items-center rounded-full border border-line bg-white">
+          <button type="button" onClick={a.dec} disabled={a.soldOut || a.full} className="grid size-12 place-items-center rounded-full hover:text-brand disabled:opacity-30 sm:size-14" aria-label="Тоо хасах">
             <Minus className="size-4" />
           </button>
           <input
@@ -27,10 +27,10 @@ export function AddToCart({ item }: { item: Omit<CartItem, "quantity"> }) {
             disabled={a.soldOut || a.full}
             onChange={(e) => a.setQty(Number(e.target.value) || 0)}
             onBlur={a.clampQty}
-            className="w-14 bg-transparent text-center text-lg font-bold tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-11 bg-transparent sm:w-14 text-center text-lg font-bold tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             aria-label="Тоо хэмжээ"
           />
-          <button type="button" onClick={a.inc} disabled={a.qty >= a.left} className="grid size-14 place-items-center rounded-full hover:text-brand disabled:opacity-30" aria-label="Тоо нэмэх">
+          <button type="button" onClick={a.inc} disabled={a.qty >= a.left} className="grid size-12 place-items-center rounded-full hover:text-brand disabled:opacity-30 sm:size-14" aria-label="Тоо нэмэх">
             <Plus className="size-4" />
           </button>
         </div>
@@ -42,7 +42,7 @@ export function AddToCart({ item }: { item: Omit<CartItem, "quantity"> }) {
             setDone(true);
             setTimeout(() => setDone(false), 1500);
           }}
-          className="btn btn-primary h-14 flex-1 px-8 text-base disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+          className="btn btn-primary h-14 min-w-0 flex-1 px-4 text-base disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-8"
         >
           {done ? <Check className="size-5" /> : <ShoppingBasket className="size-5" />}
           {label}

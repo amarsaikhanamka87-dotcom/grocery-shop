@@ -15,7 +15,7 @@ export async function getReceiptData(where: { id: string } | { orderId: string }
   const receipt = await prisma.receipt.findUnique({
     where,
     include: {
-      order: { include: { items: { include: { product: { select: { slug: true } } } } } },
+      order: { include: { items: true } },
     },
   });
   if (!receipt) return null;
@@ -44,7 +44,8 @@ export async function getReceiptData(where: { id: string } | { orderId: string }
     lines: order.items.map((item, index) => ({
       no: index + 1,
       name: item.name,
-      code: item.product?.slug ?? "",
+      // Products have no stock code yet; the English URL slug ("carrot") only confused people.
+      code: "",
       unit: item.unit,
       quantity: item.quantity,
       price: item.price,

@@ -6,7 +6,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export type UbDay = {
   key: string; // "2026-11-23", used in the URL (?day=)
-  label: string; // "11:23"
+  label: string; // "11/23" (day buttons)
+  longLabel: string; // "11-р сарын 23" (headings)
   weekday: string; // "Даваа"
   start: Date; // the day's UB midnight as a real UTC Date
   end: Date; // next UB midnight
@@ -25,7 +26,8 @@ export function ubRecentDays(count: number, now: Date = new Date()): UbDay[] {
     const start = new Date(day.getTime() - UB_OFFSET_MS);
     return {
       key: `${day.getUTCFullYear()}-${pad(month)}-${pad(date)}`,
-      label: `${month}:${pad(date)}`,
+      label: `${month}/${pad(date)}`,
+      longLabel: `${month}-р сарын ${date}`,
       weekday: WEEKDAY_OPTIONS.find((w) => w.value === day.getUTCDay())?.label ?? "",
       start,
       end: new Date(start.getTime() + DAY_MS),

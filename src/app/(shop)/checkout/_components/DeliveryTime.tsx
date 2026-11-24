@@ -27,14 +27,14 @@ export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <DeliveryTypeCard
             title="Хуваарьт"
-            hint="Хуваарьт хүргэлт"
+            hint="Өдөр, цагаа сонгоно"
             icon={CalendarCheck}
             checked={t.type === "scheduled"}
             onSelect={() => t.setType("scheduled")}
           />
           <DeliveryTypeCard
             title="Давтамжит"
-            hint="Давтамжит хүргэлт"
+            hint="7 хоног бүр тогтмол"
             icon={CalendarSync}
             checked={t.type === "recurring"}
             onSelect={() => t.setPlanOpen(true)}
@@ -54,6 +54,9 @@ export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
         </div>
       )}
 
+      {/* Day + time chips already show the choice for Хуваарьт / Очиж авах; this summary only for
+          the other kinds (Давтамжит plan with "Өөрчлөх", Шуурхай). */}
+      {t.type !== "scheduled" && t.type !== "pickup" && (
       <div className="mt-5 flex items-center gap-4 rounded-2xl border border-line bg-white p-4">
         <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-brand text-white">
           <CalendarDays className="size-6" />
@@ -68,6 +71,7 @@ export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
           </button>
         )}
       </div>
+      )}
     </section>
   );
 }

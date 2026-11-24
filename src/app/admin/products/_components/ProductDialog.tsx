@@ -16,12 +16,8 @@ export function ProductDialog({ product, categories }: { product?: Product; cate
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {product ? (
-        <Dialog.Trigger
-          aria-label="Засах"
-          title="Засах"
-          className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-brand-50 hover:text-brand"
-        >
-          <Pencil className="size-4" />
+        <Dialog.Trigger className="btn btn-outline h-10 px-4 text-[14px]">
+          <Pencil className="size-4" /> Засах
         </Dialog.Trigger>
       ) : (
         <Dialog.Trigger className="btn btn-primary h-11 w-full px-4 sm:w-auto">

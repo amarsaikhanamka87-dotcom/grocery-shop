@@ -14,7 +14,7 @@ export function BasketButton() {
     >
       <ShoppingBasket className="size-[18px]" />
       <span className="hidden sm:inline">Сагс</span>
-      <span className="grid size-8 place-items-center rounded-full bg-clay text-[13px] font-bold tabular-nums">
+      <span className="grid size-8 place-items-center rounded-full bg-white text-[13px] text-brand font-bold tabular-nums">
         {ready ? count : 0}
       </span>
     </Link>

@@ -45,7 +45,7 @@ export function receiptHtml(receipt: ReceiptData): string {
 </tr></table>
 ${receiptLinesHtml(receipt)}
 <p style="font-size:12.5px;margin:10px 0 0;color:#333;">
-  Захиалга №${receipt.orderNumber} · Төлбөр төлөгдсөн · Утас: ${escapeHtml(buyer.phone)}
+  Захиалга №${receipt.orderNumber} · Төлбөр төлөгдсөн${buyer.phone ? ` · Утас: ${escapeHtml(buyer.phone)}` : ""}
 </p>
 <table width="100%" style="font-size:13px;margin-top:22px;"><tr>
   <td style="width:90px;vertical-align:top;font-weight:bold;">Тэмдэг</td>

@@ -8,7 +8,7 @@ export function CategoryTile({ category: c }: { category: CategoryWithCount }) {
       href={`/shop?category=${c.slug}`}
       className="group flex flex-col items-center gap-2.5 rounded-[20px] border border-line bg-white p-3 text-center transition-shadow hover:shadow-card sm:flex-row sm:gap-3.5 sm:text-left"
     >
-      <span className="relative aspect-square w-full shrink-0 overflow-hidden rounded-2xl bg-cream-2 sm:size-[72px] sm:w-auto">
+      <span className="relative aspect-square w-full shrink-0 overflow-hidden rounded-2xl bg-ink/5 sm:size-[72px] sm:w-auto">
         <Image
           src={c.image}
           alt=""

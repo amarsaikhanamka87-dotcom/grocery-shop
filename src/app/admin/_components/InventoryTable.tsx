@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ArrowRight, PackageSearch } from "lucide-react";
 import type { OutgoingRow } from "@/lib/orders/getDayOutgoing";
-import { InventoryItem } from "./InventoryItem";
+import { IncomeBreakdown } from "./IncomeBreakdown";
 
-/** "<day> гарсан бараа": products in orders paid that day, most outgoing first. */
-export function InventoryTable({ dayTitle, rows }: { dayTitle: string; rows: OutgoingRow[] }) {
+type Props = { dayTitle: string; rows: OutgoingRow[]; deliveryFees: number };
+
+/** "<day> гарсан бараа": products in orders paid that day (most income first) as one money table. */
+export function InventoryTable({ dayTitle, rows, deliveryFees }: Props) {
   return (
     <section className="card mt-6 p-5">
       <div className="flex items-center justify-between gap-3">
@@ -20,11 +22,9 @@ export function InventoryTable({ dayTitle, rows }: { dayTitle: string; rows: Out
           <PackageSearch className="size-7" /> Энэ өдөр төлөгдсөн захиалгад бараа алга.
         </p>
       ) : (
-        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
-          {rows.map((p) => (
-            <InventoryItem key={p.id} product={p} />
-          ))}
-        </ul>
+        // One table (item, stock left, quantity, price, money, total) instead of photo cards plus a
+        // table that repeated the same numbers: one short scroll on a phone.
+        <IncomeBreakdown rows={rows} deliveryFees={deliveryFees} />
       )}
     </section>
   );

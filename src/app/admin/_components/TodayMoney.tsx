@@ -1,24 +1,43 @@
-import { Scale, TrendingDown, TrendingUp } from "lucide-react";
+import { Calculator, Globe, TrendingUp } from "lucide-react";
 import type { getDayMoney } from "@/lib/orders/getDayMoney";
+import type { getStoreDaySales } from "@/lib/orders/getStoreDaySales";
 import { MoneyCard } from "./MoneyCard";
 
-type Props = { title: string; money: Awaited<ReturnType<typeof getDayMoney>> };
+type Props = {
+  title: string;
+  money: Awaited<ReturnType<typeof getDayMoney>>;
+  store: Awaited<ReturnType<typeof getStoreDaySales>>;
+};
 
-/** One day's income, expenses and the balance between them, under `title` ("Өнөөдөр" / "11:21"). */
-export function TodayMoney({ title, money }: Props) {
+/** One day's income: the total, then split into online orders and stall (POS) sales. */
+export function TodayMoney({ title, money, store }: Props) {
+  const onlineIncome = money.income - store.total;
+  const onlineOrders = money.paidOrders - store.count;
   return (
     <section className="mt-6">
       <h2 className="text-lg font-extrabold">{title}</h2>
       <div className="mt-3 grid gap-4 sm:grid-cols-3">
         <MoneyCard
-          label="Орлого"
+          label="Нийт орлого"
           amount={money.income}
-          hint={`${money.paidOrders} төлөгдсөн захиалга`}
+          hint="Онлайн + касс"
           icon={TrendingUp}
           tone="brand"
         />
-        <MoneyCard label="Зарлага" amount={money.expenses} hint="Зарлага бүртгэх хэсэг удахгүй" icon={TrendingDown} tone="clay" />
-        <MoneyCard label="Үлдэгдэл" amount={money.balance} hint="Орлого − зарлага" icon={Scale} tone="ink" />
+        <MoneyCard
+          label="Онлайн захиалга"
+          amount={onlineIncome}
+          hint={`${onlineOrders} төлөгдсөн захиалга`}
+          icon={Globe}
+          tone="ink"
+        />
+        <MoneyCard
+          label="Касс"
+          amount={store.total}
+          hint={`${store.count} борлуулалт`}
+          icon={Calculator}
+          tone="ink"
+        />
       </div>
     </section>
   );

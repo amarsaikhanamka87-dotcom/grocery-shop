@@ -1,18 +1,20 @@
 import { ChevronRight } from "lucide-react";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { formatDateTime } from "@/lib/format/formatDateTime";
+import { formatDayMn } from "@/lib/format/formatDayMn";
 import type { AdminOrder } from "@/lib/orders/listAdminOrders";
-import { ORDER_BADGES } from "../_features/orderBadges";
-import { statusBadge } from "../_features/statusBadge";
+import { orderState } from "../_features/orderState";
 import { FulfillmentPill } from "./FulfillmentPill";
 import { StatusPill } from "./StatusPill";
 import { AdminOrderDialog } from "./AdminOrderDialog";
 import { DELIVERY_TYPE_LABEL } from "@/lib/orders/deliveryTypeLabel";
+import { PAYMENT_METHOD_LABEL } from "@/lib/orders/paymentMethodLabel";
 
 /** One order row; clicking it opens the read-only detail dialog. */
 export function AdminOrderRow({ order: o }: { order: AdminOrder }) {
-  const day = o.deliveryDate?.toISOString().slice(0, 10) ?? "";
-  const pickup = o.deliveryType === "pickup";
+  const day = formatDayMn(o.deliveryDate);
+  // Pickup: the type tag already says "Очиж авах", so the time line is just day + slot.
+  const typeText = o.deliveryType === "pickup" ? "" : `${DELIVERY_TYPE_LABEL[o.deliveryType ?? ""] ?? "Хүргэлт"} · `;
   return (
     <li>
       <AdminOrderDialog order={o}>
@@ -29,16 +31,20 @@ export function AdminOrderRow({ order: o }: { order: AdminOrder }) {
             </span>
           </span>
           <span className="min-w-0 text-[13.5px]">
-            <span className="block truncate">{o.items.map((i) => `${i.name} ×${i.quantity}${i.unit}`).join(", ")}</span>
+            <span className="block truncate">{o.items.map((i) => `${i.name} × ${i.quantity} ${i.unit}`).join(", ")}</span>
             <span className="block text-muted-foreground">
-              {DELIVERY_TYPE_LABEL[o.deliveryType ?? ""] ?? "Хүргэлт"} · {day} {o.deliverySlot}
+              {typeText}
+              {day}, {o.deliverySlot}
             </span>
           </span>
-          <span className="flex flex-wrap items-center gap-1.5">
-            <FulfillmentPill pickup={pickup} />
-            <StatusPill {...ORDER_BADGES.payment[o.paymentStatus]} />
-            <StatusPill {...statusBadge(o.status, pickup)} />
-            <span className="text-[12px] font-semibold text-muted-foreground">{o.paymentMethod}</span>
+          {/* One status badge + how it leaves. The payment method shows only for store sales
+              (Бэлэн / Карт / Дансаар); "Wire" on every online order told the owner nothing. */}
+          <span className="flex flex-wrap items-center gap-2">
+            <StatusPill {...orderState(o)} />
+            <FulfillmentPill deliveryType={o.deliveryType} />
+            {o.deliveryType === "store" && (
+              <span className="text-[13px] font-semibold text-muted-foreground">{PAYMENT_METHOD_LABEL[o.paymentMethod]}</span>
+            )}
           </span>
           <span className="text-[16px] font-extrabold tabular-nums lg:text-right">{formatPrice(o.total)}</span>
           <ChevronRight className="hidden size-4 text-muted-foreground lg:block" />

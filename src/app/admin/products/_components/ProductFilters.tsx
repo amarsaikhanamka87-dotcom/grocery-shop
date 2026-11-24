@@ -21,7 +21,7 @@ export function ProductFilters({ categories }: { categories: CategoryWithCount[]
             type="search"
             value={text}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Нэр, slug, гарал үүслээр хайх"
+            placeholder="Нэр эсвэл гарал үүслээр хайх"
             className="input h-10 py-0 pl-9"
           />
           {pending && <Loader2 className="absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />}
