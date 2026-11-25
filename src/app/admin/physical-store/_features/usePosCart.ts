@@ -5,9 +5,12 @@ import type { PosProduct } from "@/lib/catalog/getPosProducts";
 
 export type PosLine = { product: PosProduct; quantity: number };
 
-/** The POS basket: products the cashier tapped, quantities capped at the stock left. */
-export function usePosCart() {
-  const [lines, setLines] = useState<PosLine[]>([]);
+/**
+ * The POS basket: products the cashier tapped, quantities capped at the stock left. Can start
+ * filled (a handwritten order sent from /admin/handwriting).
+ */
+export function usePosCart(initialLines: PosLine[] = []) {
+  const [lines, setLines] = useState<PosLine[]>(initialLines);
 
   const setQuantity = (productId: string, quantity: number) =>
     setLines((current) =>

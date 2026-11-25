@@ -4,6 +4,7 @@ import {
   FileText,
   LayoutDashboard,
   Package,
+  ScanText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -18,4 +19,6 @@ export const adminNav: AdminNavItem[] = [
   { href: "/admin/receipts", label: "Баримт", icon: FileText },
 
   { href: "/admin/products", label: "Бүтээгдэхүүн", icon: Package },
+
+  { href: "/admin/handwriting", label: "Гар бичмэл", icon: ScanText },
 ];

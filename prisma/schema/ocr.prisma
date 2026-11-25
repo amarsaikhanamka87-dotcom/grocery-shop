@@ -1,0 +1,14 @@
+// Handwriting → text (/admin/handwriting). One row per photo read by the AI model; the photo itself
+// is not stored. readText = what the model returned, finalText = the admin's corrected text.
+
+model HandwritingScan {
+  id          String   @id @default(cuid())
+  adminUserId String // Clerk user id of the admin who scanned
+  model       String // AI model that read the photo, e.g. "gemini-2.5-flash"
+  readText    String // raw model output
+  finalText   String? // text after the admin's edits (null until saved)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdAt])
+}
