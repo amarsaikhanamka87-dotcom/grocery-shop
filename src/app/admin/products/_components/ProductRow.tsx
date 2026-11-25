@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cartUnitLabel } from "@/lib/format/cartUnitLabel";
 import { formatPrice } from "@/lib/format/formatPrice";
 import type { Category, ProductWithCategory } from "@/types/catalog";
 import { ProductActions } from "./ProductActions";
@@ -21,9 +22,7 @@ export function ProductRow({ product: p, categories }: Props) {
           <Link href={`/product/${p.slug}`} target="_blank" className="block truncate font-bold text-ink hover:underline">
             {p.name}
           </Link>
-          <p className="truncate text-[13px] text-muted-foreground">
-            {p.category.name} · {p.unit}
-          </p>
+          <p className="truncate text-[13px] text-muted-foreground">{p.category.name}</p>
           {(p.isFeatured || p.isOrganic) && (
             <div className="mt-1 flex gap-1">
               {p.isFeatured && <span className={tag}>Онцлох</span>}
@@ -32,17 +31,21 @@ export function ProductRow({ product: p, categories }: Props) {
           )}
         </div>
         <div className="shrink-0 text-right">
-          <p className="font-extrabold text-ink">{formatPrice(p.price)}</p>
-          {p.oldPrice && <p className="text-[12px] text-muted-foreground line-through">{formatPrice(p.oldPrice)}</p>}
+          <p className="font-extrabold whitespace-nowrap text-ink">{formatPrice(p.price)}</p>
+          <p className="text-[13px] text-muted-foreground">/ {cartUnitLabel(p.unit)}</p>
+          {p.oldPrice && <p className="text-[13px] text-muted-foreground line-through">{formatPrice(p.oldPrice)}</p>}
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <StockBadge stock={p.stock} minQty={p.minQty} />
-        <p className="text-[13px] text-muted-foreground">Доод тоо {p.minQty}</p>
-        <div className="ml-auto">
-          <ProductActions product={p} categories={categories} />
-        </div>
+      {/* Stock (+ minimum when > 1) on one line, then the actions on their own line. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <StockBadge stock={p.stock} minQty={p.minQty} unit={p.unit} />
+        {p.minQty > 1 && (
+          <p className="text-[13px] text-muted-foreground">
+            Багадаа {p.minQty} {cartUnitLabel(p.unit)}
+          </p>
+        )}
       </div>
+      <ProductActions product={p} categories={categories} />
     </li>
   );
 }

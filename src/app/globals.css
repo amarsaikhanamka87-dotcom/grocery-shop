@@ -36,7 +36,7 @@
 }
 
 :root {
-  --background: #faf8f3; /* cream */
+  --background: #ffffff; /* white: storefront palette = white, ink, brand green */
   --foreground: #1d2a21; /* ink */
   --card: #ffffff;
   --card-foreground: #1d2a21;
@@ -51,8 +51,8 @@
   --accent: #eef3ec; /* brand-50 */
   --accent-foreground: #2e5d3d;
   --destructive: #b4562a; /* clay */
-  --border: #e7e2d6; /* line */
-  --input: #e7e2d6;
+  --border: #e3e6e4; /* line */
+  --input: #e3e6e4;
   --ring: #2e5d3d;
   --radius: 0.75rem;
 }

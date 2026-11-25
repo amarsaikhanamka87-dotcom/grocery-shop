@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { monthGrid } from "../_features/monthGrid";
 
 const WEEK_HEAD = ["Да", "Мя", "Лха", "Пү", "Ба", "Бя", "Ня"];
-const NAV = "grid size-10 place-items-center rounded-xl bg-cream-2 text-ink hover:bg-line disabled:opacity-40";
+const NAV = "grid size-10 place-items-center rounded-xl bg-ink/5 text-ink hover:bg-line disabled:opacity-40";
 
 type Props = {
   year: number;

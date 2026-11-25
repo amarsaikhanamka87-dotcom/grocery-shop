@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { getMyApplication } from "@/lib/business/getMyApplication";
 import { getMonthlyOrder } from "@/lib/business/getMonthlyOrder";
 import { getAllProducts } from "@/lib/catalog/getAllProducts";
 import { profileDefaults } from "@/lib/auth/profileDefaults";
 import { ApplyView } from "./_components/ApplyView";
 import { B2BDashboard } from "./_components/B2BDashboard";
+import { requireBusinessSignIn } from "./_middleware/requireBusinessSignIn";
 
 export const metadata: Metadata = { title: "Бизнес хэрэглэгч" };
 
 const EMPTY_MONTHLY = { dayOfMonth: 1, active: true, items: [] };
 
 export default async function BusinessPage() {
-  const { userId } = await auth();
-  if (!userId) redirect("/sign-in?redirect_url=/business");
+  const userId = await requireBusinessSignIn();
   const [application, user] = await Promise.all([getMyApplication(userId), currentUser()]);
   const isB2B = user?.publicMetadata.role === "b2b" && application?.status === "APPROVED";
 

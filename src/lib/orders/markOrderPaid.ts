@@ -7,7 +7,10 @@ import { payOrder } from "./payOrder";
  * the paid amount equals the order total. Safe to call twice.
  * Returns true when the order is (now or already) paid.
  */
-export async function markOrderPaid(intentId: string, paidAmount: number): Promise<boolean> {
+export async function markOrderPaid(
+  intentId: string,
+  paidAmount: number,
+): Promise<boolean> {
   const order = await prisma.order.findUnique({
     where: { wireIntentId: intentId },
     select: { id: true, total: true, paymentStatus: true },
@@ -15,7 +18,9 @@ export async function markOrderPaid(intentId: string, paidAmount: number): Promi
   if (!order) return false;
   if (order.paymentStatus === "PAID") return true;
   if (order.total !== paidAmount) {
-    console.error(`[wire] amount mismatch for order ${order.id}: paid ${paidAmount}, total ${order.total}`);
+    console.error(
+      `[wire] amount mismatch for order ${order.id}: paid ${paidAmount}, total ${order.total}`,
+    );
     return false;
   }
   return payOrder(order.id);

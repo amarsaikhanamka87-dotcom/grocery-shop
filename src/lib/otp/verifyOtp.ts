@@ -1,29 +1,26 @@
 import "server-only";
-import { timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
+import { getVerifyStatus } from "@/lib/verify/getVerifyStatus";
 import type { OtpResult } from "@/types/auth";
 import { hashCode } from "./hashCode";
-import { OTP_LIMITS } from "./limits";
 
-/** Checks the latest unused code for the phone. A correct code can be used exactly once. */
-export async function verifyOtp(phone: string, code: string): Promise<OtpResult> {
+/**
+ * Checks whether the buyer's SMS for this verify.mn session arrived. The session must be one we
+ * created for this phone (matched by HMAC) and can be used exactly once.
+ */
+export async function verifyOtp(phone: string, sessionId: string): Promise<OtpResult> {
   const row = await prisma.phoneOtp.findFirst({
-    where: { phone, consumedAt: null },
-    orderBy: { createdAt: "desc" },
+    where: { phone, codeHash: hashCode(phone, sessionId), consumedAt: null },
   });
 
   if (!row) return { ok: false, error: "no_code" };
   if (row.expiresAt.getTime() < Date.now()) return { ok: false, error: "expired" };
-  if (row.attempts >= OTP_LIMITS.maxAttempts) return { ok: false, error: "locked" };
 
-  const expected = Buffer.from(row.codeHash, "hex");
-  const given = Buffer.from(hashCode(phone, code), "hex");
-  if (!timingSafeEqual(expected, given)) {
-    await prisma.phoneOtp.update({ where: { id: row.id }, data: { attempts: { increment: 1 } } });
-    return { ok: false, error: row.attempts + 1 >= OTP_LIMITS.maxAttempts ? "locked" : "wrong" };
-  }
+  const status = await getVerifyStatus(sessionId);
+  if (status === "EXPIRED") return { ok: false, error: "expired" };
+  if (status === "PENDING") return { ok: false, error: "pending" };
 
-  // Conditional update so two parallel requests can't both use the same code.
+  // Conditional update so two parallel polls can't both sign in with the same session.
   const used = await prisma.phoneOtp.updateMany({
     where: { id: row.id, consumedAt: null },
     data: { consumedAt: new Date() },

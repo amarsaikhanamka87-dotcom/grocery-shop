@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Building2, Heart, Menu, User, X } from "lucide-react";
+import { Heart, Menu, User, X } from "lucide-react";
 import { Show, UserButton } from "@clerk/nextjs";
 import type { NavItem } from "@/types/nav";
+import { AdminLink } from "./AdminLink";
 import { Logo } from "./Logo";
 
 export function MobileMenu({ nav }: { nav: NavItem[] }) {
@@ -27,7 +28,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
     <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Цэс">
       <div className="absolute inset-0 bg-ink/40" onClick={() => setOpen(false)} />
       <aside
-        className="absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col bg-cream shadow-float"
+        className="absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col bg-white shadow-float"
         onClick={(e) => {
           // Close the drawer when a link inside it is followed.
           if ((e.target as HTMLElement).closest("a")) setOpen(false);
@@ -37,7 +38,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
           <Logo />
           <button
             onClick={() => setOpen(false)}
-            className="grid size-10 place-items-center rounded-full hover:bg-cream-2"
+            className="grid size-10 place-items-center rounded-full hover:bg-ink/5"
             aria-label="Цэс хаах"
           >
             <X className="size-5" />
@@ -48,9 +49,9 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
             <div key={item.label} className="border-b border-line/70 py-1 last:border-b-0">
               <Link
                 href={item.href}
-                className={`flex items-center gap-2 rounded-xl px-3 py-3 text-[16px] font-bold active:bg-cream-2 ${item.dot ? "text-clay" : ""}`}
+                className={`flex items-center gap-2 rounded-xl px-3 py-3 text-[16px] font-bold active:bg-brand-50 ${item.dot ? "text-brand" : ""}`}
               >
-                {item.dot && <span className="size-1.5 rounded-full bg-clay" />}
+                {item.dot && <span className="size-1.5 rounded-full bg-brand" />}
                 {item.label}
               </Link>
               {item.children && (
@@ -59,7 +60,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
                     <Link
                       key={c.href}
                       href={c.href}
-                      className="rounded-lg px-2 py-2.5 text-[15px] font-medium text-ink-2 active:bg-cream-2"
+                      className="rounded-lg px-2 py-2.5 text-[15px] font-medium text-ink-2 active:bg-brand-50"
                     >
                       {c.label}
                     </Link>
@@ -70,17 +71,16 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
           ))}
         </nav>
         <div className="grid shrink-0 gap-2 border-t border-line p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <AdminLink className="btn btn-primary h-12" />
           <Show when="signed-in">
             <div className="flex h-12 items-center gap-3 rounded-full border border-line bg-white px-3">
               <UserButton />
               <span className="font-bold">Миний бүртгэл</span>
             </div>
           </Show>
+          {/* One sign-in button: business registration (/business) needs sign-in first anyway. */}
           <Show when="signed-out">
-            <Link href="/sign-up" className="btn btn-primary h-12">
-              <Building2 className="size-4" /> Байгууллагаар бүртгүүлэх
-            </Link>
-            <Link href="/sign-in" className="btn btn-outline h-12">
+            <Link href="/sign-in" className="btn btn-primary h-12">
               <User className="size-4" /> Нэвтрэх
             </Link>
           </Show>
@@ -96,7 +96,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="-ml-2 grid size-10 place-items-center rounded-full hover:bg-cream-2 lg:hidden"
+        className="-ml-2 grid size-11 place-items-center rounded-full hover:bg-ink/5 lg:hidden"
         aria-label="Цэс нээх"
         aria-expanded={open}
       >

@@ -10,7 +10,7 @@ export function CategoryLink({ href, label, count, active }: Props) {
         active ? "bg-brand text-white" : "bg-white text-ink-2 hover:bg-brand-50 lg:bg-transparent"
       }`}
     >
-      {label} <span className="text-xs opacity-70 max-lg:hidden">{count}</span>
+      {label} <span className="text-[14px] font-bold tabular-nums opacity-80 max-lg:hidden">{count}</span>
     </Link>
   );
 }

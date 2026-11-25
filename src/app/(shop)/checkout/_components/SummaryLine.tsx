@@ -5,7 +5,7 @@ import { formatPrice } from "@/lib/format/formatPrice";
 export function SummaryLine({ item: i }: { item: CartItem }) {
   return (
     <li className="flex items-center gap-3">
-      <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-cream-2">
+      <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-ink/5">
         <Image src={i.image} alt="" fill sizes="56px" className="object-cover" />
         <span className="absolute right-0.5 top-0.5 grid min-w-5 place-items-center rounded-full bg-ink px-1 text-[11px] font-bold text-white">
           {i.quantity}

@@ -1,0 +1,57 @@
+{
+  "name": "Захиалга төлөгдсөн → БМ-3 баримт Gmail-ээр",
+  "nodes": [
+    {
+      "id": "cb036570-2262-46b1-bb24-3eb48c8a9f96",
+      "name": "Апп-аас (order-event)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "45a5a11b-f52a-4ff4-9c02-1869c9fef4fe",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "order-event",
+        "authentication": "headerAuth",
+        "options": {}
+      }
+    },
+    {
+      "id": "e22416bc-731a-484b-a9f5-bd8b918d8f9f",
+      "name": "Gmail-ээр илгээх",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.body.order.email }}",
+        "subject": "={{ $json.body.receipt.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.body.receipt.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Апп-аас (order-event)": {
+      "main": [
+        [
+          {
+            "node": "Gmail-ээр илгээх",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

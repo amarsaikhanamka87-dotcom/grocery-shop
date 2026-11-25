@@ -1,39 +1,27 @@
-import { getCategories } from "@/lib/catalog/getCategories";
 import { getDeals } from "@/lib/catalog/getDeals";
 import { getProductCount } from "@/lib/catalog/getProductCount";
-import { getPromoProducts } from "@/lib/catalog/getPromoProducts";
 import { getFeaturedProducts } from "@/lib/catalog/getFeaturedProducts";
 import { HeroSection } from "./_components/HeroSection";
-import { FeatureStrip } from "./_components/FeatureStrip";
-import { CategoriesSection } from "./_components/CategoriesSection";
+import { StatsStrip } from "./_components/StatsStrip";
 import { FeaturedSection } from "./_components/FeaturedSection";
-import { PromoBanners } from "./_components/PromoBanners";
 import { DealsSection } from "./_components/DealsSection";
 import { FarmsStory } from "./_components/FarmsStory";
-import { SegmentsSection } from "./_components/SegmentsSection";
-import { CtaSection } from "./_components/CtaSection";
 
+// Landing page: 3 colors (white, ink, brand green), one font (Manrope) in 3 sizes (display, heading, body).
 export default async function HomePage() {
-  const [categories, featured, deals, promo, productCount] = await Promise.all([
-    getCategories(),
+  const [featured, deals, productCount] = await Promise.all([
     getFeaturedProducts(),
     getDeals(),
-    getPromoProducts(),
     getProductCount(),
   ]);
 
   return (
     <>
       <HeroSection />
-      {/* <FeatureStrip /> */}
-
       <FeaturedSection products={featured} />
-
+      <StatsStrip productCount={productCount} />
       <DealsSection products={deals} />
-      <CategoriesSection categories={categories} />
-      <FarmsStory productCount={productCount} />
-      {/* <SegmentsSection /> */}
-      <CtaSection />
+      <FarmsStory />
     </>
   );
 }

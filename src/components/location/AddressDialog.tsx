@@ -16,7 +16,7 @@ export function AddressDialog() {
           {dialogOpen && <AddressDialogBody />}
           <Dialog.Close
             aria-label="Хаах"
-            className="absolute top-4 right-4 grid size-9 place-items-center rounded-full text-muted-foreground hover:bg-cream-2 hover:text-ink"
+            className="absolute top-4 right-4 grid size-9 place-items-center rounded-full text-muted-foreground hover:bg-ink/5 hover:text-ink"
           >
             <X className="size-5" />
           </Dialog.Close>

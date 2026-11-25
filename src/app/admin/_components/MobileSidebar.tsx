@@ -13,7 +13,7 @@ export function MobileSidebar() {
     <>
       <button
         onClick={show}
-        className="grid size-10 place-items-center rounded-full hover:bg-cream-2 lg:hidden"
+        className="grid size-11 place-items-center rounded-full hover:bg-cream-2 lg:hidden"
         aria-label="Цэс нээх"
       >
         <Menu className="size-5" />
@@ -26,7 +26,7 @@ export function MobileSidebar() {
               <SidebarBrand />
               <button
                 onClick={hide}
-                className="grid size-10 place-items-center rounded-full hover:bg-cream-2"
+                className="grid size-11 place-items-center rounded-full hover:bg-cream-2"
                 aria-label="Цэс хаах"
               >
                 <X className="size-5" />

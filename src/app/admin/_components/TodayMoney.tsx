@@ -1,24 +1,47 @@
-import { Scale, TrendingDown, TrendingUp } from "lucide-react";
-import type { getTodayMoney } from "@/lib/orders/getTodayMoney";
+import { Calculator, Globe, TrendingUp } from "lucide-react";
+import type { getDayMoney } from "@/lib/orders/getDayMoney";
+import type { getStoreDaySales } from "@/lib/orders/getStoreDaySales";
 import { MoneyCard } from "./MoneyCard";
 
-type Props = { money: Awaited<ReturnType<typeof getTodayMoney>> };
+type Props = {
+  title: string;
+  money: Awaited<ReturnType<typeof getDayMoney>>;
+  store: Awaited<ReturnType<typeof getStoreDaySales>>;
+};
 
-/** "Өнөөдөр": today's income, expenses and the balance between them. */
-export function TodayMoney({ money }: Props) {
+/**
+ * One day's income: the total, then split into online orders and stall (POS) sales. Phones: the
+ * total on its own row, the two parts side by side (half a screen instead of a full one).
+ */
+export function TodayMoney({ title, money, store }: Props) {
+  const onlineIncome = money.income - store.total;
+  const onlineOrders = money.paidOrders - store.count;
   return (
     <section className="mt-6">
-      <h2 className="text-lg font-extrabold">Өнөөдөр</h2>
-      <div className="mt-3 grid gap-4 sm:grid-cols-3">
+      <h2 className="text-lg font-extrabold">{title}</h2>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <MoneyCard
-          label="Орлого"
+          wide
+          label="Нийт орлого"
           amount={money.income}
-          hint={`${money.paidOrders} төлөгдсөн захиалга`}
+          hint="Онлайн + касс"
           icon={TrendingUp}
           tone="brand"
         />
-        <MoneyCard label="Зарлага" amount={money.expenses} hint="Зарлага бүртгэх хэсэг удахгүй" icon={TrendingDown} tone="clay" />
-        <MoneyCard label="Үлдэгдэл" amount={money.balance} hint="Орлого − зарлага" icon={Scale} tone="ink" />
+        <MoneyCard
+          label="Онлайн захиалга"
+          amount={onlineIncome}
+          hint={`${onlineOrders} төлөгдсөн захиалга`}
+          icon={Globe}
+          tone="ink"
+        />
+        <MoneyCard
+          label="Касс"
+          amount={store.total}
+          hint={`${store.count} борлуулалт`}
+          icon={Calculator}
+          tone="ink"
+        />
       </div>
     </section>
   );

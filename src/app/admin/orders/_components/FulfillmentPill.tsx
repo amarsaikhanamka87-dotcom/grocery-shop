@@ -1,17 +1,17 @@
-import { ShoppingBasket, Truck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Store, Truck } from "lucide-react";
+import { DELIVERY_TYPE_LABEL } from "@/lib/orders/deliveryTypeLabel";
 
-/** "Хүргэлт" (truck) or "Очиж авах" (basket) tag, so the two kinds of orders stand apart. */
-export function FulfillmentPill({ pickup }: { pickup: boolean }) {
-  const Icon = pickup ? ShoppingBasket : Truck;
+/**
+ * How the order leaves: "Хүргэлт" (truck), "Очиж авах" / "Касс" (store), as quiet text next to
+ * the status badge. Store icon, not a basket: the basket means the cart on the storefront.
+ */
+export function FulfillmentPill({ deliveryType }: { deliveryType: string | null }) {
+  const isPickup = deliveryType === "pickup" || deliveryType === "store";
+  const Icon = isPickup ? Store : Truck;
+  const label = isPickup ? (DELIVERY_TYPE_LABEL[deliveryType ?? ""] ?? "Очиж авах") : "Хүргэлт";
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-bold",
-        pickup ? "bg-violet-100 text-violet-800" : "bg-cream-2 text-ink-2",
-      )}
-    >
-      <Icon className="size-3.5" /> {pickup ? "Очиж авах" : "Хүргэлт"}
+    <span className="inline-flex items-center gap-1 text-[13px] font-semibold whitespace-nowrap text-muted-foreground">
+      <Icon className="size-4" /> {label}
     </span>
   );
 }

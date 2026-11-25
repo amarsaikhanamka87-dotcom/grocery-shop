@@ -2,10 +2,19 @@ import { CircleCheck, Clock, XCircle } from "lucide-react";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { PaymentPoller } from "./PaymentPoller";
 
-type Props = { paid: boolean; cancelled: boolean; total: number; checkoutUrl: string | null };
+type Props = {
+  paid: boolean;
+  cancelled: boolean;
+  total: number;
+  checkoutUrl: string | null;
+};
 
-/** Paid / waiting for payment / cancelled, with "pay" and "check" actions while unpaid. */
-export function PaymentStatusCard({ paid, cancelled, total, checkoutUrl }: Props) {
+export function PaymentStatusCard({
+  paid,
+  cancelled,
+  total,
+  checkoutUrl,
+}: Props) {
   if (paid) {
     return (
       <section className="card flex items-center gap-4 border-brand bg-brand-50 p-5 sm:p-6">

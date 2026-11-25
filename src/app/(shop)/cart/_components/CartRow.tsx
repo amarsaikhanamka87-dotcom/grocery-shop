@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart/useCart";
 import { type CartItem } from "@/components/cart/CartContext";
+import { cartUnitLabel } from "@/lib/format/cartUnitLabel";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { QtyInput } from "./QtyInput";
 import { StockWarning } from "./StockWarning";
@@ -13,7 +14,7 @@ export function CartRow({ item: i }: { item: CartItem }) {
   const { setQuantity, remove } = useCart();
   return (
     <div className="flex gap-4 p-4 sm:p-5">
-      <Link href={`/product/${i.slug}`} className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-cream-2 sm:size-24">
+      <Link href={`/product/${i.slug}`} className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-ink/5 sm:size-24">
         <Image src={i.image} alt={i.name} fill sizes="96px" className="object-cover" />
       </Link>
       <div className="flex min-w-0 flex-1 flex-col">
@@ -23,13 +24,14 @@ export function CartRow({ item: i }: { item: CartItem }) {
               {i.name}
             </Link>
             <p className="text-[13px] text-muted-foreground">
-              {formatPrice(i.price)} / {i.unit} · хамгийн багадаа {i.minQty}
+              {formatPrice(i.price)} / {i.unit}
+              {i.minQty > 1 && ` · багадаа ${i.minQty} ${cartUnitLabel(i.unit)}`}
             </p>
             <StockWarning item={i} />
           </div>
           <button
             onClick={() => remove(i.productId)}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-cream-2 hover:text-clay"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-ink/5 hover:text-clay"
             aria-label={`${i.name} хасах`}
           >
             <Trash2 className="size-4" />

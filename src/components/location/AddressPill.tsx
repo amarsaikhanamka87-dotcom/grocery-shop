@@ -25,13 +25,13 @@ export function AddressPill() {
         }}
       >
         <Popover.Trigger
-          className="flex h-10 min-w-0 items-center gap-2.5 rounded-xl bg-cream-2 px-2.5 text-left max-lg:shrink-0 hover:bg-line/60 md:h-12 md:max-w-[300px] md:px-3"
+          className="flex h-11 min-w-0 items-center gap-2.5 rounded-xl bg-ink/5 px-2.5 text-left max-lg:shrink-0 hover:bg-ink/10 md:h-12 md:max-w-[220px] md:px-3"
           aria-label="Хүргүүлэх хаяг сонгох"
         >
           <MapPin className="size-5 shrink-0 text-ink-2" />
           <span className="hidden min-w-0 leading-tight lg:block">
             <span className="block truncate text-[13px] font-bold">{loc.ready ? title : "…"}</span>
-            <span className="block text-[11px] font-medium text-muted-foreground">
+            <span className="block truncate text-[11px] font-medium text-muted-foreground">
               {pickup ? "Очиж авах цэг" : "Таны хүргүүлэх хаяг"}
             </span>
           </span>

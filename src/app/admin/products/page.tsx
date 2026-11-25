@@ -4,7 +4,6 @@ import { getCategories } from "@/lib/catalog/getCategories";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { ProductDialog } from "./_components/ProductDialog";
 import { ProductFilters } from "./_components/ProductFilters";
-import { ProductStats } from "./_components/ProductStats";
 import { ProductTable } from "./_components/ProductTable";
 
 export const metadata: Metadata = { title: "Бүтээгдэхүүн" };
@@ -21,18 +20,16 @@ export default async function AdminProductsPage({
     getAdminProducts({ q, category }),
     getCategories(),
   ]);
-  const total = categories.reduce((sum, c) => sum + c.productCount, 0);
   const filtered = Boolean(q?.trim() || category);
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <AdminPageHeader
           title="Бүтээгдэхүүн"
-          description="Үнэ, үлдэгдэл, ангилал болон нүүрэнд онцлох бараагаа удирдана."
+          description="Шинэ бараа нэмэх, үнэ болон үлдэгдлийг засах."
         />
         <ProductDialog categories={categories} />
       </div>
-      {/* <ProductStats products={products} total={total} filtered={filtered} /> */}
       <section className="card mt-6 overflow-hidden">
         <ProductFilters categories={categories} />
         <ProductTable

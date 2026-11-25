@@ -12,3 +12,13 @@ model PhoneOtp {
   @@index([phone, createdAt], map: "phone_otps_phone_created_idx")
   @@map("phone_otps")
 }
+
+/// Links a verified Mongolian phone to its Clerk user. Clerk rejects +976 numbers, so the
+/// phone lives here and the Clerk user is created without one.
+model PhoneUser {
+  phone       String   @id // E.164, e.g. +97699112233
+  clerkUserId String   @unique @map("clerk_user_id")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("phone_users")
+}

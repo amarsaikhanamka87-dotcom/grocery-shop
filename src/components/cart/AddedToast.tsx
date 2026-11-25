@@ -11,7 +11,7 @@ type Props = { item: Omit<CartItem, "quantity">; quantity: number; onClose: () =
 export function AddedToast({ item, quantity, onClose }: Props) {
   return (
     <div className="flex w-[min(92vw,380px)] items-center gap-3 rounded-2xl border border-line bg-white p-3 shadow-lg">
-      <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-cream-2">
+      <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-ink/5">
         <Image src={item.image} alt="" fill sizes="56px" className="object-cover" />
       </span>
       <div className="min-w-0 flex-1">

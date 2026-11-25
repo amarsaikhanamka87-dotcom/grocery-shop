@@ -16,12 +16,9 @@ export function ProductDialog({ product, categories }: { product?: Product; cate
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {product ? (
-        <Dialog.Trigger
-          aria-label="Засах"
-          title="Засах"
-          className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-brand-50 hover:text-brand"
-        >
-          <Pencil className="size-4" />
+        <Dialog.Trigger className="btn btn-outline h-11 px-4 text-[14px]">
+          <Pencil className="size-4" /> <span className="md:hidden">Үнэ, үлдэгдэл засах</span>
+          <span className="hidden md:inline">Засах</span>
         </Dialog.Trigger>
       ) : (
         <Dialog.Trigger className="btn btn-primary h-11 w-full px-4 sm:w-auto">
@@ -41,7 +38,7 @@ export function ProductDialog({ product, categories }: { product?: Product; cate
                 {product ? product.name : "Мэдээллээ бөглөөд хадгална уу."}
               </Dialog.Description>
             </div>
-            <Dialog.Close aria-label="Хаах" className="-mr-1.5 rounded-full p-1.5 text-muted-foreground hover:bg-cream">
+            <Dialog.Close aria-label="Хаах" className="-mr-2 grid size-11 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-cream">
               <X className="size-5" />
             </Dialog.Close>
           </div>

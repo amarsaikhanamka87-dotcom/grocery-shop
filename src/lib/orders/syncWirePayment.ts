@@ -9,7 +9,9 @@ import { markOrderPaid } from "./markOrderPaid";
 export async function syncWirePayment(intentId: string): Promise<boolean> {
   try {
     const intent = await getPaymentIntent(intentId);
-    return intent.status === "succeeded" ? markOrderPaid(intent.id, intent.amount) : false;
+    return intent.status === "succeeded"
+      ? markOrderPaid(intent.id, intent.amount)
+      : false;
   } catch (err) {
     console.error("[wire] status check failed", err);
     return false;

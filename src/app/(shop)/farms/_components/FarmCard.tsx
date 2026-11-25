@@ -8,7 +8,7 @@ export type Farm = { name: string; place: string; items: string; image: string }
 export function FarmCard({ farm: f }: { farm: Farm }) {
   return (
     <li className="card overflow-hidden">
-      <div className="relative aspect-[4/3] bg-cream-2">
+      <div className="relative aspect-[4/3] bg-ink/5">
         <Image src={f.image.startsWith("/") ? f.image : img(f.image, 700)} alt={f.name} fill sizes="(min-width:1024px) 360px, 50vw" className="object-cover" />
       </div>
       <div className="p-6">

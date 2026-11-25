@@ -18,7 +18,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             href={href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-semibold transition-colors ${
+            className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-semibold transition-colors ${
               active ? "bg-brand text-white" : "text-ink-2 hover:bg-cream-2 hover:text-ink"
             }`}
           >
