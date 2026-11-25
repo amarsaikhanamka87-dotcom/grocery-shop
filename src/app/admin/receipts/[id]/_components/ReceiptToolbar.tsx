@@ -18,7 +18,7 @@ export function ReceiptToolbar({ receiptId, email, emailStatus, emailedAt }: Pro
   return (
     <div className="card mt-6 flex flex-wrap items-start justify-between gap-4 p-4 sm:p-5">
       <div className="grid gap-1.5">
-        <Link href="/admin/receipts" className="flex items-center gap-1 text-[14px] font-bold text-brand hover:underline">
+        <Link href="/admin/receipts" className="flex h-11 items-center gap-1 text-[14px] font-bold text-brand hover:underline">
           <ArrowLeft className="size-4" /> Бүх баримт
         </Link>
         <span className="flex flex-wrap items-center gap-2 text-[13.5px]">
@@ -33,7 +33,7 @@ export function ReceiptToolbar({ receiptId, email, emailStatus, emailedAt }: Pro
         </span>
       </div>
       <div className="flex flex-wrap items-start gap-2">
-        <a href={`/admin/receipts/${receiptId}/print`} target="_blank" rel="noopener" className="btn btn-outline h-10 px-4">
+        <a href={`/admin/receipts/${receiptId}/print`} target="_blank" rel="noopener" className="btn btn-outline h-11 px-4">
           <Printer className="size-4" /> Хэвлэх
         </a>
         {/* No email = nothing to send to, so no (dead, greyed-out) send button. */}

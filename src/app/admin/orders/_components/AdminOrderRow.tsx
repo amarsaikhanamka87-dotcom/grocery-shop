@@ -19,9 +19,13 @@ export function AdminOrderRow({ order: o }: { order: AdminOrder }) {
     <li>
       <AdminOrderDialog order={o}>
         <span className="grid gap-3 px-4 py-4 sm:px-5 lg:grid-cols-[110px_1.2fr_1.4fr_1.2fr_auto_16px] lg:items-center lg:gap-5">
-          <span>
-            <span className="block text-[15px] font-extrabold">#{o.number}</span>
-            <span className="block text-[12.5px] text-muted-foreground">{formatDateTime(o.createdAt)}</span>
+          {/* Phones: number + time on the left, the total on the right of the same line. */}
+          <span className="flex items-start justify-between gap-3">
+            <span>
+              <span className="block text-[15px] font-extrabold">#{o.number}</span>
+              <span className="block text-[12.5px] text-muted-foreground">{formatDateTime(o.createdAt)}</span>
+            </span>
+            <span className="text-[16px] font-extrabold tabular-nums lg:hidden">{formatPrice(o.total)}</span>
           </span>
           <span className="min-w-0">
             <span className="block truncate text-[14.5px] font-semibold">{o.customerName || "—"}</span>
@@ -46,7 +50,7 @@ export function AdminOrderRow({ order: o }: { order: AdminOrder }) {
               <span className="text-[13px] font-semibold text-muted-foreground">{PAYMENT_METHOD_LABEL[o.paymentMethod]}</span>
             )}
           </span>
-          <span className="text-[16px] font-extrabold tabular-nums lg:text-right">{formatPrice(o.total)}</span>
+          <span className="hidden text-[16px] font-extrabold tabular-nums lg:block lg:text-right">{formatPrice(o.total)}</span>
           <ChevronRight className="hidden size-4 text-muted-foreground lg:block" />
         </span>
       </AdminOrderDialog>

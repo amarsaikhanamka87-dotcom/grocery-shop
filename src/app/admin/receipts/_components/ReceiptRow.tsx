@@ -15,9 +15,13 @@ export function ReceiptRow({ receipt: r }: { receipt: ReceiptListRow }) {
         href={`/admin/receipts/${r.id}`}
         className="grid gap-3 px-4 py-4 hover:bg-cream sm:px-5 lg:grid-cols-[120px_1.2fr_1.6fr_auto_120px_16px] lg:items-center lg:gap-5"
       >
-        <span>
-          <span className="block text-[15px] font-extrabold">№ {r.number}</span>
-          <span className="block text-[12.5px] text-muted-foreground">{formatDateTime(r.createdAt)}</span>
+        {/* Phones: number + time on the left, the total on the right of the same line. */}
+        <span className="flex items-start justify-between gap-3">
+          <span>
+            <span className="block text-[15px] font-extrabold">№ {r.number}</span>
+            <span className="block text-[12.5px] text-muted-foreground">{formatDateTime(r.createdAt)}</span>
+          </span>
+          <span className="text-[16px] font-extrabold tabular-nums lg:hidden">{formatPrice(r.order.total)}</span>
         </span>
         <span className="min-w-0">
           <span className="block truncate text-[14.5px] font-semibold">
@@ -34,7 +38,7 @@ export function ReceiptRow({ receipt: r }: { receipt: ReceiptListRow }) {
           </span>
         </span>
         <span className={`w-fit rounded-full px-2.5 py-1 text-[12px] font-bold ${badge.className}`}>{badge.label}</span>
-        <span className="text-[16px] font-extrabold tabular-nums lg:text-right">{formatPrice(r.order.total)}</span>
+        <span className="hidden text-[16px] font-extrabold tabular-nums lg:block lg:text-right">{formatPrice(r.order.total)}</span>
         <ChevronRight className="hidden size-4 text-muted-foreground lg:block" />
       </Link>
     </li>

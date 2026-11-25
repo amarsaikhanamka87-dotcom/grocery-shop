@@ -64,7 +64,7 @@ export function ProductForm({ product: p, categories, onSaved }: Props) {
         <FormSection title={p ? undefined : "Үнэ ба үлдэгдэл"}>
           <ProductField name="price" label="Үнэ (₮)" defaultValue={val("price")} error={fe.price} inputMode="numeric" />
           <ProductField name="oldPrice" label="Хямдралын өмнөх үнэ (₮, заавал биш)" defaultValue={val("oldPrice")} error={fe.oldPrice} inputMode="numeric" required={false} />
-          <ProductField name="unit" label="Нэгж" defaultValue={val("unit")} error={fe.unit} />
+          <ProductField name="unit" label="Нэгж" placeholder="жишээ: шуудай" defaultValue={val("unit")} error={fe.unit} />
           <ProductField name="stock" label="Үлдэгдэл" defaultValue={val("stock")} error={fe.stock} inputMode="numeric" />
           <ProductField name="minQty" label="Багадаа (хамгийн бага захиалах тоо)" defaultValue={val("minQty")} error={fe.minQty} inputMode="numeric" />
         </FormSection>

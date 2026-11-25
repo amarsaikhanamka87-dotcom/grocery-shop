@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReceiptEmailStatus } from "@prisma/client";
-import { cn } from "@/lib/utils";
+import { filterChipClass } from "@/components/admin/filterChipClass";
 
 const TABS: { value: ReceiptEmailStatus | ""; label: string }[] = [
   { value: "", label: "Бүгд" },
@@ -19,10 +19,7 @@ export function ReceiptFilterTabs({ status, count }: Props) {
         <Link
           key={tab.value}
           href={tab.value ? `/admin/receipts?status=${tab.value}` : "/admin/receipts"}
-          className={cn(
-            "h-10 shrink-0 rounded-xl px-3.5 text-[14px] font-bold leading-10 whitespace-nowrap",
-            (status ?? "") === tab.value ? "bg-ink text-white" : "bg-cream-2 text-muted-foreground hover:text-ink",
-          )}
+          className={filterChipClass((status ?? "") === tab.value)}
         >
           {tab.label}
         </Link>

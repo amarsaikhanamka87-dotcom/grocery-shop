@@ -8,6 +8,8 @@ type Props = {
   hint: string;
   icon: LucideIcon;
   tone: "brand" | "clay" | "ink";
+  /** Phones: take the whole row (the day's total); the others sit two per row without an icon. */
+  wide?: boolean;
 };
 
 const TONES = {
@@ -17,22 +19,23 @@ const TONES = {
 };
 
 /** One money tile on the admin dashboard (орлого / зарлага / үлдэгдэл). */
-export function MoneyCard({ label, amount, hint, icon: Icon, tone }: Props) {
+export function MoneyCard({ label, amount, hint, icon: Icon, tone, wide = false }: Props) {
   return (
-    <div className="card flex items-center gap-4 p-5">
+    <div className={cn("card flex min-w-0 items-center gap-4 p-4 sm:col-span-1 sm:p-5", wide && "col-span-2")}>
       <span
         className={cn(
-          "grid size-11 shrink-0 place-items-center rounded-xl",
+          "size-11 shrink-0 place-items-center rounded-xl sm:grid",
+          wide ? "grid" : "hidden",
           TONES[tone],
         )}>
         <Icon className="size-5" />
       </span>
       <span className="min-w-0">
         <span className="block text-[14px] text-muted-foreground">{label}</span>
-        <span className="block text-[24px] font-extrabold leading-tight tabular-nums">
+        <span className="block text-[22px] font-extrabold leading-tight tabular-nums sm:text-[24px]">
           {formatPrice(amount)}
         </span>
-        <span className="block text-[12.5px] text-muted-foreground">
+        <span className="block text-[13px] text-muted-foreground">
           {hint}
         </span>
       </span>

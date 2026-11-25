@@ -9,15 +9,19 @@ type Props = {
   store: Awaited<ReturnType<typeof getStoreDaySales>>;
 };
 
-/** One day's income: the total, then split into online orders and stall (POS) sales. */
+/**
+ * One day's income: the total, then split into online orders and stall (POS) sales. Phones: the
+ * total on its own row, the two parts side by side (half a screen instead of a full one).
+ */
 export function TodayMoney({ title, money, store }: Props) {
   const onlineIncome = money.income - store.total;
   const onlineOrders = money.paidOrders - store.count;
   return (
     <section className="mt-6">
       <h2 className="text-lg font-extrabold">{title}</h2>
-      <div className="mt-3 grid gap-4 sm:grid-cols-3">
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <MoneyCard
+          wide
           label="Нийт орлого"
           amount={money.income}
           hint="Онлайн + касс"

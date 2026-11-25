@@ -164,8 +164,13 @@ customer's `/business` is a dashboard with a monthly order list (`StandingOrder`
 the b2b role and each product's `minQty`), and "add all to cart". Auto-placing it on that day
 comes after orders exist (Day 6–8).
 
-**Admin.** `/admin` dashboard: day buttons "11/23", "11/22" … (`DayButtons`, `ubRecentDays`,
-`?day=`, one UB day = UTC+8). `page.tsx` starts the day's queries without awaiting and `DayReport`
+**Admin.** `/admin` dashboard: day navigator `‹ [📅 11-р сарын 22, Ням] ›` + "Өнөөдөр рүү буцах"
+(`DayNavigator`; the middle is a native `<input type="date">`, any past day). `?day=YYYY-MM-DD` →
+`resolveDashboardDay` (`lib/date/ubDayFromKey` + `buildUbDay`, one UB day = UTC+8); an invalid or
+future day falls back to today with a clay notice. One date format everywhere ("11-р сарын 22").
+Admin "pick one" filters (orders, receipts, product categories) all use `components/admin/filterChipClass`.
+Orders are listed under day headings ("Өнөөдөр", "Өчигдөр", …; `orders/_features/groupOrdersByDay`).
+Status changes and deletes ask first inline, in words ("Тийм, устгах" / "Болих"). `page.tsx` starts the day's queries without awaiting and `DayReport`
 awaits them inside `<Suspense key={day}>`, so switching days shows a skeleton, never the old day's
 money. Cards: Нийт орлого (`getDayMoney`, PAID orders by `paidAt`) split into Онлайн захиалга and
 Касс (`getStoreDaySales`); then one table of goods out with money per item (`getDayOutgoing`:
@@ -212,6 +217,9 @@ storefront background is white (rule 7); `cream` is only for the admin. Grey tex
   renders its drawer through a portal.
 - **Turbopack sometimes keeps a stale `globals.css`** (a changed CSS variable doesn't show): restart
   `npm run dev`.
-- **Claude in Chrome can't resize the owner's maximized window**, so admin pages can't be checked at
-  phone width there; buyer pages can be shot headless with `.claude/skills/ui-review/shot.mjs <url> <png> 390`.
+- **Claude in Chrome can't resize the owner's maximized window.** For admin pages at phone width,
+  inject a same-origin `<iframe>` (390×844) over any `localhost:3000` page with `javascript_tool`;
+  it shares the admin's Clerk cookies. Zoom the screenshot onto it (the screenshot frame may be
+  scaled vs CSS px) and measure tap targets via `iframe.contentDocument`. Buyer pages can be shot
+  headless with `.claude/skills/ui-review/shot.mjs <url> <png> 390` (signed out).
 - Clerk config changes: `npx clerk@latest config patch --file x.json --dry-run --mode agent` first.

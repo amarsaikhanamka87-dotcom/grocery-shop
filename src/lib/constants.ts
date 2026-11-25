@@ -38,9 +38,6 @@ export const PICKUP_POINT = {
   mapsQuery: "Барс худалдааны төв, Улаанбаатар",
 };
 
-/** How many day buttons the admin dashboard shows (today + the days before it). */
-export const DASHBOARD_DAYS = 14;
-
 /** POS tiles show the stock left in clay (warning) at or below this many units. */
 export const POS_LOW_STOCK = 10;
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { filterChipClass } from "@/components/admin/filterChipClass";
 import { ordersHref } from "../_features/ordersHref";
 
 // Same words as the status badge on each row (orderState).
@@ -16,12 +16,6 @@ const TYPE_TABS = [
   { value: "pickup", label: "Очиж авах" },
 ];
 
-const tab = (on: boolean) =>
-  cn(
-    "h-10 shrink-0 rounded-xl px-3.5 text-[14px] font-bold leading-10 whitespace-nowrap",
-    on ? "bg-ink text-white" : "bg-cream-2 text-ink-2 hover:text-ink",
-  );
-
 type Props = { pay: string; type: string; count: number };
 
 /**
@@ -35,14 +29,14 @@ export function OrderFilterTabs({ pay, type, count }: Props) {
       <p className="text-[14px] text-muted-foreground sm:order-last sm:ml-auto">{count} захиалга</p>
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
         {PAY_TABS.map((t) => (
-          <Link key={t.value} href={ordersHref(t.value, type)} className={tab(pay === t.value)}>
+          <Link key={t.value} href={ordersHref(t.value, type)} className={filterChipClass(pay === t.value)}>
             {t.label}
           </Link>
         ))}
       </div>
       <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
         {TYPE_TABS.map((t) => (
-          <Link key={t.value} href={ordersHref(pay, t.value)} className={tab(type === t.value)}>
+          <Link key={t.value} href={ordersHref(pay, t.value)} className={filterChipClass(type === t.value)}>
             {t.label}
           </Link>
         ))}

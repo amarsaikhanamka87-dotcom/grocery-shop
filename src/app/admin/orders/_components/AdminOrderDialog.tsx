@@ -29,7 +29,7 @@ export function AdminOrderDialog({ order, children }: Props) {
           <DeliveredButton order={order} />
           <Dialog.Close
             aria-label="Хаах"
-            className="absolute top-4 right-4 grid size-9 place-items-center rounded-full text-muted-foreground hover:bg-cream-2 hover:text-ink"
+            className="absolute top-3 right-3 grid size-11 place-items-center rounded-full text-muted-foreground hover:bg-cream-2 hover:text-ink"
           >
             <X className="size-5" />
           </Dialog.Close>

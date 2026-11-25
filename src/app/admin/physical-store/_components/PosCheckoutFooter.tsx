@@ -54,7 +54,7 @@ export function PosCheckoutFooter(props: Props) {
         <button
           type="button"
           onClick={() => setNameOpen(true)}
-          className="flex items-center gap-1.5 text-[14px] font-semibold text-muted-foreground hover:text-brand"
+          className="flex min-h-11 items-center gap-1.5 text-[14px] font-semibold text-muted-foreground hover:text-brand"
         >
           <UserRound className="size-4" /> Худалдан авагчийн нэр нэмэх (заавал биш)
         </button>

@@ -13,7 +13,10 @@ export function InventoryTable({ dayTitle, rows, deliveryFees }: Props) {
         <h2 className="text-lg font-extrabold">
           {dayTitle} гарсан бараа <span className="text-muted-foreground">({rows.length})</span>
         </h2>
-        <Link href="/admin/products" className="flex items-center gap-1 text-[14px] font-bold text-brand hover:underline">
+        <Link
+          href="/admin/products"
+          className="flex h-11 shrink-0 items-center gap-1 text-[14px] font-bold whitespace-nowrap text-brand hover:underline"
+        >
           Бүх үлдэгдэл <ArrowRight className="size-4" />
         </Link>
       </div>

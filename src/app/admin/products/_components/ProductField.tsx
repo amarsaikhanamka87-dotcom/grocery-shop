@@ -6,10 +6,11 @@ type Props = {
   inputMode?: "numeric" | "text";
   required?: boolean;
   multiline?: boolean;
+  placeholder?: string;
 };
 
-export function ProductField({ name, label, defaultValue, error, inputMode, required = true, multiline }: Props) {
-  const shared = { id: name, name, defaultValue, required, className: "input" };
+export function ProductField({ name, label, defaultValue, error, inputMode, required = true, multiline, placeholder }: Props) {
+  const shared = { id: name, name, defaultValue, required, placeholder, className: "input" };
   return (
     <div>
       <label className="label" htmlFor={name}>{label}</label>

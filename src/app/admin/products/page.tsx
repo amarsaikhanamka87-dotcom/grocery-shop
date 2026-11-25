@@ -26,7 +26,7 @@ export default async function AdminProductsPage({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <AdminPageHeader
           title="Бүтээгдэхүүн"
-          description="Үнэ, үлдэгдэл, ангилал болон нүүрэнд онцлох бараагаа удирдана."
+          description="Шинэ бараа нэмэх, үнэ болон үлдэгдлийг засах."
         />
         <ProductDialog categories={categories} />
       </div>

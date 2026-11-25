@@ -14,7 +14,7 @@ export function ResendButton({ receiptId }: { receiptId: string }) {
         type="button"
         disabled={pending}
         onClick={() => start(async () => setResult(await resendReceipt(receiptId)))}
-        className="btn btn-primary h-10 px-4"
+        className="btn btn-primary h-11 px-4"
       >
         {pending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} И-мэйлээр илгээх
       </button>
