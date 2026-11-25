@@ -46,3 +46,9 @@ export const SHOP_REG_NO = "";
 
 /** Paid receipts are emailed (via n8n) only when the order total is more than this, in ₮. */
 export const RECEIPT_EMAIL_MIN_TOTAL = 200;
+
+/** Gemini model that reads handwritten photos on /admin/handwriting (override with GEMINI_MODEL). */
+export const GEMINI_OCR_MODEL = "gemini-2.5-flash";
+
+/** Photos are shrunk in the browser to this longest side (px) before upload: keeps them under 1 MB. */
+export const OCR_IMAGE_MAX_SIDE = 1600;
