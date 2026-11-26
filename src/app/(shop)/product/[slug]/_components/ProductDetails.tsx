@@ -6,14 +6,14 @@ import { StockStatus } from "./StockStatus";
 import { DeliveryPerks } from "./DeliveryPerks";
 
 /**
- * Name, price, then straight away the quantity + "Сагсанд нэмэх" (on phones it sticks to the bottom
+ * Name, price, then straight away the quantity + "Сагслах" (on phones it sticks to the bottom
  * of the screen while the details are in view), then stock, description and perks.
  */
 export function ProductDetails({ product: p }: { product: Product }) {
   return (
     <div className="lg:py-4">
       {p.origin && (
-        <p className="flex items-center gap-1.5 text-[15px] font-semibold text-muted-foreground">
+        <p className="flex items-center gap-1.5 text-[16px] text-muted-foreground">
           <MapPin className="size-4" /> {p.origin}
         </p>
       )}
@@ -22,10 +22,10 @@ export function ProductDetails({ product: p }: { product: Product }) {
       <div className="mt-3 flex items-end gap-3">
         <p className="text-[34px] font-extrabold tabular-nums tracking-tight">
           {formatPrice(p.price)}
-          <span className="text-lg font-bold text-muted-foreground"> / {p.unit}</span>
+          <span className="text-[16px] font-normal tracking-normal text-muted-foreground"> / {p.unit}</span>
         </p>
         {p.oldPrice && (
-          <p className="pb-1.5 text-lg font-semibold text-muted-foreground line-through">{formatPrice(p.oldPrice)}</p>
+          <p className="pb-1.5 text-[16px] text-muted-foreground line-through">{formatPrice(p.oldPrice)}</p>
         )}
       </div>
       <StockStatus product={p} />

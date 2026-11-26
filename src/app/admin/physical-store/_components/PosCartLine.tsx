@@ -10,7 +10,7 @@ const stepButton =
   "grid size-11 shrink-0 place-items-center rounded-xl border border-line text-ink hover:border-brand disabled:opacity-40";
 
 /**
- * One bill line: name, price, line total (under the name on phones) and an "Устгах" text link,
+ * One bill line: name, price, line total (under the name on phones) and a 44px "Устгах",
  * then − quantity +. Remove sits under the name, far from "+", so it isn't tapped by accident.
  */
 export function PosCartLine({ line, onQuantity }: Props) {
@@ -20,14 +20,14 @@ export function PosCartLine({ line, onQuantity }: Props) {
     <li className="flex items-center gap-2 py-2.5">
       <div className="min-w-0 flex-1">
         <p className="line-clamp-2 text-[16px] font-bold leading-snug text-ink">{p.name}</p>
-        <p className="text-[14px] text-muted-foreground tabular-nums">
+        <p className="text-[16px] text-muted-foreground tabular-nums">
           {formatPrice(p.price)}/{cartUnitLabel(p.unit)}
         </p>
         <p className="text-[17px] font-extrabold tabular-nums text-ink sm:hidden">{lineTotal}</p>
         <button
           type="button"
           onClick={() => onQuantity(p.id, 0)}
-          className="mt-0.5 py-1 text-[14px] font-semibold text-muted-foreground underline-offset-2 hover:text-clay hover:underline"
+          className="-ml-2 flex min-h-11 items-center rounded-xl px-2 text-[16px] font-bold text-muted-foreground hover:bg-ink/5 hover:text-clay"
         >
           Устгах
         </button>

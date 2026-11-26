@@ -15,7 +15,7 @@ export function DeliveredButton({ order }: { order: AdminOrder }) {
   const [isConfirming, setConfirming] = useState(false);
   const [error, setError] = useState(false);
   const pickup = order.deliveryType === "pickup";
-  const label = pickup ? "Очиж авсан" : "Хүргэж өгсөн";
+  const label = pickup ? "Ирж авсан" : "Хүргэж өгсөн";
   const Icon = pickup ? PackageCheck : CheckCheck;
   if (order.paymentStatus !== "PAID" || order.status === "DELIVERED" || order.status === "CANCELLED") return null;
 
@@ -26,7 +26,7 @@ export function DeliveredButton({ order }: { order: AdminOrder }) {
     });
 
   return (
-    <div className="mt-5 border-t border-line pt-4">
+    <div>
       {isConfirming ? (
         <div className="grid gap-3">
           <p className="text-center text-[15px] font-semibold">

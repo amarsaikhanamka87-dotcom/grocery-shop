@@ -5,12 +5,12 @@ type Crumb = { label: string; href?: string };
 
 export function Breadcrumb({ items }: { items: Crumb[] }) {
   return (
-    <nav className="text-[15px] font-medium text-muted-foreground" aria-label="Breadcrumb">
+    <nav className="flex flex-wrap items-center text-[16px] text-muted-foreground" aria-label="Breadcrumb">
       {items.map((c, i) => (
         <Fragment key={c.label}>
           {i > 0 && <span className="mx-1.5">/</span>}
           {c.href ? (
-            <Link href={c.href} className="hover:text-brand">
+            <Link href={c.href} className="inline-flex min-h-11 items-center hover:text-brand">
               {c.label}
             </Link>
           ) : (

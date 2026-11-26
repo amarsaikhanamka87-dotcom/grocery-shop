@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Leaf } from "lucide-react";
 import { discountPercent } from "@/lib/catalog/discountPercent";
+import { stockLevel } from "@/lib/catalog/stockLevel";
 import { formatPrice } from "@/lib/format/formatPrice";
 import { CartButton } from "./CartButton";
 import { StockBadge } from "./StockBadge";
@@ -81,7 +82,7 @@ export function ProductCard({
         {/* Price always with its unit; on a narrow card "/ шуудай" may wrap, never gets cut. The
             button stays aligned across a row (mt-auto below). */}
         <p className="flex flex-wrap items-baseline gap-x-1.5">
-          <span className="text-[16px] font-extrabold whitespace-nowrap tabular-nums">{formatPrice(p.price)}</span>
+          <span className="text-[16px] font-bold whitespace-nowrap text-brand tabular-nums">{formatPrice(p.price)}</span>
           <span className="text-[16px] whitespace-nowrap text-muted-foreground">/ {shortUnit(p.unit)}</span>
           {p.oldPrice && (
             <span className="text-[16px] whitespace-nowrap text-muted-foreground line-through tabular-nums">
@@ -89,15 +90,24 @@ export function ProductCard({
             </span>
           )}
         </p>
-        <h3 className="mt-1 line-clamp-2 text-[16px] font-semibold leading-snug">
-          <Link href={`/product/${p.slug}`} className="hover:text-brand">
+        <h3 className="mt-1 line-clamp-2 text-[16px] font-bold leading-snug">
+          <Link
+            href={`/product/${p.slug}`}
+            className="relative hover:text-brand after:absolute after:inset-x-0 after:-inset-y-3 after:content-['']"
+          >
             {p.name}
           </Link>
         </h3>
-        {/* The minimum only when it matters (> 1); "Багадаа 1" on every card was noise. */}
-        {p.minQty > 1 && (
+        {/* Wholesale buyers plan by what is left: "Бэлэн 120 шуудай" when stock is fine (low / out
+            show as a badge on the photo instead), plus the minimum with its unit when it matters (> 1). */}
+        {stockLevel(p.stock, p.minQty) === "ok" && (
           <p className="mt-1 text-[16px] text-muted-foreground">
-            Багадаа {p.minQty} {shortUnit(p.unit)}
+            Бэлэн {p.stock} {shortUnit(p.unit)}
+          </p>
+        )}
+        {p.minQty > 1 && (
+          <p className="text-[16px] text-muted-foreground">
+            Хамгийн багадаа {p.minQty} {shortUnit(p.unit)}
           </p>
         )}
         <div className="mt-auto pt-4">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Printer } from "lucide-react";
 import type { ReceiptEmailStatus } from "@prisma/client";
-import { formatDateTime } from "@/lib/format/formatDateTime";
+import { formatDayTimeMn } from "@/lib/format/formatDayTimeMn";
 import { receiptStatusBadge } from "../../_features/receiptStatusBadge";
 import { ResendButton } from "./ResendButton";
 
@@ -27,7 +27,7 @@ export function ReceiptToolbar({ receiptId, email, emailStatus, emailedAt }: Pro
           {email && (
             <span className="text-muted-foreground">
               {email}
-              {emailedAt && ` · ${formatDateTime(emailedAt)}`}
+              {emailedAt && ` · ${formatDayTimeMn(emailedAt)}`}
             </span>
           )}
         </span>
@@ -37,7 +37,7 @@ export function ReceiptToolbar({ receiptId, email, emailStatus, emailedAt }: Pro
           <Printer className="size-4" /> Хэвлэх
         </a>
         {/* No email = nothing to send to, so no (dead, greyed-out) send button. */}
-        {email && <ResendButton receiptId={receiptId} />}
+        {email && <ResendButton receiptId={receiptId} alreadySent={emailStatus === "SENT"} />}
       </div>
     </div>
   );

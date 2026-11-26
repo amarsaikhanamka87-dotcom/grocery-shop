@@ -17,6 +17,8 @@ export const checkoutSchema = z.object({
     .array(z.object({ productId: z.string().min(1).max(64), quantity: z.number().int().positive().max(100000) }))
     .min(1, "Сагс хоосон байна")
     .max(100),
+  /** WIRE = pay now on Wire.mn; TRANSFER = bank transfer, the admin confirms it ("Дансаар төлсөн"). */
+  paymentMethod: z.enum(["WIRE", "TRANSFER"]).default("WIRE"),
   /** НӨАТ receipt: a person, or a company with its 7-digit register number and name. */
   invoiceType: z.enum(["person", "company"]).default("person"),
   companyRegNo: z.string().trim().optional(),

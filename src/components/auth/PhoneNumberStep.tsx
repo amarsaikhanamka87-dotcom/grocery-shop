@@ -18,7 +18,7 @@ export function PhoneNumberStep({ phone, pending, onPhoneChange, onSubmit }: Pro
     >
       <label className="label" htmlFor="phone">Утасны дугаар</label>
       <div className="flex items-center gap-2">
-        <span className="input w-auto shrink-0 bg-cream-2 font-semibold">+976</span>
+        <span className="input w-auto shrink-0 bg-cream-2 font-bold">+976</span>
         <input
           id="phone"
           value={phone}
@@ -33,7 +33,7 @@ export function PhoneNumberStep({ phone, pending, onPhoneChange, onSubmit }: Pro
       </div>
       <button type="submit" disabled={pending} className="btn btn-primary h-12">
         {pending ? <Loader2 className="size-4 animate-spin" /> : <Smartphone className="size-4" />}
-        SMS код авах
+        Утсаар баталгаажуулах
       </button>
     </form>
   );

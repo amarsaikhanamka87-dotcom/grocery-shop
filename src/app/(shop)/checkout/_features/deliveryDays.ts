@@ -22,7 +22,7 @@ export function deliveryDays(count: number, today = new Date()): DeliveryDay[] {
     return {
       value: `${d.getFullYear()}-${mm}-${dd}`,
       title: i === 0 ? "Маргааш" : i === 1 ? "Нөгөөдөр" : WEEKDAYS[d.getDay()],
-      date: `${mm}/${dd}`,
+      date: `${d.getMonth() + 1}-р сарын ${d.getDate()}`,
     };
   });
 }

@@ -2,10 +2,11 @@ import "server-only";
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendReceipt } from "@/lib/receipts/sendReceipt";
+import { holdsStock } from "./holdsStock";
 
 /**
  * Turns an UNPAID order into PAID, issues its Receipt (БМ-3) and takes its quantities out of
- * product stock, in one transaction. Runs once: a second call (webhook retry, double click)
+ * product stock (unless the order already holds it, see holdsStock), in one transaction. Runs once: a second call (webhook retry, double click)
  * changes nothing. Returns true when the order is paid (now or already). Only the call that
  * actually paid it emails the receipt (via n8n), after the response is sent.
  */
@@ -21,6 +22,10 @@ export async function payOrder(orderId: string): Promise<boolean> {
     }
 
     await tx.receipt.create({ data: { orderId } });
+
+    // Bank-transfer orders already took their stock when placed (holdsStock).
+    const order = await tx.order.findUnique({ where: { id: orderId }, select: { paymentMethod: true, deliveryType: true } });
+    if (order && holdsStock(order)) return "paid-now";
 
     const items = await tx.orderItem.findMany({ where: { orderId }, select: { productId: true, quantity: true } });
     for (const item of items) {

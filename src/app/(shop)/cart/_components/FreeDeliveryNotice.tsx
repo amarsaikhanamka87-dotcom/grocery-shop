@@ -6,7 +6,7 @@ import { useIsB2B } from "@/lib/roles/useIsB2B";
 import { useDeliveryLocation } from "@/components/location/useDeliveryLocation";
 import { amountToFreeDelivery } from "../_features/amountToFreeDelivery";
 
-const BAR = "flex items-center gap-3 rounded-t-[20px] bg-brand-50 px-5 py-4 text-[15px]";
+const BAR = "flex items-center gap-3 rounded-t-[20px] bg-brand-50 px-5 py-4 text-[16px]";
 
 /** Top of the cart: pickup = no delivery fee; delivery = free already, or how much more for free delivery. */
 export function FreeDeliveryNotice({ subtotal }: { subtotal: number }) {
@@ -14,7 +14,7 @@ export function FreeDeliveryNotice({ subtotal }: { subtotal: number }) {
   const isPickup = useDeliveryLocation().mode === "pickup";
   if (isPickup) {
     return (
-      <div className={`${BAR} font-semibold text-brand`}>
+      <div className={`${BAR} font-bold text-brand`}>
         <Store className="size-5 shrink-0" /> Очиж авна: хүргэлтийн төлбөргүй.
       </div>
     );
@@ -22,8 +22,8 @@ export function FreeDeliveryNotice({ subtotal }: { subtotal: number }) {
   const left = amountToFreeDelivery(subtotal, isB2B);
   if (left === 0) {
     return (
-      <div className={`${BAR} font-semibold text-brand`}>
-        <Truck className="size-5 shrink-0" /> {isB2B ? "B2B хэрэглэгч: хүргэлт үнэгүй!" : "Танд хүргэлт үнэгүй!"}
+      <div className={`${BAR} font-bold text-brand`}>
+        <Truck className="size-5 shrink-0" /> {isB2B ? "Бизнес хэрэглэгч: хүргэлт үнэгүй." : "Танд хүргэлт үнэгүй."}
       </div>
     );
   }

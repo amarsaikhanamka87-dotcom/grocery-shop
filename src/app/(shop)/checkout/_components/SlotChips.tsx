@@ -12,7 +12,7 @@ export function SlotChips({ slot, onSlot }: { slot: string; onSlot: (value: stri
         {DELIVERY_SLOTS.map((s) => (
           <label key={s} className={CHIP}>
             <input type="radio" name="pickSlot" checked={slot === s} onChange={() => onSlot(s)} className="sr-only" />
-            <span className="text-[15px] font-semibold tabular-nums">{s}</span>
+            <span className="text-[16px] font-bold tabular-nums">{s}</span>
           </label>
         ))}
       </div>

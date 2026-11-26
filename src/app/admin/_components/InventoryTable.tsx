@@ -5,7 +5,7 @@ import { IncomeBreakdown } from "./IncomeBreakdown";
 
 type Props = { dayTitle: string; rows: OutgoingRow[]; deliveryFees: number };
 
-/** "<day> гарсан бараа": products in orders paid that day (most income first) as one money table. */
+/** "<period> гарсан бараа": products in orders paid in that period (day / week / month / year) (most income first) as one money table. */
 export function InventoryTable({ dayTitle, rows, deliveryFees }: Props) {
   return (
     <section className="card mt-6 p-5">
@@ -22,7 +22,7 @@ export function InventoryTable({ dayTitle, rows, deliveryFees }: Props) {
       </div>
       {rows.length === 0 ? (
         <p className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
-          <PackageSearch className="size-7" /> Энэ өдөр төлөгдсөн захиалгад бараа алга.
+          <PackageSearch className="size-7" /> Энэ хугацаанд төлөгдсөн захиалгад бараа алга.
         </p>
       ) : (
         // One table (item, stock left, quantity, price, money, total) instead of photo cards plus a

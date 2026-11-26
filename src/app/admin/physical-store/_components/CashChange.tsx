@@ -9,7 +9,7 @@ type Props = { total: number; received: string; onReceived: (value: string) => v
 
 /**
  * Cash payments: the amount handed over (typed as "10,000₮" or a quick button) next to the change.
- * Empty = nothing typed yet: a neutral hint, not a "short" warning.
+ * Empty = nothing typed yet: a neutral "—" (the reason sits under the pay button), not a "short" warning.
  */
 export function CashChange({ total, received, onReceived }: Props) {
   const amount = Number(received) || 0;
@@ -36,8 +36,8 @@ export function CashChange({ total, received, onReceived }: Props) {
           )}
         >
           <span className="text-[14px] font-bold">{isEmpty ? "Хариулт" : change < 0 ? "Дутуу" : "Хариулт"}</span>
-          <span className={cn("font-extrabold tabular-nums", isEmpty ? "text-[14px]" : "text-[26px] leading-tight")}>
-            {isEmpty ? "Мөнгөө оруулна уу" : formatPrice(Math.abs(change))}
+          <span className="text-[26px] leading-tight font-extrabold tabular-nums">
+            {isEmpty ? "—" : formatPrice(Math.abs(change))}
           </span>
         </div>
       </div>

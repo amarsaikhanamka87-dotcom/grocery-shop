@@ -13,7 +13,7 @@ export function CategoryNav({ nav }: { nav: NavItem[] }) {
             <li key={item.label} className="group relative">
               <Link
                 href={item.href}
-                className={`flex h-[42px] items-center gap-1 px-2.5 text-[14.5px] font-semibold transition-colors hover:text-brand ${
+                className={`flex h-[42px] items-center gap-1 px-2.5 text-[16px] font-bold transition-colors hover:text-brand ${
                   item.dot ? "text-brand" : "text-ink-2"
                 }`}>
                 {item.dot && (
@@ -30,7 +30,7 @@ export function CategoryNav({ nav }: { nav: NavItem[] }) {
                     <Link
                       key={c.href}
                       href={c.href}
-                      className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold text-ink-2 hover:bg-brand-50 hover:text-brand">
+                      className="block rounded-xl px-3.5 py-2.5 text-[16px] font-bold text-ink-2 hover:bg-brand-50 hover:text-brand">
                       {c.label}
                     </Link>
                   ))}

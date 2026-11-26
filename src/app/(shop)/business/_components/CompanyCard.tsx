@@ -16,7 +16,7 @@ export function CompanyCard({ application: a }: { application: BusinessApplicati
         </p>
         {a.reviewedAt && (
           <p className="mt-1 text-[13px] text-muted-foreground">
-            B2B хамтрагч: {a.reviewedAt.toLocaleDateString("mn-MN")}-с хойш
+            Бизнес хэрэглэгч: {a.reviewedAt.toLocaleDateString("mn-MN")}-с хойш
           </p>
         )}
       </div>

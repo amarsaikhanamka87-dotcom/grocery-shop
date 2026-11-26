@@ -106,13 +106,23 @@ equal the total, idempotent), called from the signed webhook `api/webhooks/wire`
 after asking Wire's API server-to-server (`syncWirePayment`). Wire has no test mode (API accepts
 only `sk_live_` keys), so test with small real amounts. Env: `WIRE_API_KEY`, `WIRE_WEBHOOK_SECRET`.
 
+**Bank transfer ("Дансаар шилжүүлэх").** Picked next to the pay button at checkout (`paymentMethod`
+WIRE | TRANSFER). A transfer order gets no Wire link; `/orders/[id]` shows `BankTransferCard`
+(`BANK_TRANSFER` in constants) with the code `transferReference` = "BZ" + order number. It **holds
+its stock from placement** (`checkout/_features/createOrderHoldingStock`; rule in
+`lib/orders/holdsStock`, so `payOrder` skips the stock step). Admin dialog: "Дансаар төлсөн"
+(`markPaidByTransfer` → `payOrder`) or "Цуцлах" (`cancelHeldOrder`, stock back). Unpaid after
+`TRANSFER_HOLD_HOURS` (24) → `cancelExpiredTransfers`: hourly via `netlify/functions/cancelExpiredTransfers.mts`
+→ `POST /api/cron/cancel-expired-transfers` (header `x-cron-secret` = `CRON_SECRET`), and also when
+checkout, the order page or `/admin/orders` runs. The app can't see the bank: the owner confirms by hand.
+
 **Receipts (БМ-3 "Зарлагын баримт").** `payOrder` creates a `Receipt` (prisma `receipts.prisma`, own
 №) in the same transaction that flips the order to PAID, then schedules (`after()`) `lib/receipts/sendReceipt`:
 if the order has an `email` (Clerk email saved at checkout) and total > `RECEIPT_EMAIL_MIN_TOTAL` it POSTs
 `order.paid` to n8n (`lib/n8n/postN8nEvent`, header `x-n8n-secret`) and records `emailStatus`
 (SENT/SKIPPED/FAILED); n8n is called only when an email should go out. `receiptHtml` renders the one
 БМ-3 layout used by the email (`body.receipt.html`, `body.receipt.subject`, to `body.order.email`), the
-admin view and the print page. Admin: `/admin/receipts` (filter by status), `/admin/receipts/[id]`
+admin view and the print page. Admin: `/admin/receipts` (period + totals via `getReceiptPeriodSummary`, e-mail status tabs with counts, grouped by day), `/admin/receipts/[id]`
 (sheet, "Хэвлэх" → `[id]/print` route, "И-мэйлээр илгээх" = `resendReceipt`, any amount). n8n workflow:
 `n8n/order-paid-receipt.json` (Webhook → Gmail). Env: `N8N_ORDER_EVENT_URL`, `N8N_WEBHOOK_SECRET`,
 `SITE_URL` (optional, for the order link). Seller register no. on the form: `SHOP_REG_NO` (constants).
@@ -122,8 +132,12 @@ admin view and the print page. Admin: `/admin/receipts` (filter by status), `/ad
 `components/location/`). Pickup = buyer collects at `PICKUP_POINT` (`lib/constants.ts`, also the footer
 address + Google Maps link via `lib/location/googleMapsLinks.ts`): no address form, no delivery fee;
 `placeOrder` forces fee 0 and the pickup address server-side. Once per browser session in delivery mode
-`useAskLocationOnce` asks "Энэ хаяг руу хүргүүлэх үү?" (saved address, else GPS, else opens
-"Хаяг сонгох"); the popup only closes on Тийм or by choosing an address.
+`useAskLocationOnce` asks "Энэ хаяг руу хүргүүлэх үү?" only for a saved address (since 2026-11-25
+a new visitor gets no GPS prompt and no "Хаяг сонгох" form over the home page; they pick it in the
+header or at checkout); that popup only closes on Тийм or by choosing an address.
+Address UI: md+ header pill (`AddressPill`), phones a thin line under the sticky header
+(`AddressLine` in `(shop)/layout.tsx`, scrolls away); both use `AddressConfirmPopover` gated by
+`useIsMdUp` so only the visible one opens; `AddressDialog` is rendered once, in `Header`.
 
 **Order kinds.** `Order.deliveryType` (string): `scheduled` (day + slot), `recurring` ("Давтамжит":
 `recurrence` enum WEEKLY/BIWEEKLY/MONTHLY + `recurrenceDays` weekdays 0=Ням + start/end dates, picked
@@ -164,21 +178,25 @@ customer's `/business` is a dashboard with a monthly order list (`StandingOrder`
 the b2b role and each product's `minQty`), and "add all to cart". Auto-placing it on that day
 comes after orders exist (Day 6–8).
 
-**Admin.** `/admin` dashboard: day navigator `‹ [📅 11-р сарын 22, Ням] ›` + "Өнөөдөр рүү буцах"
-(`DayNavigator`; the middle is a native `<input type="date">`, any past day). `?day=YYYY-MM-DD` →
-`resolveDashboardDay` (`lib/date/ubDayFromKey` + `buildUbDay`, one UB day = UTC+8); an invalid or
-future day falls back to today with a clay notice. One date format everywhere ("11-р сарын 22").
+**Admin.** `/admin` dashboard and `/admin/receipts` share `components/admin/PeriodNavigator`:
+Өдөр / 7 хоног (Mon–Sun) / Сар / Жил, then `‹ [📅 Энэ 7 хоног · 11-р сарын 23 – 29] ›` (the middle is a
+native `<input type="date">`; a picked day opens the period holding it) + "back to now".
+`?period=day|week|month|year&date=YYYY-MM-DD` → `lib/date/resolvePeriod` (UB time = UTC+8; old
+`?day=` links still work on the dashboard); an invalid or future date falls back to the current
+period with a clay notice. The report queries (`getDayMoney`, …) take any `{ start, end }`. One date format everywhere ("11-р сарын 22").
 Admin "pick one" filters (orders, receipts, product categories) all use `components/admin/filterChipClass`.
-Orders are listed under day headings ("Өнөөдөр", "Өчигдөр", …; `orders/_features/groupOrdersByDay`).
 Status changes and deletes ask first inline, in words ("Тийм, устгах" / "Болих"). `page.tsx` starts the day's queries without awaiting and `DayReport`
 awaits them inside `<Suspense key={day}>`, so switching days shows a skeleton, never the old day's
 money. Cards: Нийт орлого (`getDayMoney`, PAID orders by `paidAt`) split into Онлайн захиалга and
 Касс (`getStoreDaySales`); then one table of goods out with money per item (`getDayOutgoing`:
 quantity, price range, `price × quantity`, stock left) + delivery fees = the total. Product units are
-"шуудай" (sacks) since 2026-11-23; old order items keep "кг". `/admin/orders`: filters
-`?pay=paid|unpaid|delivered&type=delivery|pickup`; Касс sales are never listed; DELIVERED orders show
-only under "Хүргэгдсэн" (never deleted: receipts and income depend on them). One status badge per order
-(`orders/_features/orderState.ts`). "Хүргэж өгсөн" / "Очиж авсан" (`markDelivered`, PAID only →
+"шуудай" (sacks) since 2026-11-23; old order items keep "кг". `/admin/orders` (redesigned 2026-11-25): tabs
+`?view=check|todo|unpaid|done|cancelled` (Данс шалгах / Өгөх (default) / Төлөгдөөгүй / Дууссан /
+Цуцалсан, with counts; `lib/orders/adminOrderWhere`) + type switch `&type=delivery|pickup`; grouped by
+hand-over day + slot ("Маргааш, 11-р сарын 26 · 06:00–09:00", `groupOrdersByHandOverDay`); rows are 3
+lines; the dialog puts the action first (`TransferCheckBox` / "Хүргэж өгсөн"). Касс sales are never
+listed; DELIVERED orders are never deleted (receipts and income depend on them). One status badge per
+order, worded like the tabs (`orders/_features/orderState.ts`). "Хүргэж өгсөн" / "Очиж авсан" (`markDelivered`, PAID only →
 `DELIVERED`). `/admin/products` edit dialog changes only "Үнэ ба үлдэгдэл"; the other fields go along
 unchanged as hidden inputs (`KeepFields`), creating a product shows the full form.
 

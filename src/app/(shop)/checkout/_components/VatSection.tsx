@@ -11,8 +11,8 @@ export function VatSection({ company }: Props) {
   const v = useInvoiceType(company);
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="flex items-center gap-2 text-lg font-extrabold">
-        <ReceiptText className="size-5 text-brand" /> НӨАТ
+      <h2 className="flex items-center gap-2 text-[16px] font-bold">
+        <ReceiptText className="size-5 text-brand" /> НӨАТ-ын баримт хэнд вэ?
       </h2>
       <input type="hidden" name="invoiceType" value={v.type} />
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -22,7 +22,7 @@ export function VatSection({ company }: Props) {
       {v.isCompany && (
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="label" htmlFor="companyRegNo">Байгууллагын регистр</label>
+            <label className="label" htmlFor="companyRegNo">Байгууллагын регистрийн дугаар</label>
             <input
               id="companyRegNo"
               name="companyRegNo"

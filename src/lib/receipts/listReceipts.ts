@@ -2,10 +2,12 @@ import "server-only";
 import type { ReceiptEmailStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-/** Admin "Баримт": issued receipts, newest first, optionally only one email status. */
-export function listReceipts(emailStatus?: ReceiptEmailStatus) {
+type Range = { start: Date; end: Date };
+
+/** Admin "Баримт": receipts issued in a period, newest first, optionally only one email status. */
+export function listReceipts(range: Range, emailStatus?: ReceiptEmailStatus) {
   return prisma.receipt.findMany({
-    where: emailStatus ? { emailStatus } : undefined,
+    where: { createdAt: { gte: range.start, lt: range.end }, ...(emailStatus && { emailStatus }) },
     orderBy: { number: "desc" },
     take: 200,
     select: {
@@ -23,6 +25,7 @@ export function listReceipts(emailStatus?: ReceiptEmailStatus) {
           phone: true,
           total: true,
           deliveryType: true,
+          paymentMethod: true,
           items: { select: { name: true, quantity: true, unit: true } },
         },
       },

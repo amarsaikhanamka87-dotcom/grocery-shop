@@ -1,11 +1,14 @@
 import { CircleCheck, Clock, XCircle } from "lucide-react";
 import { formatPrice } from "@/lib/format/formatPrice";
+import { BankTransferCard } from "@/components/payment/BankTransferCard";
 import { PaymentPoller } from "./PaymentPoller";
 
 type Props = {
   paid: boolean;
   cancelled: boolean;
   total: number;
+  orderNumber: number;
+  isTransfer: boolean;
   checkoutUrl: string | null;
 };
 
@@ -13,6 +16,8 @@ export function PaymentStatusCard({
   paid,
   cancelled,
   total,
+  orderNumber,
+  isTransfer,
   checkoutUrl,
 }: Props) {
   if (paid) {
@@ -41,14 +46,19 @@ export function PaymentStatusCard({
       <div className="flex items-center gap-4">
         <Clock className="size-10 shrink-0 text-clay" />
         <div>
-          <p className="text-lg font-extrabold">Төлбөр хүлээгдэж байна</p>
+          <p className="text-lg font-extrabold">
+            {isTransfer ? "Шилжүүлэг хүлээгдэж байна" : "Төлбөр хүлээгдэж байна"}
+          </p>
           <p className="text-[14.5px] text-muted-foreground">
-            Төлбөр орсны дараа энэ хуудас автоматаар шинэчлэгдэнэ.
+            {isTransfer
+              ? "Доорх данс руу шилжүүлнэ үү. Бид шалгаад баталгаажуулахад энэ хуудас шинэчлэгдэнэ."
+              : "Төлбөр орсны дараа энэ хуудас автоматаар шинэчлэгдэнэ."}
           </p>
         </div>
       </div>
+      {isTransfer && <BankTransferCard orderNumber={orderNumber} total={total} />}
       <div className="flex flex-wrap gap-2">
-        {checkoutUrl && (
+        {checkoutUrl && !isTransfer && (
           <a href={checkoutUrl} className="btn btn-primary h-11 px-6">
             Төлөх · {formatPrice(total)}
           </a>

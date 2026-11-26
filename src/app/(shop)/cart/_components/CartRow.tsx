@@ -20,32 +20,32 @@ export function CartRow({ item: i }: { item: CartItem }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <Link href={`/product/${i.slug}`} className="line-clamp-2 font-bold hover:text-brand">
+            <Link href={`/product/${i.slug}`} className="line-clamp-2 text-[16px] font-bold hover:text-brand">
               {i.name}
             </Link>
-            <p className="text-[13px] text-muted-foreground">
-              {formatPrice(i.price)} / {i.unit}
-              {i.minQty > 1 && ` · багадаа ${i.minQty} ${cartUnitLabel(i.unit)}`}
+            <p className="text-[16px] text-muted-foreground">
+              {formatPrice(i.price)} / {cartUnitLabel(i.unit)}
+              {i.minQty > 1 && ` · хамгийн багадаа ${i.minQty}`}
             </p>
             <StockWarning item={i} />
           </div>
           <button
             onClick={() => remove(i.productId)}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-ink/5 hover:text-clay"
+            className="-mt-2 -mr-2 grid size-11 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-ink/5 hover:text-ink"
             aria-label={`${i.name} хасах`}
           >
-            <Trash2 className="size-4" />
+            <Trash2 className="size-5" />
           </button>
         </div>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-3">
-          <div className="flex h-10 items-center rounded-full border border-line bg-white">
+          <div className="flex h-11 items-center rounded-full border border-line bg-white">
             <button
               onClick={() => setQuantity(i.productId, i.quantity - 1)}
               disabled={i.quantity <= i.minQty}
-              className="grid size-10 place-items-center disabled:opacity-30"
+              className="grid size-11 place-items-center disabled:opacity-30"
               aria-label="Хасах"
             >
-              <Minus className="size-3.5" />
+              <Minus className="size-4" />
             </button>
             <QtyInput
               value={i.quantity}
@@ -56,13 +56,13 @@ export function CartRow({ item: i }: { item: CartItem }) {
             <button
               onClick={() => setQuantity(i.productId, i.quantity + 1)}
               disabled={i.quantity >= i.stock}
-              className="grid size-10 place-items-center disabled:opacity-30"
+              className="grid size-11 place-items-center disabled:opacity-30"
               aria-label="Нэмэх"
             >
-              <Plus className="size-3.5" />
+              <Plus className="size-4" />
             </button>
           </div>
-          <p className="ml-auto whitespace-nowrap text-[17px] font-extrabold tabular-nums">
+          <p className="ml-auto whitespace-nowrap text-[16px] font-bold tabular-nums">
             {formatPrice(i.price * i.quantity)}
           </p>
         </div>

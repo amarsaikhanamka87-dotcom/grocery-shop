@@ -12,16 +12,17 @@ const FREQUENCIES = Object.keys(RECURRENCE_LABEL) as RecurrencePlan["frequency"]
 
 type Props = { initial: RecurrencePlan | null; onSave: (plan: RecurrencePlan) => void };
 
-/** Inside of the "Давтамжит" dialog: start date, how often, which weekdays, end date. */
+/** Inside of the "Тогтмол захиалга" dialog: start date, how often, which weekdays, end date. */
 export function RecurrenceForm({ initial, onSave }: Props) {
   const f = useRecurrenceForm(initial);
+  const monthly = f.frequency === "MONTHLY";
   return (
     <>
-      <Dialog.Title className="border-b border-line px-6 py-5 text-lg font-extrabold">Хүргэлтийн огноо</Dialog.Title>
+      <Dialog.Title className="border-b border-line px-6 py-5 text-[16px] font-bold">Тогтмол захиалга</Dialog.Title>
       <div className="grid gap-5 px-6 py-5">
-        <DateField label="Циклийн эхлэх хугацаа" value={f.start} min={f.today} onChange={f.setStart} />
+        <DateField label="Эхлэх өдөр" value={f.start} min={f.firstDay} onChange={f.setStart} />
         <div className="grid gap-3 border-t border-line pt-5">
-          <p className="font-extrabold">Захиалгын давтамж</p>
+          <p className="text-[16px] font-bold">Хэр давтамжтай вэ?</p>
           {FREQUENCIES.map((value) => (
             <ChoiceRow
               key={value}
@@ -34,7 +35,9 @@ export function RecurrenceForm({ initial, onSave }: Props) {
           ))}
         </div>
         <div className="grid gap-3 border-t border-line pt-5">
-          <p className="font-extrabold">Өдөр</p>
+          <p className="text-[16px] font-bold">
+            {monthly ? "Сар бүрийн эхний аль гарагт хүргэх вэ?" : "Аль гарагт хүргэх вэ?"}
+          </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {WEEKDAY_OPTIONS.map((d) => (
               <ChoiceRow
@@ -49,27 +52,20 @@ export function RecurrenceForm({ initial, onSave }: Props) {
           </div>
         </div>
         <div className="border-t border-line pt-5">
-          <DateField
-            label={
-              <>
-                Дуусах <span className="text-clay">*</span>
-              </>
-            }
-            value={f.end}
-            min={f.endMin}
-            defaultOpen={!f.end}
-            onChange={f.setEnd}
-          />
+          <DateField label="Дуусах өдөр" value={f.end} min={f.endMin} defaultOpen={!f.end} onChange={f.setEnd} />
         </div>
       </div>
-      <div className="flex justify-end border-t border-line px-6 py-4">
+      <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line px-6 py-4">
+        {/* Say what is still missing instead of a silent grey button. */}
+        {f.missing && <p className="mr-auto text-[16px] text-muted-foreground">Сонгоно уу: {f.missing}</p>}
+        <Dialog.Close className="btn btn-outline h-11 px-6">Болих</Dialog.Close>
         <button
           type="button"
           disabled={!f.plan}
           onClick={() => f.plan && onSave(f.plan)}
           className="btn btn-primary h-11 px-6 disabled:opacity-50"
         >
-          Сонгох
+          Хадгалах
         </button>
       </div>
     </>

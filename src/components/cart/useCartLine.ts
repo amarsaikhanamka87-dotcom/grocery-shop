@@ -18,7 +18,7 @@ export function useCartLine(item: Omit<CartItem, "quantity">) {
     atMax: quantity >= item.stock,
     add: () => {
       add(item);
-      notifyAdded(item, Math.min(item.minQty, item.stock));
+      notifyAdded(item);
     },
     increment: () => setQuantity(item.productId, quantity + 1),
     decrement: () => (quantity <= item.minQty ? remove(item.productId) : setQuantity(item.productId, quantity - 1)),

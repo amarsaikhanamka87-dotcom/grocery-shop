@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { formatPrice } from "@/lib/format/formatPrice";
-import { formatDateTime } from "@/lib/format/formatDateTime";
+import { formatDayTimeMn } from "@/lib/format/formatDayTimeMn";
 import { formatDayMn } from "@/lib/format/formatDayMn";
 import type { AdminOrder } from "@/lib/orders/listAdminOrders";
 import { orderState } from "../_features/orderState";
@@ -10,6 +10,7 @@ import { DetailField } from "./DetailField";
 import { DELIVERY_TYPE_LABEL } from "@/lib/orders/deliveryTypeLabel";
 import { PAYMENT_METHOD_LABEL } from "@/lib/orders/paymentMethodLabel";
 import { recurrenceText } from "@/lib/orders/recurrenceText";
+import { cancelReason } from "../_features/cancelReason";
 
 /** Read-only body of the order dialog: buyer, delivery, payment, lines and totals. */
 export function AdminOrderDetail({ order: o }: { order: AdminOrder }) {
@@ -17,21 +18,25 @@ export function AdminOrderDetail({ order: o }: { order: AdminOrder }) {
   const pickup = o.deliveryType === "pickup";
   // Pickup: the type tag already says "Очиж авах", so the time line is just day + slot.
   const typeText = pickup ? "" : `${DELIVERY_TYPE_LABEL[o.deliveryType ?? ""] ?? "Хүргэлт"} · `;
+  // Old orders have no date (their slot holds the text): no stray ", " then.
+  const whenText = typeText + [day, o.deliverySlot].filter(Boolean).join(", ");
+  const reason = cancelReason(o);
   const paymentText =
     o.paymentStatus === "UNPAID"
-      ? "Төлөгдөөгүй"
-      : `${PAYMENT_METHOD_LABEL[o.paymentMethod] ?? o.paymentMethod}${o.paidAt ? ` · ${formatDateTime(o.paidAt)}` : ""}`;
+      ? `Төлөгдөөгүй${o.paymentMethod === "TRANSFER" ? " · Дансаар шилжүүлнэ" : ""}`
+      : `${PAYMENT_METHOD_LABEL[o.paymentMethod] ?? o.paymentMethod}${o.paidAt ? ` · ${formatDayTimeMn(o.paidAt)}` : ""}`;
   return (
     <div className="grid gap-5">
       <div className="flex flex-wrap items-center gap-2">
         <StatusPill {...orderState(o)} />
         <FulfillmentPill deliveryType={o.deliveryType} />
       </div>
+      {reason && <p className="-mt-2 text-[14px] text-muted-foreground">{reason}</p>}
       <dl className="grid gap-4 sm:grid-cols-2">
         <DetailField label="Захиалагч" value={[o.customerName || "—", o.companyName].filter(Boolean).join(" · ")} />
         <DetailField label="Утас" value={<a href={`tel:${o.phone}`} className="text-brand hover:underline">{o.phone}</a>} />
-        <DetailField label={pickup ? "Очиж авах цэг" : "Хүргүүлэх хаяг"} value={`${o.district} дүүрэг, ${o.address}`} wide />
-        <DetailField label={pickup ? "Очиж авах хугацаа" : "Хүргэлтийн хугацаа"} value={`${typeText}${day}, ${o.deliverySlot}`} />
+        <DetailField label={pickup ? "Ирж авах цэг" : "Хүргэх хаяг"} value={`${o.district} дүүрэг, ${o.address}`} wide />
+        <DetailField label={pickup ? "Ирж авах хугацаа" : "Хүргэх хугацаа"} value={whenText} />
         {o.recurrence && (
           <DetailField
             label="Давтамж"
@@ -43,7 +48,7 @@ export function AdminOrderDetail({ order: o }: { order: AdminOrder }) {
           label="НӨАТ"
           value={o.companyRegNo ? `Байгууллага · ${o.companyName ?? ""} · РД ${o.companyRegNo}` : "Хувь хүн"}
         />
-        <DetailField label="Захиалсан" value={formatDateTime(o.createdAt)} />
+        <DetailField label="Захиалсан" value={formatDayTimeMn(o.createdAt)} />
         <DetailField
           label="Төлбөр"
           value={
@@ -85,7 +90,7 @@ export function AdminOrderDetail({ order: o }: { order: AdminOrder }) {
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Хүргэлт</dt>
           <dd className="tabular-nums">
-            {pickup ? "Очиж авна (0₮)" : o.deliveryFee === 0 ? "Үнэгүй" : formatPrice(o.deliveryFee)}
+            {pickup ? "Ирж авна (0₮)" : o.deliveryFee === 0 ? "Үнэгүй" : formatPrice(o.deliveryFee)}
           </dd>
         </div>
         <div className="flex justify-between text-lg font-extrabold">

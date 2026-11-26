@@ -5,12 +5,14 @@ import { X } from "lucide-react";
 import type { AdminOrder } from "@/lib/orders/listAdminOrders";
 import { AdminOrderDetail } from "./AdminOrderDetail";
 import { DeliveredButton } from "./DeliveredButton";
+import { TransferCheckBox } from "./TransferCheckBox";
+import { UnpaidOrderNote } from "./UnpaidOrderNote";
 
 type Props = { order: AdminOrder; children: React.ReactNode };
 
 /**
  * The order row is the trigger; the dialog shows the order from data already loaded with the
- * list, plus "Хүргэж өгсөн" for paid orders still on their way.
+ * list, plus "Дансаар төлсөн" for unpaid ones and "Хүргэж өгсөн" for paid orders still on their way.
  */
 export function AdminOrderDialog({ order, children }: Props) {
   return (
@@ -23,10 +25,17 @@ export function AdminOrderDialog({ order, children }: Props) {
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl bg-white p-6 text-ink shadow-xl outline-none">
           <Dialog.Title className="pr-10 text-xl font-extrabold">Захиалга #{order.number}</Dialog.Title>
           <Dialog.Description className="sr-only">Захиалгын дэлгэрэнгүй</Dialog.Description>
-          <div className="mt-4">
+          {/* What the owner has to do comes first, above the details (no scrolling to the buttons). */}
+          <div className="mt-4 grid gap-5">
+            {order.paymentMethod === "TRANSFER" && order.paymentStatus === "UNPAID" && order.status !== "CANCELLED" && (
+              <TransferCheckBox order={order} />
+            )}
+            {order.paymentMethod !== "TRANSFER" && order.paymentStatus === "UNPAID" && order.status !== "CANCELLED" && (
+              <UnpaidOrderNote />
+            )}
+            <DeliveredButton order={order} />
             <AdminOrderDetail order={order} />
           </div>
-          <DeliveredButton order={order} />
           <Dialog.Close
             aria-label="Хаах"
             className="absolute top-3 right-3 grid size-11 place-items-center rounded-full text-muted-foreground hover:bg-cream-2 hover:text-ink"

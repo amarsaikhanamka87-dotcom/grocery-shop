@@ -26,13 +26,12 @@ export function ProductPicker({ products, inBill, onPick }: Props) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Бараа хайх…"
           className="input h-11 w-full pl-9 text-[16px]"
-          autoFocus
         />
       </label>
       {shown.length === 0 ? (
         <p className="py-10 text-center text-muted-foreground">Бараа олдсонгүй.</p>
       ) : (
-        <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-3 2xl:grid-cols-4">
+        <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {shown.map((product) => (
             <li key={product.id}>
               <PosProductButton product={product} inBill={inBill.get(product.id) ?? 0} onPick={onPick} />

@@ -12,7 +12,7 @@ export const clerkLocalization = {
     start: {
       ...mnMN.signIn?.start,
       title: "Нэвтрэх",
-      subtitle: "Google эсвэл утасны дугаараараа нэвтэрнэ үү.",
+      subtitle: "Google эсвэл утасны дугаараа нэвтэрнэ үү.",
     },
   },
   signUp: {
@@ -20,7 +20,7 @@ export const clerkLocalization = {
     start: {
       ...mnMN.signUp?.start,
       title: "Бүртгүүлэх",
-      subtitle: "Google эсвэл утасны дугаараараа бүртгүүлнэ үү.",
+      subtitle: "Google эсвэл утасны дугаараа бүртгүүлнэ үү.",
     },
   },
 };

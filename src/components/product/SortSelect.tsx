@@ -14,7 +14,7 @@ export function SortSelect({ value }: { value: string }) {
   const pathname = usePathname();
   const params = useSearchParams();
   return (
-    <label className="flex items-center gap-2 text-[14px] font-medium text-muted-foreground">
+    <label className="flex items-center gap-2 text-[16px] text-muted-foreground">
       Эрэмбэлэх:
       <select
         value={value}
@@ -23,7 +23,7 @@ export function SortSelect({ value }: { value: string }) {
           next.set("sort", e.target.value);
           router.push(`${pathname}?${next.toString()}`);
         }}
-        className="h-10 rounded-full border border-line bg-white px-4 text-[14px] font-semibold text-ink outline-none focus:border-brand"
+        className="h-11 rounded-full border border-line bg-white px-4 text-[16px] font-bold text-ink outline-none focus:border-brand"
       >
         {OPTIONS.map(([v, l]) => (
           <option key={v} value={v}>

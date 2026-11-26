@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cancelExpiredTransfers } from "@/lib/orders/cancelExpiredTransfers";
 import { getMyOrder } from "@/lib/orders/getMyOrder";
 import { syncWirePayment } from "@/lib/orders/syncWirePayment";
 import { PaymentStatusCard } from "./_components/PaymentStatusCard";
@@ -12,6 +13,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const { id } = await params;
   const userId = await requireOrderSignIn(id);
 
+  await cancelExpiredTransfers();
   let order = await getMyOrder(id, userId);
   if (!order) notFound();
 
@@ -27,6 +29,8 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         paid={order.paymentStatus === "PAID"}
         cancelled={order.status === "CANCELLED"}
         total={order.total}
+        orderNumber={order.number}
+        isTransfer={order.paymentMethod === "TRANSFER"}
         checkoutUrl={order.wireCheckoutUrl ?? `/pay?order=${order.id}`}
       />
       <OrderDetails order={order} />

@@ -8,15 +8,15 @@ import { getDeals } from "@/lib/catalog/getDeals";
 import { Logo } from "./Logo";
 
 const CONTACT_BTN =
-  "flex h-12 items-center justify-center gap-2 rounded-xl bg-white/5 text-[16px] font-semibold text-white ring-1 ring-white/10";
+  "flex h-12 items-center justify-center gap-2 rounded-xl bg-white/5 text-[16px] font-bold text-white ring-1 ring-white/10";
 
 // Sign-in / sign-up live in the header and mobile menu; the footer doesn't repeat them.
 const infoCol = {
   title: "Мэдээлэл",
   links: [
     { label: "Манай фермүүд", href: "/farms" },
-    { label: "Хэрхэн захиалах", href: "/help" },
-    { label: "Хадгалсан бараа", href: "/wishlist" },
+    { label: "Түгээмэл асуулт", href: "/help" },
+    { label: "Хадгалсан бүтээгдэхүүн", href: "/wishlist" },
   ],
 };
 
@@ -98,7 +98,7 @@ export async function Footer() {
           <p>
             © {new Date().getFullYear()} {SHOP_NAME}. Бүх эрх хуулиар хамгаалагдсан.
           </p>
-          <p>Төлбөрийг QR кодоор бүх банкны аппаар төлнө</p>
+          <p>QR код, банкны апп эсвэл дансаар төлнө</p>
         </div>
       </div>
     </footer>

@@ -12,5 +12,7 @@ export function recurrenceText(
   const names = WEEKDAY_OPTIONS.filter((d) => days.includes(d.value)).map(
     (d) => d.label,
   );
-  return `${RECURRENCE_LABEL[frequency]} · ${names.join(", ")} · ${start} – ${end}`;
+  // Monthly + weekdays means the first such weekday of each month ("эхний Даваа").
+  const dayText = frequency === "MONTHLY" ? names.map((n) => `эхний ${n}`).join(", ") : names.join(", ");
+  return `${RECURRENCE_LABEL[frequency]} · ${dayText} · ${start} – ${end}`;
 }

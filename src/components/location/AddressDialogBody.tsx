@@ -8,7 +8,7 @@ import { SavedAddressList } from "./SavedAddressList";
 import { useAddressDialog, type AddressTab } from "./useAddressDialog";
 
 const TABS: { id: AddressTab; label: string }[] = [
-  { id: "temp", label: "Түр хаяг" },
+  { id: "temp", label: "Шинэ хаяг" },
   { id: "saved", label: "Хадгалсан хаяг" },
 ];
 

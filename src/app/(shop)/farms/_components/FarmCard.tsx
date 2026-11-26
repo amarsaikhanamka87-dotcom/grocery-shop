@@ -1,23 +1,43 @@
 import Image from "next/image";
-import { MapPin } from "lucide-react";
-import { img } from "@/lib/format/img";
+import Link from "next/link";
+import { MapPin, Sprout } from "lucide-react";
 
-/** `image`: our own photo in /public ("/images/farms/…") or an Unsplash photo id. */
-export type Farm = { name: string; place: string; items: string; image: string };
+type Props = {
+  name: string;
+  place: string;
+  photo?: string;
+  products: { name: string; slug: string }[];
+};
 
-export function FarmCard({ farm: f }: { farm: Farm }) {
+/** One farm: photo (or a plain tile), name, place, and its products as links to buy them. */
+export function FarmCard({ name, place, photo, products }: Props) {
   return (
-    <li className="card overflow-hidden">
-      <div className="relative aspect-[4/3] bg-ink/5">
-        <Image src={f.image.startsWith("/") ? f.image : img(f.image, 700)} alt={f.name} fill sizes="(min-width:1024px) 360px, 50vw" className="object-cover" />
+    <li className="card flex flex-col gap-4 p-4 sm:p-5">
+      <div className="flex items-center gap-4">
+        <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-brand-50 text-brand">
+          {photo ? <Image src={photo} alt={name} fill sizes="80px" className="object-cover" /> : <Sprout className="size-8" />}
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-[16px] font-bold">{name}</h2>
+          <p className="mt-1 flex items-center gap-1.5 text-[16px] text-muted-foreground">
+            <MapPin className="size-4 shrink-0" /> {place}
+          </p>
+        </div>
       </div>
-      <div className="p-6">
-        <p className="flex items-center gap-1.5 text-[13px] font-semibold text-muted-foreground">
-          <MapPin className="size-4" /> {f.place}
-        </p>
-        <h2 className="mt-2 text-lg font-extrabold">{f.name}</h2>
-        <p className="mt-1 text-[15px] text-ink-2">{f.items}</p>
-      </div>
+      {products.length > 0 && (
+        <ul className="flex flex-wrap gap-2" aria-label={`${name}-ийн ногоо`}>
+          {products.map((p) => (
+            <li key={p.slug}>
+              <Link
+                href={`/product/${p.slug}`}
+                className="flex h-11 items-center rounded-full border border-line bg-white px-4 text-[16px] font-bold hover:border-brand hover:text-brand"
+              >
+                {p.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
