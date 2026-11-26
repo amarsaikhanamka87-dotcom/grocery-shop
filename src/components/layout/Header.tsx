@@ -11,13 +11,14 @@ import { BasketButton } from "./BasketButton";
 import { MobileMenu } from "./MobileMenu";
 import { CategoryNav } from "./CategoryNav";
 import { AddressPill } from "@/components/location/AddressPill";
+import { AddressDialog } from "@/components/location/AddressDialog";
 import { ModeToggle } from "@/components/location/ModeToggle";
 
 export async function Header() {
   const [categories, deals] = await Promise.all([getCategories(), getDeals(1)]);
   const nav = buildNav(categories, deals.length > 0);
   return (
-    <header className="sticky -top-[30px] z-40 lg:top-0">
+    <header className="sticky top-0 z-40">
       {/* Top bar */}
       {/* <div className="bg-brand text-[13px] font-semibold text-white">
         <div className="container-x flex h-[30px] items-center justify-between gap-4">
@@ -43,30 +44,32 @@ export async function Header() {
 
       {/* Main row */}
       <div className=" bg-white/95 backdrop-blur">
-        <div className="container-x flex h-[60px] items-center gap-3 md:h-[64px] md:gap-4">
+        <div className="container-x flex h-[60px] items-center gap-2 sm:gap-3 md:h-[64px] md:gap-4">
           <MobileMenu nav={nav} />
           <Logo />
-          <SearchForm className="hidden flex-1 md:flex lg:min-w-[300px]" />
+          <SearchForm className="hidden min-w-[260px] flex-1 2xl:flex" />
           <div className="hidden sm:block">
             <ModeToggle />
           </div>
           <AddressPill />
-          <div className="ml-auto flex items-center gap-1 md:ml-0">
-            <AdminLink className="hidden h-10 items-center gap-1.5 rounded-full border border-line px-3 text-[14px] font-bold hover:border-brand hover:text-brand lg:flex" />
+          <div className="ml-auto flex shrink-0 items-center sm:gap-1 2xl:ml-0">
+            <AdminLink className="hidden h-10 items-center gap-1.5 rounded-full border border-line px-3 text-[16px] font-bold hover:border-brand hover:text-brand lg:flex" />
             <AccountButton />
             <Link
               href="/wishlist"
-              className="hidden size-10 place-items-center rounded-full hover:bg-brand-50 sm:grid"
+              className="hidden h-11 min-w-11 items-center justify-center gap-1.5 rounded-full px-2.5 text-[16px] font-bold hover:bg-brand-50 lg:flex"
               aria-label="Хадгалсан бүтээгдэхүүн">
               <Heart className="size-[19px]" />
+              <span className="hidden min-[1440px]:inline">Хадгалсан</span>
             </Link>
             <BasketButton />
           </div>
         </div>
-        {/* Below md: search on its own row; on phones the "Хүргэлт | Очиж авах" switch sits next to
-            it (with words, not bare icons) because the top row has no room for it. */}
-        <div className="container-x flex items-center gap-2 pb-2.5 md:hidden">
-          <div className="sm:hidden">
+        {/* Below 2xl: search on its own row (the top row has no room for it next to the switch,
+            address, "Нэвтрэх" and the cart); on phones the "Хүргэлт | Очиж авах" switch sits next to it. */}
+        <div className="group/search container-x flex items-center gap-2 pb-2.5 2xl:hidden">
+          {/* While typing a search on a phone the switch steps aside so the box gets the whole row. */}
+          <div className="group-has-[form:focus-within]/search:hidden sm:hidden">
             <ModeToggle />
           </div>
           <SearchForm className="min-w-0 flex-1" />
@@ -74,6 +77,8 @@ export async function Header() {
       </div>
 
       <CategoryNav nav={nav} />
+      {/* "Хаяг сонгох", once for the whole shop (opened by the pill, the phone address line, checkout). */}
+      <AddressDialog />
     </header>
   );
 }

@@ -19,7 +19,7 @@ export async function startPayment(orderId: string): Promise<PayState> {
 
   const order = await getMyOrder(id.data, userId);
   if (!order) return { error: "Захиалга олдсонгүй." };
-  if (order.paymentStatus === "PAID" || order.status === "CANCELLED")
+  if (order.paymentStatus === "PAID" || order.status === "CANCELLED" || order.paymentMethod === "TRANSFER")
     redirect(`/orders/${order.id}`);
   if (order.wireCheckoutUrl) redirect(order.wireCheckoutUrl);
 

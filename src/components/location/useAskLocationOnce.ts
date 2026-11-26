@@ -1,21 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import { detectAddress } from "@/lib/location/detectAddress";
 import type { DeliveryAddress, FoundAddress } from "@/types/location";
 
 const ASKED_KEY = "location-asked-v2";
 
 /**
- * Once per browser session (when delivering): asks "Энэ хаяг руу хүргүүлэх үү?" for the saved
- * address, or for the browser's GPS location when there is none. No location → "Хаяг сонгох".
- * Not cancelled on cleanup: React dev mode runs effects twice, and cancelling dropped the answer.
+ * Once per browser session (when delivering) and only for a buyer with a saved address: asks
+ * "Энэ хаяг руу хүргүүлэх үү?". A new visitor is not asked anything (no GPS prompt, no "Хаяг сонгох"
+ * form over the home page, owner's review 2026-11-25): the address is picked from the header or at
+ * checkout. Not cancelled on cleanup: React dev mode runs effects twice, and that dropped the answer.
  */
 export function useAskLocationOnce(
   enabled: boolean,
   current: DeliveryAddress | null,
   onFound: (address: FoundAddress) => void,
-  openDialog: (open: boolean) => void,
 ) {
   useEffect(() => {
     if (!enabled) return;
@@ -25,7 +24,6 @@ export function useAskLocationOnce(
     } catch {
       return;
     }
-    if (current) return onFound(current);
-    detectAddress().then((found) => (found ? onFound(found) : openDialog(true)));
-  }, [enabled, current, onFound, openDialog]);
+    if (current) onFound(current);
+  }, [enabled, current, onFound]);
 }

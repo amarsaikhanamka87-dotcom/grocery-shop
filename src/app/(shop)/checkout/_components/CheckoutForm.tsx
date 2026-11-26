@@ -11,6 +11,7 @@ import { VatSection } from "./VatSection";
 import { DeliveryTime } from "./DeliveryTime";
 import { OrderSummary } from "./OrderSummary";
 import { useCheckoutSubmit } from "../_features/useCheckoutSubmit";
+import { usePaymentChoice } from "../_features/usePaymentChoice";
 
 type Props = {
   defaults: { name: string; phone: string };
@@ -18,9 +19,9 @@ type Props = {
 };
 
 export function CheckoutForm({ defaults, company }: Props) {
-
   const { items, subtotal, ready } = useCart();
   const { notice, pending, onSubmit } = useCheckoutSubmit();
+  const { paymentMethod, setPaymentMethod } = usePaymentChoice();
   const pickup = useDeliveryLocation().mode === "pickup";
   useSyncCartStock();
 
@@ -28,9 +29,9 @@ export function CheckoutForm({ defaults, company }: Props) {
   if (items.length === 0) {
     return (
       <div className="py-20 text-center">
-        <p className="text-lg font-bold">Сагс хоосон байна.</p>
+        <p className="text-[16px] font-bold">Сагс хоосон байна.</p>
         <Link href="/shop" className="btn btn-primary mt-6 h-11 px-6">
-          Дэлгүүр хэсэх
+          Ногоо сонгох
         </Link>
       </div>
     );
@@ -39,8 +40,8 @@ export function CheckoutForm({ defaults, company }: Props) {
   if (items.some((i) => stockProblem(i))) {
     return (
       <div className="py-20 text-center">
-        <p className="text-lg font-bold">
-          Зарим бүтээгдэхүүний үлдэгдэл хүрэлцэхгүй байна.
+        <p className="text-[16px] font-bold">
+          Сагсанд байгаа зарим ногоо хүрэлцэхгүй байна.
         </p>
         <Link href="/cart" className="btn btn-primary mt-6 h-11 px-6">
           Сагсаа засах
@@ -68,6 +69,8 @@ export function CheckoutForm({ defaults, company }: Props) {
         subtotal={subtotal}
         notice={notice}
         pending={pending}
+        paymentMethod={paymentMethod}
+        onPaymentChange={setPaymentMethod}
       />
     </form>
   );

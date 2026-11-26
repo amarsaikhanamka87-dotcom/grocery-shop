@@ -19,7 +19,7 @@ export default async function PayPage({
 
   const order = await getMyOrder(orderId.data, userId);
   if (!order) notFound();
-  if (order.paymentStatus === "PAID" || order.status === "CANCELLED")
+  if (order.paymentStatus === "PAID" || order.status === "CANCELLED" || order.paymentMethod === "TRANSFER")
     redirect(`/orders/${order.id}`);
   if (order.wireCheckoutUrl) redirect(order.wireCheckoutUrl);
 

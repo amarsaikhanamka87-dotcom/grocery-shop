@@ -1,39 +1,31 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { DELIVERY_SLOTS, FREE_DELIVERY_FROM } from "@/lib/constants";
+import { formatPrice } from "@/lib/format/formatPrice";
 
 const HERO_SRC = "/images/hero-beets.jpg";
+const firstDeliveryTime = (DELIVERY_SLOTS[0] ?? "").split("–")[0];
 const HERO_ALT = "Талбайдаа шинэхэн улаан манжин хурааж буй тариаланч";
 
 /**
- * Landing hero, kept minimal on purpose: the headline, one short line and one main button
- * (business sign-up lives at the end of the farms section). The photo sits beside it from sm up.
+ * Short hero: one headline and the free-delivery line, so the categories and the first prices
+ * show on a phone's first screen. The photo only from lg, at half height, beside the text.
  */
 export function HeroSection() {
   return (
-    <section className="container-x grid items-center gap-10 pt-6 pb-2 sm:pt-8 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+    <section className="container-x grid items-center gap-8 pt-5 sm:pt-8 lg:grid-cols-[1fr_440px] lg:gap-12">
       <div>
-        <h1 className="text-[42px] font-extrabold leading-[1.04] tracking-[-0.04em] text-ink sm:text-[60px] xl:text-[68px]">
-          Фермийн ногоо, бөөний үнээр, <span className="text-brand">өглөө бүр</span>
+        <h1 className="text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[42px]">
+          Барс захын ногоо, <span className="text-brand">бөөний үнээр</span>
         </h1>
-        <p className="mt-5 max-w-[480px] text-[16px] leading-relaxed text-ink/70 sm:mt-6">
-          Ресторан, дэлгүүрт фермийн ногоог бөөний үнээр хүргэнэ.
+        <p className="mt-3 max-w-[520px] text-[16px] leading-relaxed text-muted-foreground">
+          {/* By when: a cook ordering at 06:00 must not expect it the same morning. */}
+          Ресторан, гуанз, дэлгүүрт шуудайгаар. Өнөөдөр захиалбал маргааш {firstDeliveryTime}-аас
+          хүргэнэ, {formatPrice(FREE_DELIVERY_FROM)}-с дээш хүргэлт үнэгүй.
         </p>
-        <Link href="/shop" className="btn btn-primary mt-7 h-13 w-full px-7 text-[16px] sm:mt-8 sm:w-auto">
-          Үнийн жагсаалт үзэх <ArrowRight className="size-4" />
-        </Link>
       </div>
-      {/* Hidden on phones so the first products show sooner. A line border keeps the pale sky at
-          the top from melting into the white page. */}
-      <div className="relative hidden aspect-[4/3] overflow-hidden rounded-[32px] ring-1 ring-line sm:block lg:aspect-square">
-        <Image
-          src={HERO_SRC}
-          alt={HERO_ALT}
-          fill
-          priority
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover object-[30%_35%]"
-        />
+      {/* A line border keeps the pale sky at the top from melting into the white page. */}
+      <div className="relative hidden aspect-[16/10] overflow-hidden rounded-[28px] ring-1 ring-line lg:block">
+        <Image src={HERO_SRC} alt={HERO_ALT} fill priority sizes="440px" className="object-cover object-[30%_35%]" />
       </div>
     </section>
   );

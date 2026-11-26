@@ -38,7 +38,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
           <Logo />
           <button
             onClick={() => setOpen(false)}
-            className="grid size-10 place-items-center rounded-full hover:bg-ink/5"
+            className="grid size-11 place-items-center rounded-full hover:bg-ink/5"
             aria-label="Цэс хаах"
           >
             <X className="size-5" />
@@ -60,7 +60,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
                     <Link
                       key={c.href}
                       href={c.href}
-                      className="rounded-lg px-2 py-2.5 text-[15px] font-medium text-ink-2 active:bg-brand-50"
+                      className="rounded-lg px-2 py-2.5 text-[16px] text-ink-2 active:bg-brand-50"
                     >
                       {c.label}
                     </Link>
@@ -85,7 +85,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
             </Link>
           </Show>
           <Link href="/wishlist" className="btn btn-outline h-12">
-            <Heart className="size-4" /> Хадгалсан бараа
+            <Heart className="size-4" /> Хадгалсан бүтээгдэхүүн
           </Link>
         </div>
       </aside>
@@ -96,7 +96,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="-ml-2 grid size-11 place-items-center rounded-full hover:bg-ink/5 lg:hidden"
+        className="-ml-2 grid size-11 shrink-0 place-items-center rounded-full hover:bg-ink/5 lg:hidden"
         aria-label="Цэс нээх"
         aria-expanded={open}
       >

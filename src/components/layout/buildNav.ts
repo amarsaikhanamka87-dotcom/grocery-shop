@@ -14,6 +14,6 @@ export function buildNav(categories: Category[], hasDeals: boolean): NavItem[] {
     },
     ...(hasDeals ? [{ label: "Хямдрал", href: "/shop?deals=1", dot: true }] : []),
     { label: "Манай фермүүд", href: "/farms" },
-    { label: "Хэрхэн захиалах", href: "/help" },
+    { label: "Түгээмэл асуулт", href: "/help" },
   ];
 }

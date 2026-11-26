@@ -18,7 +18,8 @@ export function TodayMoney({ title, money, store }: Props) {
   const onlineOrders = money.paidOrders - store.count;
   return (
     <section className="mt-6">
-      <h2 className="text-lg font-extrabold">{title}</h2>
+      {/* The period is already in the date button above; keep the heading for screen readers only. */}
+      <h2 className="sr-only">{title}</h2>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <MoneyCard
           wide

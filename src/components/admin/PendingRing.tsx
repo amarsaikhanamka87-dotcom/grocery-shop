@@ -3,8 +3,8 @@
 import { useLinkStatus } from "next/link";
 import { cn } from "@/lib/utils";
 
-/** Inside a day link (‹, ›, Өнөөдөр): a green ring that pulses while that day is loading (always rendered, no layout shift). */
-export function DayPendingHint() {
+/** Inside a period link (‹, ›, back to now, kind switch): a green ring that pulses while it loads (always rendered, no layout shift). */
+export function PendingRing() {
   const { pending } = useLinkStatus();
   return (
     <span

@@ -85,11 +85,6 @@
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  @media (min-width: 768px) {
-    .input {
-      font-size: 0.95rem;
-    }
-  }
   .input:focus {
     border-color: var(--color-brand);
     box-shadow: 0 0 0 3px rgb(46 93 61 / 0.15);
@@ -97,8 +92,8 @@
   .label {
     display: block;
     margin-bottom: 0.4rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 16px; /* heading style (16/700), one of the 3 storefront text styles */
+    font-weight: 700;
     color: var(--color-ink-2);
   }
   .card {
@@ -116,11 +111,17 @@
     text-transform: uppercase;
     color: var(--color-brand);
   }
+  /* The one display size of the storefront (same as the page h1s): 34px phones, 42px from sm. */
   .h-section {
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    line-height: 1.1;
+    font-size: 34px;
+    line-height: 1.08;
     font-weight: 800;
     letter-spacing: -0.03em;
+  }
+  @media (min-width: 640px) {
+    .h-section {
+      font-size: 42px;
+    }
   }
 }
 

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
 import { Manrope } from "next/font/google";
-import { Toaster } from "sonner";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { LocationProvider } from "@/components/location/LocationProvider";
 import { SHOP_NAME } from "@/lib/constants";
 import { clerkLocalization } from "@/lib/auth/clerkLocalization";
 import "./globals.css";
+import { AppToaster } from "@/components/cart/AppToaster";
 
 // Cyrillic subset is needed for the Mongolian UI text.
 const manrope = Manrope({ subsets: ["latin", "cyrillic"], variable: "--font-sans", display: "swap" });
@@ -33,13 +33,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           appearance={{
             theme: shadcn,
             options: { unsafe_disableDevelopmentModeWarnings: true },
-            elements: { socialButtonsBlockButton: "min-h-11 text-[15px]" },
+            // Storefront rules: 16px text, white card footer (Clerk's default panel was cream).
+            elements: {
+              socialButtonsBlockButton: "min-h-11 text-[16px]",
+              headerTitle: "text-[16px] font-bold",
+              headerSubtitle: "text-[16px]",
+              footer: "bg-white bg-none",
+              footerActionText: "text-[16px]",
+              footerActionLink: "text-[16px] font-bold",
+              dividerText: "text-[16px]",
+            },
           }}
         >
           <LocationProvider>
             <CartProvider>
               {children}
-              <Toaster position="top-center" offset={16} />
+              <AppToaster />
             </CartProvider>
           </LocationProvider>
         </ClerkProvider>

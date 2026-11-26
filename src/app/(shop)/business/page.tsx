@@ -21,7 +21,6 @@ export default async function BusinessPage() {
     const { name, phone } = profileDefaults(user);
     return (
       <div className="container-x pt-10">
-        <p className="eyebrow">B2B</p>
         <ApplyView application={application} defaults={{ contactName: name, phone }} />
       </div>
     );
@@ -30,8 +29,7 @@ export default async function BusinessPage() {
   const [monthly, products] = await Promise.all([getMonthlyOrder(userId), getAllProducts()]);
   return (
     <div className="container-x pt-10">
-      <p className="eyebrow">B2B</p>
-      <h1 className="mt-2 text-[34px] font-extrabold tracking-[-0.03em] sm:text-[42px]">Бизнес самбар</h1>
+      <h1 className="text-[34px] font-extrabold tracking-[-0.03em] sm:text-[42px]">Бизнес самбар</h1>
       <B2BDashboard application={application} monthly={monthly ?? EMPTY_MONTHLY} products={products} />
     </div>
   );

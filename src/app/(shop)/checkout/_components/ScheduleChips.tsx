@@ -21,8 +21,8 @@ export function ScheduleChips({ days, day, slot, onDay, onSlot }: Props) {
         {days.map((d) => (
           <label key={d.value} className={CHIP}>
             <input type="radio" name="pickDay" checked={day === d.value} onChange={() => onDay(d.value)} className="sr-only" />
-            <span className="text-[15px] font-bold">{d.title}</span>
-            <span className="text-[13px] text-muted-foreground">{d.date}</span>
+            <span className="text-[16px] font-bold">{d.title}</span>
+            <span className="text-[16px] text-muted-foreground">{d.date}</span>
           </label>
         ))}
       </div>

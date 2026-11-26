@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { monthGrid } from "../_features/monthGrid";
 
 const WEEK_HEAD = ["Да", "Мя", "Лха", "Пү", "Ба", "Бя", "Ня"];
-const NAV = "grid size-10 place-items-center rounded-xl bg-ink/5 text-ink hover:bg-line disabled:opacity-40";
+const NAV = "grid size-11 place-items-center rounded-xl bg-ink/5 text-ink hover:bg-line disabled:opacity-40";
 
 type Props = {
   year: number;
@@ -24,7 +24,7 @@ export function MonthCalendar({ year, month, value, min, canGoBack, onPrev, onNe
         <button type="button" onClick={onPrev} disabled={!canGoBack} aria-label="Өмнөх сар" className={NAV}>
           <ChevronLeft className="size-5" />
         </button>
-        <p className="font-extrabold">
+        <p className="font-bold">
           {month + 1}-р сар {year}
         </p>
         <button type="button" onClick={onNext} aria-label="Дараагийн сар" className={NAV}>
@@ -33,25 +33,29 @@ export function MonthCalendar({ year, month, value, min, canGoBack, onPrev, onNe
       </div>
       <div className="mt-3 grid grid-cols-7 gap-1 text-center">
         {WEEK_HEAD.map((w) => (
-          <span key={w} className="py-1 text-[13px] text-muted-foreground">
+          <span key={w} className="py-1 text-[16px] text-muted-foreground">
             {w}
           </span>
         ))}
-        {monthGrid(year, month).map((c) => (
+        {monthGrid(year, month).map((c) =>
+          // Days of the next/previous month are left blank, so they don't look pickable.
+          !c.inMonth ? (
+            <span key={c.iso} aria-hidden />
+          ) : (
           <button
             key={c.iso}
             type="button"
             disabled={c.iso < min}
             onClick={() => onPick(c.iso)}
             className={cn(
-              "h-10 rounded-xl text-[15px] font-semibold tabular-nums hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent",
-              !c.inMonth && "text-muted-foreground",
+              "h-11 rounded-xl text-[16px] tabular-nums hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent",
               c.iso === value && "bg-brand text-white hover:bg-brand",
             )}
           >
             {c.day}
           </button>
-        ))}
+          ),
+        )}
       </div>
     </div>
   );

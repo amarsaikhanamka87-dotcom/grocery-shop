@@ -5,7 +5,7 @@ import { BUSINESS_STATUS } from "@/lib/business/businessStatusLabel";
 const ICONS = { PENDING: Clock, APPROVED: CheckCircle2, REJECTED: XCircle };
 const TEXT = {
   PENDING: "Таны хүсэлтийг шалгаж байна. Ихэвчлэн 1 ажлын өдөрт хариу өгнө.",
-  APPROVED: "Та B2B хэрэглэгч боллоо. Бүх захиалгад хүргэлт үнэгүй.",
+  APPROVED: "Та бизнес хэрэглэгч боллоо. Бүх захиалгад хүргэлт үнэгүй.",
   REJECTED: "Таны хүсэлтийг зөвшөөрөөгүй. Мэдээллээ засаад дахин илгээж болно.",
 };
 

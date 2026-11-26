@@ -1,30 +1,17 @@
 import "server-only";
-import type { PaymentStatus, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import type { OrderKind, OrderView } from "@/types/orders";
+import { adminOrderWhere } from "./adminOrderWhere";
 
 /**
- * Admin: newest orders first with everything the list and the detail dialog show (so opening
- * an order needs no extra request), filtered by payment and by delivery vs pickup ("Очиж авах").
- * Delivered orders are hidden unless `delivered` is true, which shows only them ("Хүргэгдсэн").
- * Old QPay QR images are left out.
+ * Admin: one tab of orders (see adminOrderWhere) with everything the list and the detail dialog
+ * show, so opening an order needs no extra request. Sorted by hand-over day and slot: soonest first
+ * for open tabs, newest first for "Дууссан" / "Цуцалсан". Old QPay QR images are left out.
  */
-export function listAdminOrders(
-  filter: { payment?: PaymentStatus; method?: "delivery" | "pickup"; delivered?: boolean } = {},
-) {
-  const where: Prisma.OrderWhereInput = {
-    status: filter.delivered ? "DELIVERED" : { not: "DELIVERED" },
-    ...(filter.payment && { paymentStatus: filter.payment }),
-    ...(filter.method === "pickup" && { deliveryType: "pickup" }),
-    // Old orders have no deliveryType; they were all delivered.
-    ...(filter.method === "delivery" && {
-      OR: [{ deliveryType: null }, { deliveryType: { notIn: ["pickup", "store"] } }],
-    }),
-    // Касс (walk-in) sales are never orders to fulfil: they live on /admin/physical-store and in
-    // Баримт. (A null deliveryType must stay in, so not a plain `not: "store"`.)
-    AND: [{ OR: [{ deliveryType: null }, { deliveryType: { not: "store" } }] }],
-  };
+export function listAdminOrders(view: OrderView, kind: OrderKind) {
+  const direction = view === "done" || view === "cancelled" ? "desc" : "asc";
   return prisma.order.findMany({
-    where,
+    where: adminOrderWhere(view, kind),
     select: {
       id: true,
       number: true,
@@ -62,7 +49,11 @@ export function listAdminOrders(
         },
       },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [
+      { deliveryDate: { sort: direction, nulls: "last" } },
+      { deliverySlot: direction },
+      { number: direction },
+    ],
     take: 200,
   });
 }

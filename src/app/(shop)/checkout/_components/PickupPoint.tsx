@@ -8,7 +8,7 @@ export function PickupPoint({ defaults }: { defaults: { name: string; phone: str
   const maps = googleMapsLinks(PICKUP_POINT.mapsQuery);
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="flex items-center gap-2 text-lg font-extrabold">
+      <h2 className="flex items-center gap-2 text-[16px] font-bold">
         <Store className="size-5 text-brand" /> Очиж авах цэг
       </h2>
       <input type="hidden" name="customerName" value={defaults.name} />
@@ -27,16 +27,16 @@ export function PickupPoint({ defaults }: { defaults: { name: string; phone: str
           />
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 bg-brand-50 px-4 py-3">
-          <p className="flex items-center gap-2 text-[15px] font-bold text-brand">
+          <p className="flex items-center gap-2 text-[16px] font-bold text-brand">
             <MapPin className="size-4 shrink-0" /> {addressLabel(PICKUP_POINT)}
           </p>
           <a
             href={maps.open}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[14px] font-bold text-brand underline-offset-2 hover:underline"
+            className="flex min-h-11 items-center gap-1.5 text-[16px] font-bold text-brand underline-offset-2 hover:underline"
           >
-            Google Maps-д нээх <ExternalLink className="size-4" />
+            Газрын зураг дээр нээх <ExternalLink className="size-4" />
           </a>
         </div>
       </div>
@@ -57,8 +57,8 @@ export function PickupPoint({ defaults }: { defaults: { name: string; phone: str
           />
         </div>
         <div>
-          <label className="label" htmlFor="note">Нэмэлт тайлбар (заавал биш)</label>
-          <input id="note" name="note" className="input" placeholder="Жишээ нь: машины дугаар" />
+          <label className="label" htmlFor="note">Худалдагчид хэлэх зүйл (заавал биш)</label>
+          <input id="note" name="note" className="input" placeholder="Жишээ нь: машины дугаар, ирэх цаг" />
         </div>
       </div>
     </section>

@@ -47,6 +47,25 @@ export const SHOP_REG_NO = "";
 /** Paid receipts are emailed (via n8n) only when the order total is more than this, in ₮. */
 export const RECEIPT_EMAIL_MIN_TOTAL = 200;
 
+/**
+ * Shop bank account for direct bank transfers (shown with the order's transfer code).
+ * Empty fields are hidden: fill in the real account before going live.
+ */
+export const BANK_TRANSFER = {
+  /** Bank code 0005 in the IBAN = Хаан банк. */
+  bankName: "Хаан банк",
+  accountNumber: "5165040007",
+  /** Other banks' apps ask for the IBAN: MN + check digits 75 + bank 0005 + 12-digit account. */
+  iban: "MN750005005165040007",
+  accountName: SHOP_NAME,
+};
+
+/** Prefix of the bank transfer code ("BZ" + order number), Latin so every bank app accepts it. */
+export const TRANSFER_CODE_PREFIX = "BZ";
+
+/** An unpaid bank-transfer order is cancelled (and its held stock returned) after this many hours. */
+export const TRANSFER_HOLD_HOURS = 24;
+
 /** Gemini model that reads handwritten photos on /admin/handwriting (override with GEMINI_MODEL). */
 export const GEMINI_OCR_MODEL = "gemini-2.5-flash";
 

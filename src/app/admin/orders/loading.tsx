@@ -5,7 +5,7 @@ import { ListSkeleton } from "@/components/skeleton/ListSkeleton";
 export default function Loading() {
   return (
     <>
-      <PageTitleSkeleton description />
+      <PageTitleSkeleton />
       <ListSkeleton rows={6} />
     </>
   );

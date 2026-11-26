@@ -61,7 +61,7 @@ export function PhoneLogin() {
         <PhoneNumberStep phone={phone} pending={pending} onPhoneChange={setPhone} onSubmit={requestCode} />
       )}
       {error && (
-        <p className="mt-3 flex items-start gap-2 rounded-xl bg-clay-50 px-3 py-2.5 text-[13.5px] font-medium text-clay">
+        <p className="mt-3 flex items-start gap-2 rounded-xl bg-clay-50 px-3 py-2.5 text-[16px] text-clay">
           <AlertCircle className="mt-0.5 size-4 shrink-0" /> {error}
         </p>
       )}

@@ -13,7 +13,7 @@ export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
   const plan = t.type === "recurring" ? t.plan : null;
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="text-lg font-extrabold">{pickup ? "Очиж авах хугацаа" : "Хүргэлтийн хугацаа"}</h2>
+      <h2 className="text-[16px] font-bold">{pickup ? "Хэзээ очиж авах вэ?" : "Хэзээ хүргэх вэ?"}</h2>
       {/* What the order carries; read by useCheckoutSubmit. */}
       <input type="hidden" name="deliveryType" value={t.type} />
       <input type="hidden" name="deliveryDate" value={t.date} />
@@ -26,15 +26,15 @@ export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
       {!pickup && (
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <DeliveryTypeCard
-            title="Хуваарьт"
+            title="Нэг удаа"
             hint="Өдөр, цагаа сонгоно"
             icon={CalendarCheck}
             checked={t.type === "scheduled"}
             onSelect={() => t.setType("scheduled")}
           />
           <DeliveryTypeCard
-            title="Давтамжит"
-            hint="7 хоног бүр тогтмол"
+            title="Тогтмол давтах"
+            hint="7 хоног, 14 хоног эсвэл сар бүр"
             icon={CalendarSync}
             checked={t.type === "recurring"}
             onSelect={() => t.setPlanOpen(true)}
@@ -62,11 +62,11 @@ export function DeliveryTime({ pickup = false }: { pickup?: boolean }) {
           <CalendarDays className="size-6" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] text-muted-foreground">{pickup ? "Очиж авах огноо" : "Хүргэлтийн огноо"}</p>
+          <p className="text-[16px] text-muted-foreground">Давтах хуваарь</p>
           <p className="text-[16px] font-bold tabular-nums">{t.summary}</p>
         </div>
         {t.type === "recurring" && (
-          <button type="button" onClick={() => t.setPlanOpen(true)} className="text-[14px] font-bold text-brand hover:underline">
+          <button type="button" onClick={() => t.setPlanOpen(true)} className="flex min-h-11 items-center px-2 text-[16px] font-bold text-brand hover:underline">
             Өөрчлөх
           </button>
         )}

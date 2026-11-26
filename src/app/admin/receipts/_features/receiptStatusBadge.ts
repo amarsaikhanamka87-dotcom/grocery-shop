@@ -7,7 +7,7 @@ const BADGES: Record<ReceiptEmailStatus, Badge> = {
   SENT: { label: "И-мэйл илгээсэн", className: "bg-brand-50 text-brand" },
   SKIPPED: { label: "Илгээгээгүй", className: "bg-ink/5 text-ink-2" },
   PENDING: { label: "Илгээж байна", className: "bg-ink/5 text-ink-2" },
-  FAILED: { label: "Илгээж чадсангүй", className: "bg-clay-50 text-clay" },
+  FAILED: { label: "Илгээж чадаагүй", className: "bg-clay-50 text-clay" },
 };
 
 /**

@@ -1,45 +1,31 @@
 import { Suspense } from "react";
+import { PeriodNavigator } from "@/components/admin/PeriodNavigator";
+import { resolvePeriod } from "@/lib/date/resolvePeriod";
+import { ubRecentDays } from "@/lib/date/ubRecentDays";
 import { getDayMoney } from "@/lib/orders/getDayMoney";
 import { getDayOutgoing } from "@/lib/orders/getDayOutgoing";
 import { getStoreDaySales } from "@/lib/orders/getStoreDaySales";
-import { ubRecentDays } from "@/lib/date/ubRecentDays";
 import { AdminPageHeader } from "./_components/AdminPageHeader";
-import { DayNavigator } from "./_components/DayNavigator";
 import { DayReport } from "./_components/DayReport";
 import { DayReportSkeleton } from "./_components/DayReportSkeleton";
-import { resolveDashboardDay } from "./_features/resolveDashboardDay";
 
-type Params = Promise<{ day?: string }>;
+type Params = Promise<{ period?: string; date?: string; day?: string }>;
 
-export default async function AdminDashboardPage({
-  searchParams,
-}: {
-  searchParams: Params;
-}) {
-  const { day: dayParam } = await searchParams;
+export default async function AdminDashboardPage({ searchParams }: { searchParams: Params }) {
+  const params = await searchParams;
   const [today] = ubRecentDays(1);
-  const dashboardDay = resolveDashboardDay(dayParam, today);
-  const { day } = dashboardDay;
-  // One date format on the page: "11-р сарын 22, Ням" (today also says "Өнөөдөр").
-  const dayLabel = `${day.longLabel}, ${day.weekday}`;
-  const dayTitle = dashboardDay.isToday ? "Өнөөдөр" : dayLabel;
+  // ?day= is the old one-day link (bookmarks); it still opens that day.
+  const period = resolvePeriod(params.period, params.date ?? params.day, today);
 
-  // Not awaited here: DayReport waits inside <Suspense key={day}>, so switching days shows the
-  // skeleton at once instead of the previous day's numbers.
-  const data = Promise.all([getDayMoney(day), getDayOutgoing(day), getStoreDaySales(day)]);
+  // Not awaited here: DayReport waits inside <Suspense key={period}>, so switching periods shows
+  // the skeleton at once instead of the previous period's numbers. The queries take any range.
+  const data = Promise.all([getDayMoney(period), getDayOutgoing(period), getStoreDaySales(period)]);
   return (
     <>
-      <AdminPageHeader
-        title="Хянах самбар"
-        description="Өдрөөр нь орлого болон гарсан барааг харах."
-      />
-      <DayNavigator
-        dashboardDay={dashboardDay}
-        todayKey={today.key}
-        label={dashboardDay.isToday ? `Өнөөдөр · ${day.longLabel}` : dayLabel}
-      />
-      <Suspense key={day.key} fallback={<DayReportSkeleton />}>
-        <DayReport dayTitle={dayTitle} data={data} />
+      <AdminPageHeader title="Хянах самбар" />
+      <PeriodNavigator path="/admin" period={period} todayKey={today.key} />
+      <Suspense key={`${period.kind}-${period.key}`} fallback={<DayReportSkeleton />}>
+        <DayReport dayTitle={period.title} data={data} />
       </Suspense>
     </>
   );

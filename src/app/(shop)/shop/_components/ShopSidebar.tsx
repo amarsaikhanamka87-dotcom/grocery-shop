@@ -1,48 +1,40 @@
 import type { CategoryWithCount } from "@/types/catalog";
 import { shopHref, type ShopParams } from "../_features/shopHref";
 import { CategoryLink } from "./CategoryLink";
-import { FilterToggle } from "./FilterToggle";
+import { ChipRow } from "./ChipRow";
 
 type Props = { categories: CategoryWithCount[]; total: number; params: ShopParams };
 
+const HEADING = "text-[16px] font-bold text-ink max-lg:sr-only";
+
+/** The categories. Counts are per category in the whole shop, so they hide while a search or a
+ *  ?deals / ?organic link (footer "Хямдрал") is on: they would not match the results. */
 export function ShopSidebar({ categories, total, params }: Props) {
+  const filtered = !!(params.q || params.deals || params.organic);
   return (
     <aside className="min-w-0 lg:sticky lg:top-[200px] lg:self-start">
-      <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] text-muted-foreground max-lg:sr-only">
-        Ангилал
-      </h2>
-      <ul className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:grid lg:gap-1 lg:px-0">
-        <li>
-          <CategoryLink
-            href={shopHref(params, { category: undefined })}
-            label="Бүгд"
-            count={total}
-            active={!params.category}
-          />
-        </li>
-        {categories.map((c) => (
-          <li key={c.id}>
+      <div className="min-w-0">
+        <h2 className={HEADING}>Ангилал</h2>
+        <ChipRow activeKey={params.category ?? ""}>
+          <li>
             <CategoryLink
-              href={shopHref(params, { category: c.slug })}
-              label={c.name}
-              count={c.productCount}
-              active={params.category === c.slug}
+              href={shopHref(params, { category: undefined })}
+              label="Бүгд"
+              count={filtered ? undefined : total}
+              active={!params.category}
             />
           </li>
-        ))}
-      </ul>
-      <div className="mt-6 hidden gap-2 lg:grid">
-        <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] text-muted-foreground">Шүүлтүүр</h2>
-        <FilterToggle
-          href={shopHref(params, { organic: params.organic ? undefined : "1" })}
-          label="Зөвхөн органик"
-          active={!!params.organic}
-        />
-        <FilterToggle
-          href={shopHref(params, { deals: params.deals ? undefined : "1" })}
-          label="Хямдралтай"
-          active={!!params.deals}
-        />
+          {categories.map((c) => (
+            <li key={c.id}>
+              <CategoryLink
+                href={shopHref(params, { category: c.slug })}
+                label={c.name}
+                count={filtered ? undefined : c.productCount}
+                active={params.category === c.slug}
+              />
+            </li>
+          ))}
+        </ChipRow>
       </div>
     </aside>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import type { DeliveryAddress, FoundAddress } from "@/types/location";
 import type { FulfillmentMode } from "@/types/fulfillment";
 import { loadFromStorage } from "@/components/cart/loadFromStorage";
@@ -44,7 +45,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     if (ready) saveToStorage(MODE_KEY, mode);
   }, [mode, ready]);
 
-  useAskLocationOnce(ready && mode === "delivery", current, setSuggestion, setDialogOpen);
+  // Only while browsing (home, shop, product): elsewhere it covered forms (/checkout's own address
+  // form, /business), and checkout asks for the address itself.
+  const pathname = usePathname();
+  const browsing = pathname === "/" || pathname.startsWith("/shop") || pathname.startsWith("/product");
+  useAskLocationOnce(ready && mode === "delivery" && browsing, current, setSuggestion);
 
   const choose = useCallback((a: FoundAddress | DeliveryAddress) => {
     setCurrent(withId(a));

@@ -40,6 +40,7 @@ export function useCheckoutSubmit() {
         text(form, "invoiceType") === "company" ? "company" : "person",
       companyRegNo: text(form, "companyRegNo"),
       companyName: text(form, "companyName"),
+      paymentMethod: text(form, "paymentMethod") === "TRANSFER" ? "TRANSFER" : "WIRE",
       items: items.map((i) => ({
         productId: i.productId,
         quantity: i.quantity,

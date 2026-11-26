@@ -1,30 +1,51 @@
 import Link from "next/link";
 import type { ReceiptEmailStatus } from "@prisma/client";
 import { filterChipClass } from "@/components/admin/filterChipClass";
+import { periodHref } from "@/lib/date/periodHref";
+import type { ReceiptPeriodSummary } from "@/lib/receipts/getReceiptPeriodSummary";
+import { cn } from "@/lib/utils";
+import type { Period } from "@/types/period";
 
 const TABS: { value: ReceiptEmailStatus | ""; label: string }[] = [
   { value: "", label: "Бүгд" },
   { value: "SENT", label: "И-мэйл илгээсэн" },
   { value: "SKIPPED", label: "Илгээгээгүй" },
-  { value: "FAILED", label: "Илгээж чадсангүй" },
+  { value: "FAILED", label: "Илгээж чадаагүй" },
 ];
 
-type Props = { status: ReceiptEmailStatus | undefined; count: number };
+type Props = { status: ReceiptEmailStatus | undefined; period: Period; summary: ReceiptPeriodSummary };
 
-/** Email-status filter for the receipt list, kept in the URL (?status=). */
-export function ReceiptFilterTabs({ status, count }: Props) {
+/**
+ * E-mail status tabs with their counts for the chosen period (kept in the URL with it). Phones: a
+ * 2-column grid, nothing scrolls sideways. Failed e-mails show their count in clay.
+ */
+export function ReceiptFilterTabs({ status, period, summary }: Props) {
+  const dateKey = period.isCurrent ? null : period.key;
   return (
-    <div className="flex items-center gap-2 overflow-x-auto border-b border-line px-4 py-3 sm:flex-wrap sm:px-5">
-      {TABS.map((tab) => (
-        <Link
-          key={tab.value}
-          href={tab.value ? `/admin/receipts?status=${tab.value}` : "/admin/receipts"}
-          className={filterChipClass((status ?? "") === tab.value)}
-        >
-          {tab.label}
-        </Link>
-      ))}
-      <span className="ml-auto shrink-0 pl-2 text-[14px] text-muted-foreground">{count} баримт</span>
-    </div>
+    <nav aria-label="Баримтын и-мэйл" className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+      {TABS.map((tab) => {
+        const isSelected = (status ?? "") === tab.value;
+        const count = tab.value ? summary.byStatus[tab.value] : summary.count;
+        const isAlert = tab.value === "FAILED" && count > 0 && !isSelected;
+        return (
+          <Link
+            key={tab.value}
+            href={periodHref("/admin/receipts", period.kind, dateKey, { status: tab.value })}
+            aria-current={isSelected ? "page" : undefined}
+            className={cn(filterChipClass(isSelected), "justify-between gap-2")}
+          >
+            <span className="truncate">{tab.label}</span>
+            <span
+              className={cn(
+                "min-w-6 rounded-full px-1.5 text-center text-[13px] tabular-nums",
+                isAlert ? "bg-clay text-white" : isSelected ? "bg-white/20" : "bg-ink/5",
+              )}
+            >
+              {count}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

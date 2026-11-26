@@ -31,7 +31,7 @@ export function useAddToCart(item: Omit<CartItem, "quantity">) {
     addToCart: () => {
       if (qty < min || qty > left) return false;
       add(item, qty);
-      notifyAdded(item, qty);
+      notifyAdded(item);
       setQty(1); // next add tops up the line, the minimum is already met
       return true;
     },

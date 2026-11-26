@@ -54,7 +54,7 @@ export function PosCheckoutFooter(props: Props) {
         <button
           type="button"
           onClick={() => setNameOpen(true)}
-          className="flex min-h-11 items-center gap-1.5 text-[14px] font-semibold text-muted-foreground hover:text-brand"
+          className="flex min-h-11 items-center gap-1.5 text-[16px] font-bold text-muted-foreground hover:text-brand"
         >
           <UserRound className="size-4" /> Худалдан авагчийн нэр нэмэх (заавал биш)
         </button>
@@ -69,10 +69,9 @@ export function PosCheckoutFooter(props: Props) {
         {isSaving && <Loader2 className="size-5 animate-spin" />}
         {isEmpty ? "Төлбөр авах" : `${formatPrice(total)} авах`}
       </button>
-      {/* Says why the button is off, only once something was typed: before that the change box
-          already says "Мөнгөө оруулна уу", and an empty bill says to add items. */}
-      {blockReason && received !== "" && (
-        <p className="text-center text-[14px] font-semibold text-clay">{blockReason}</p>
+      {/* Says why the button is off, right under it (an empty bill already says to add items). */}
+      {blockReason && !isEmpty && (
+        <p className={`text-center text-[16px] font-bold ${received === "" ? "text-ink-2" : "text-clay"}`}>{blockReason}</p>
       )}
     </div>
   );
