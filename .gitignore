@@ -52,3 +52,6 @@ CLAUDE.local.md
 # netlify local build output (keep the Netlify agent's task history)
 .netlify/*
 !.netlify/task-history/
+
+# handwriting photos for npm run ocr:compare (private)
+/ocr-samples/

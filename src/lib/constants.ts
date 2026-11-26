@@ -65,3 +65,9 @@ export const TRANSFER_CODE_PREFIX = "BZ";
 
 /** An unpaid bank-transfer order is cancelled (and its held stock returned) after this many hours. */
 export const TRANSFER_HOLD_HOURS = 24;
+
+/** Gemini model that reads handwritten photos on /admin/handwriting (override with GEMINI_MODEL). */
+export const GEMINI_OCR_MODEL = "gemini-2.5-flash";
+
+/** Photos are shrunk in the browser to this longest side (px) before upload: keeps them under 1 MB. */
+export const OCR_IMAGE_MAX_SIDE = 1600;
