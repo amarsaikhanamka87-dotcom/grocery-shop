@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AddressLine } from "@/components/location/AddressLine";
+import { ShopChat } from "@/components/chat/ShopChat";
 
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
       </div>
       <main>{children}</main>
       <Footer />
+      <ShopChat />
     </>
   );
 }

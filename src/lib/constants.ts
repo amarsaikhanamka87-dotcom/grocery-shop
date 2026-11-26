@@ -71,3 +71,13 @@ export const GEMINI_OCR_MODEL = "gemini-2.5-flash";
 
 /** Photos are shrunk in the browser to this longest side (px) before upload: keeps them under 1 MB. */
 export const OCR_IMAGE_MAX_SIDE = 1600;
+
+/** Pinecone Assistant that answers buyers in the shop chat (created by `npm run chat:setup`). */
+export const SHOP_ASSISTANT_NAME = "booniy-zah-chat";
+
+/** Fixed id of the shop's knowledge file in that assistant, so each sync replaces the old one. */
+export const SHOP_KNOWLEDGE_FILE_ID = "6f1d2c3a-8b4e-4f7a-9c21-5e0b7d4a1f90";
+
+/** Chat limits per request: messages of history sent along, and characters per message. */
+export const CHAT_MAX_MESSAGES = 12;
+export const CHAT_MAX_CHARS = 600;

@@ -1,8 +1,10 @@
 import type { ReceiptData } from "@/types/receipts";
 import { escapeHtml } from "./escapeHtml";
+import { receiptBarcodeHtml } from "./receiptBarcodeHtml";
 import { receiptLinesHtml } from "./receiptLinesHtml";
 
 const SMALL = "color:#666;font-size:11px;";
+const FILLED = "display:inline-block;min-width:22px;border-bottom:1px solid #333;text-align:center;font-weight:bold;";
 const BOX = "display:inline-block;width:18px;height:20px;line-height:20px;border:1px solid #333;margin-right:-1px;text-align:center;font-size:12px;";
 
 /** "Регистрийн №" + 7 boxes, filled with the number when there is one. */
@@ -21,9 +23,10 @@ function party(name: string, caption: string, regNo: string): string {
 
 /**
  * The paid receipt as one HTML block laid out like НХМаягт БМ-3 "Зарлагын баримт". Inline styles
- * only, so the same HTML works in Gmail, in the admin "Баримт" view and on the print page.
+ * only, so the same HTML works in Gmail, in the admin "Баримт" view, on the print page and in the PDF.
+ * `formRows` = the paper form's 20 numbered item lines (print + PDF; the email stays short).
  */
-export function receiptHtml(receipt: ReceiptData): string {
+export function receiptHtml(receipt: ReceiptData, formRows = false): string {
   const { date, seller, buyer, delivery } = receipt;
   return `<div style="font-family:Arial,Helvetica,sans-serif;color:#111;max-width:720px;margin:0 auto;background:#fff;">
 <table width="100%" style="font-size:11px;color:#444;"><tr>
@@ -37,13 +40,13 @@ export function receiptHtml(receipt: ReceiptData): string {
   <td style="width:48%;vertical-align:top;">${party(buyer.name, "худалдан авагчийн нэр", buyer.regNo)}</td>
 </tr></table>
 <table width="100%" style="font-size:13px;margin-bottom:12px;"><tr>
-  <td style="vertical-align:bottom;white-space:nowrap;">${date.year} оны ${date.month} сарын ${date.day} өдөр</td>
+  <td style="vertical-align:bottom;white-space:nowrap;">20<span style="${FILLED}">${String(date.year).slice(2)}</span> оны <span style="${FILLED}">${date.month}</span> сарын <span style="${FILLED}">${date.day}</span> өдөр</td>
   <td style="width:55%;">
     <div style="border-bottom:1px solid #333;padding:2px 0;">${escapeHtml(delivery.method)} · ${escapeHtml(delivery.address)}</div>
     <div style="${SMALL}text-align:center;">(тээвэрлэгчийн хаяг, албан тушаал, нэр)</div>
   </td>
 </tr></table>
-${receiptLinesHtml(receipt)}
+${receiptLinesHtml(receipt, formRows)}
 <p style="font-size:12.5px;margin:10px 0 0;color:#333;">
   Захиалга №${receipt.orderNumber} · Төлбөр төлөгдсөн${buyer.phone ? ` · Утас: ${escapeHtml(buyer.phone)}` : ""}
 </p>
@@ -54,6 +57,7 @@ ${receiptLinesHtml(receipt)}
     Хүлээн авагч ........................................ /${escapeHtml(buyer.name)}/<br>
     Шалгасан нягтлан бодогч ........................................
   </td>
+  <td style="width:150px;vertical-align:bottom;text-align:center;">${receiptBarcodeHtml(receipt.number)}</td>
 </tr></table>
 ${receipt.orderUrl ? `<p style="margin-top:18px;font-size:13px;"><a href="${escapeHtml(receipt.orderUrl)}">Захиалгаа сайтаас харах</a></p>` : ""}
 <p style="${SMALL}margin-top:14px;">${escapeHtml(seller.name)} · ${escapeHtml(seller.phone)}</p>

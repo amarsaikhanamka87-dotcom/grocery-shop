@@ -1,0 +1,18 @@
+/**
+ * The brand mark: a tied sack (шуудай, the unit we sell in) with a fresh leaf, white on a brand-green
+ * rounded square. Same drawing as src/app/icon.svg (browser tab) and public/images/logo/logo.svg.
+ */
+export function LogoMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" aria-hidden className={className}>
+      <rect width="40" height="40" rx="11" fill="var(--color-brand)" />
+      <path d="M21 10.6c-.3-4.2 2.3-7 6.9-7.3.3 4.4-2.4 7.2-6.9 7.3z" fill="var(--color-brand-100)" />
+      <path d="M12.2 9.4c2.6 1.6 5.2 1.9 7.8.9 2.6 1 5.2.7 7.8-.9l-3 6H15.2z" fill="#fff" />
+      <path
+        d="M15.2 15.4C10.6 18.2 8.6 23.6 9.5 28.7c.4 2.4 2.2 3.9 4.8 3.9h11.4c2.6 0 4.4-1.5 4.8-3.9.9-5.1-1.1-10.5-5.7-13.3z"
+        fill="#fff"
+      />
+      <path d="M15 15.4h10" stroke="var(--color-brand)" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
