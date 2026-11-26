@@ -2,6 +2,8 @@
 
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { syncShopKnowledge } from "@/lib/chat/syncShopKnowledge";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/roles/requireAdmin";
 import type { FormState } from "@/types/forms";
@@ -26,5 +28,6 @@ export async function updateProduct(id: string, _prev: FormState, formData: Form
   }
 
   revalidatePath("/", "layout");
+  after(syncShopKnowledge); // the chat assistant learns the new product text
   return { ok: true };
 }

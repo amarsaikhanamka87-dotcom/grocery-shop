@@ -124,7 +124,10 @@ if the order has an `email` (Clerk email saved at checkout) and total > `RECEIPT
 БМ-3 layout used by the email (`body.receipt.html`, `body.receipt.subject`, to `body.order.email`), the
 admin view and the print page. Admin: `/admin/receipts` (period + totals via `getReceiptPeriodSummary`, e-mail status tabs with counts, grouped by day), `/admin/receipts/[id]`
 (sheet, "Хэвлэх" → `[id]/print` route, "И-мэйлээр илгээх" = `resendReceipt`, any amount). n8n workflow:
-`n8n/order-paid-receipt.json` (Webhook → Gmail). Env: `N8N_ORDER_EVENT_URL`, `N8N_WEBHOOK_SECRET`,
+`n8n/order-paid-receipt.json` (Webhook → Code → Gotenberg → Gmail): `body.receipt.pdfHtml`
+(`receiptPdfDocument`: one A4 page, 20 form rows, Noto Sans Cyrillic, Code 39 barcode of the №; also the
+print page) is turned into the PDF attachment by a Gotenberg container (`http://gotenberg:3000`) next to n8n.
+n8n never recalculates the total. Env: `N8N_ORDER_EVENT_URL`, `N8N_WEBHOOK_SECRET`,
 `SITE_URL` (optional, for the order link). Seller register no. on the form: `SHOP_REG_NO` (constants).
 
 **Delivery vs pickup.** The header switch `ModeToggle` ("Хүргэлтээр" / "Очиж авах") sets `mode` in

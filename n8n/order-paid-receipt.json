@@ -1,5 +1,5 @@
 {
-  "name": "Захиалга төлөгдсөн → БМ-3 баримт Gmail-ээр",
+  "name": "Захиалга төлөгдсөн → БМ-3 баримт (PDF хавсралттай) Gmail-ээр",
   "nodes": [
     {
       "id": "cb036570-2262-46b1-bb24-3eb48c8a9f96",
@@ -19,27 +19,128 @@
       }
     },
     {
+      "id": "7f3a9c1e-2b4d-4e8f-9a6b-1c2d3e4f5a6b",
+      "name": "HTML → файл",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Turns the app's ready A4 БМ-3 page (body.receipt.pdfHtml) into a file named index.html,\n// which is the name Gotenberg requires. The total is NOT recalculated here: the app already\n// re-priced the order from its database, and only orders over 200₮ with an email reach n8n.\nconst body = $json.body;\nconst html = body?.receipt?.pdfHtml;\nif (!html) throw new Error('body.receipt.pdfHtml is missing: update the app first.');\n\nreturn {\n  json: body,\n  binary: {\n    index: {\n      data: Buffer.from(html, 'utf8').toString('base64'),\n      mimeType: 'text/html',\n      fileName: 'index.html',\n    },\n  },\n};"
+      }
+    },
+    {
+      "id": "8a4b0d2f-3c5e-4f90-8b7c-2d3e4f5a6b7c",
+      "name": "PDF болгох (Gotenberg)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "http://gotenberg:3000/forms/chromium/convert/html",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Gotenberg-Output-Filename",
+              "value": "={{ $json.receipt.pdfFileName.replace(/\\.pdf$/, '') }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "index"
+            },
+            {
+              "name": "preferCssPageSize",
+              "value": "true"
+            },
+            {
+              "name": "printBackground",
+              "value": "true"
+            },
+            {
+              "name": "skipNetworkIdleEvent",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "pdf"
+            }
+          }
+        }
+      }
+    },
+    {
       "id": "e22416bc-731a-484b-a9f5-bd8b918d8f9f",
       "name": "Gmail-ээр илгээх",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        260,
+        720,
         0
       ],
       "parameters": {
-        "sendTo": "={{ $json.body.order.email }}",
-        "subject": "={{ $json.body.receipt.subject }}",
+        "sendTo": "={{ $('Апп-аас (order-event)').item.json.body.order.email }}",
+        "subject": "={{ $('Апп-аас (order-event)').item.json.body.receipt.subject }}",
         "emailType": "html",
-        "message": "={{ $json.body.receipt.html }}",
+        "message": "={{ $('Апп-аас (order-event)').item.json.body.receipt.html }}",
         "options": {
-          "appendAttribution": false
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "pdf"
+              }
+            ]
+          }
         }
       }
     }
   ],
   "connections": {
     "Апп-аас (order-event)": {
+      "main": [
+        [
+          {
+            "node": "HTML → файл",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML → файл": {
+      "main": [
+        [
+          {
+            "node": "PDF болгох (Gotenberg)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF болгох (Gotenberg)": {
       "main": [
         [
           {

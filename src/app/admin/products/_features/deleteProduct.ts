@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { syncShopKnowledge } from "@/lib/chat/syncShopKnowledge";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/roles/requireAdmin";
 import { idSchema } from "@/lib/validation/idSchema";
@@ -15,4 +17,5 @@ export async function deleteProduct(productId: string): Promise<void> {
   if (!id.success) return;
   await prisma.product.deleteMany({ where: { id: id.data } });
   revalidatePath("/", "layout");
+  after(syncShopKnowledge); // the chat assistant learns the new product text
 }

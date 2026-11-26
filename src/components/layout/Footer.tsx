@@ -33,7 +33,7 @@ export async function Footer() {
     infoCol,
   ];
   return (
-    <footer className="mt-16 bg-ink text-white/80 sm:mt-24">
+    <footer className="mt-16 bg-ink pb-20 text-white/80 sm:mt-24 md:pb-0">
       <div className="container-x grid gap-10 py-12 sm:py-16 md:grid-cols-2 md:gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="max-w-sm">
           <Logo light />
